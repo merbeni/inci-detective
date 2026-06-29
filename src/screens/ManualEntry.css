@@ -1,0 +1,37 @@
+.manual__head {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.manual__back { color: var(--ink); padding: 4px; }
+.manual__head h1 { font-size: 20px; }
+
+.manual__notice {
+  background: var(--caution-bg);
+  color: #b5703f;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.manual__tabs {
+  display: flex;
+  background: var(--cream-deep);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  margin-bottom: 18px;
+}
+.manual__tab {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px; border-radius: var(--radius-pill);
+  font-weight: 700; font-size: 14px; color: var(--ink-soft);
+  transition: all 0.2s var(--ease);
+}
+.manual__tab.is-active { background: var(--surface); color: var(--rose); box-shadow: var(--shadow-sm); }
+
+.manual__panel { display: flex; flex-direction: column; gap: 10px; }
+.manual__label { font-size: 13px; font-weight: 700; color: var(--ink-soft); margin-top: 4px; }
+.manual__textarea { resize: vertical; line-height: 1.5; }
+.manual__hint { font-size: 12px; margin: 0; }
+.manual__panel .btn { margin-top: 6px; }

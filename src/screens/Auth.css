@@ -1,0 +1,12 @@
+.auth { display: flex; flex-direction: column; }
+.auth__brand { text-align: center; margin: 18px 0 28px; }
+.auth__logo {
+  width: 60px; height: 60px; border-radius: 20px;
+  background: var(--lavender-soft); color: var(--rose);
+  display: grid; place-items: center; margin: 0 auto 14px;
+}
+.auth__brand h1 { font-size: 24px; margin-bottom: 6px; }
+.auth__brand p { font-size: 14px; max-width: 280px; margin: 0 auto; }
+
+.auth__form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.auth__google { margin-bottom: 6px; }

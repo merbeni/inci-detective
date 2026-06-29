@@ -1,0 +1,55 @@
+.onb {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: calc(28px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));
+}
+
+.onb__progress {
+  display: flex; gap: 6px; margin-bottom: 32px;
+}
+.onb__seg {
+  flex: 1; height: 5px; border-radius: 3px; background: var(--cream-deep);
+  transition: background 0.3s;
+}
+.onb__seg.is-done { background: var(--rose); }
+
+.onb__body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.onb__welcome { text-align: center; animation: fade 0.4s var(--ease); }
+.onb__logo {
+  width: 76px; height: 76px; border-radius: 24px;
+  background: var(--lavender-soft); color: var(--rose);
+  display: grid; place-items: center; margin: 0 auto 20px;
+}
+.onb__welcome h1 { font-size: 28px; margin-bottom: 10px; }
+.onb__welcome p { font-size: 15px; max-width: 280px; margin: 0 auto; }
+
+.onb__step { animation: fade 0.3s var(--ease); }
+.onb__step h2 { font-size: 24px; margin-bottom: 6px; }
+.onb__step > p { margin: 0 0 22px; font-size: 14px; }
+.onb__input { font-size: 18px; padding: 16px; }
+
+.onb__cards { display: flex; flex-direction: column; gap: 10px; }
+.onb__card {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1.5px solid var(--line);
+  border-radius: var(--radius); padding: 16px; text-align: left;
+  transition: all 0.18s var(--ease);
+}
+.onb__card.is-sel { border-color: var(--rose); background: var(--rose-soft); }
+.onb__card-main { display: flex; flex-direction: column; gap: 2px; }
+.onb__card-main strong { font-size: 16px; }
+.onb__card-main .faint { font-size: 13px; }
+.onb__card-check { color: var(--rose); }
+
+.onb__chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.onb__chip {
+  padding: 12px 18px; border-radius: var(--radius-pill);
+  background: var(--surface); border: 1.5px solid var(--line);
+  font-size: 14px; font-weight: 700; color: var(--ink-soft);
+  transition: all 0.18s var(--ease);
+}
+.onb__chip.is-sel { background: var(--rose); border-color: var(--rose); color: #fff; }
+
+.onb__footer { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }

@@ -1,0 +1,26 @@
+.analysis__head {
+  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px;
+}
+.analysis__titles { flex: 1; min-width: 0; }
+.analysis__titles h1 { font-size: 19px; line-height: 1.25; }
+.analysis__titles span { font-size: 13px; }
+.analysis__del { color: var(--ink-faint); padding: 6px; }
+
+.analysis__actions { display: flex; gap: 10px; margin-bottom: 16px; }
+.analysis__actions .btn { flex: 1; padding: 13px; }
+
+.analysis__ai {
+  background: var(--lavender-soft);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.analysis__ai-head {
+  display: flex; align-items: center; gap: 6px;
+  font-weight: 800; color: var(--rose); font-size: 14px; margin-bottom: 8px;
+}
+.analysis__ai p { margin: 0; font-size: 14px; white-space: pre-wrap; line-height: 1.55; }
+.analysis__ai-note { display: block; margin-top: 10px; font-size: 11px; }
+
+.analysis__list { display: flex; flex-direction: column; gap: 9px; }
+.analysis__list .eyebrow { margin-bottom: 2px; }

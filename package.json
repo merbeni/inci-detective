@@ -1,0 +1,31 @@
+{
+  "name": "inci-detective",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Offline-first PWA to scan cosmetic products and classify INCI ingredients by risk level (Safe / Caution / Alert).",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build-dataset.mjs && vite build",
+    "build:dataset": "node scripts/build-dataset.mjs",
+    "seed:dataset": "node scripts/seed-ingredients.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
+    "dexie": "^4.0.8",
+    "dexie-react-hooks": "^1.1.7",
+    "lucide-react": "^0.456.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.27.0",
+    "tesseract.js": "^5.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "vite": "^5.4.10",
+    "vite-plugin-pwa": "^0.20.5"
+  }
+}

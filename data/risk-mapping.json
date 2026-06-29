@@ -1,0 +1,22 @@
+{
+  "_comment": "Maps CosIng regulatory restriction annexes to INCI Detective's three risk levels. Versionable and auditable per the architecture decision in section 1.3 of the design doc. annex -> level. Curated overrides win over annex-derived level.",
+  "version": "2026-05",
+  "annexMap": {
+    "II": "alert",
+    "III": "caution",
+    "V": "caution",
+    "VI": "caution",
+    "IV": "safe",
+    "none": "safe"
+  },
+  "annexLabels": {
+    "II": "Annex II — prohibited in cosmetics",
+    "III": "Annex III — allowed with restrictions",
+    "IV": "Annex IV — allowed colorant",
+    "V": "Annex V — allowed preservative (with conditions)",
+    "VI": "Annex VI — allowed UV filter (with conditions)",
+    "none": "Not regulated / generally recognized"
+  },
+  "unknownLevel": "caution",
+  "_unknownRationale": "An ingredient not present in the dataset is classified as Caution (not Alert) to avoid false positives that would erode user trust — deliberate human decision documented in section 1.4."
+}

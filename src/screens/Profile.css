@@ -1,0 +1,64 @@
+.profile__head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.profile__avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--rose); color: #fff;
+  display: grid; place-items: center;
+  font-size: 24px; font-weight: 800;
+}
+.profile__name { font-size: 20px; }
+
+.profile__section { margin-bottom: 14px; }
+.profile__section h2 { font-size: 15px; margin-bottom: 12px; }
+.profile__section-head {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.profile__edit {
+  display: flex; align-items: center; gap: 5px;
+  color: var(--rose); font-weight: 700; font-size: 13px;
+}
+
+.profile__label { display: block; font-size: 12px; font-weight: 700; color: var(--ink-soft); margin: 12px 0 8px; }
+.profile__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.profile__chip {
+  padding: 8px 14px; border-radius: var(--radius-pill);
+  background: var(--cream-deep); color: var(--ink-soft);
+  font-size: 13px; font-weight: 700;
+  border: 1.5px solid transparent;
+}
+.profile__chip--solid { background: var(--rose); color: #fff; }
+
+.profile__row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+}
+.profile__row + .profile__row { border-top: 1px solid var(--line); }
+.profile__rowicon { color: var(--rose); display: grid; place-items: center; }
+.profile__rowtext { flex: 1; display: flex; flex-direction: column; }
+.profile__rowtext span:first-child { font-weight: 700; font-size: 14px; }
+.profile__rowtext .faint { font-size: 12px; }
+
+.toggle {
+  width: 46px; height: 28px; border-radius: var(--radius-pill);
+  background: var(--line); position: relative; transition: background 0.2s;
+}
+.toggle--on { background: var(--rose); }
+.toggle__knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; transition: transform 0.2s var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+.toggle--on .toggle__knob { transform: translateX(18px); }
+
+.profile__keyrow { margin-top: 10px; }
+.profile__keyfield { display: flex; gap: 8px; }
+.profile__keyfield .input { flex: 1; }
+.profile__keyhint { font-size: 12px; margin: 8px 0 0; }
+
+.profile__account-info { display: flex; align-items: center; gap: 12px; }
+.profile__account-actions { display: flex; gap: 8px; margin-top: 14px; }
+.profile__account-actions .btn { flex: 1; padding: 11px; font-size: 14px; }
+
+.profile__dataset { display: flex; align-items: center; gap: 12px; }
+.profile__dataset strong { font-size: 14px; }
+.profile__dataset .faint { font-size: 12px; }

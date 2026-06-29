@@ -1,0 +1,58 @@
+/* Design tokens — the exact palette specified in sections 3.5 / 4.4 of the doc.
+   Emotional design: personal-care warmth, not medical alert. */
+:root {
+  /* Brand */
+  --rose: #c4687a;
+  --rose-dark: #a8536a;
+  --rose-soft: #e9c5cf;
+  --cream: #fff8f5;
+  --cream-deep: #fbeee8;
+  --lavender: #c4a8d4;
+  --lavender-soft: #ece2f3;
+
+  /* Risk semaphore (pastel) */
+  --safe: #7cae7a;
+  --safe-bg: #e7f1e6;
+  --caution: #e8a87c;
+  --caution-bg: #fbeadd;
+  --alert: #d4737f;
+  --alert-bg: #f9e3e6;
+  --unknown: #b8a99f;
+  --unknown-bg: #f0e9e4;
+
+  /* Neutrals */
+  --ink: #3a2f31;
+  --ink-soft: #6f6164;
+  --ink-faint: #9c8e90;
+  --surface: #ffffff;
+  --line: #f0e3dd;
+
+  /* Shape & motion */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+  --shadow: 0 6px 24px rgba(150, 90, 100, 0.1);
+  --shadow-sm: 0 2px 8px rgba(150, 90, 100, 0.08);
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --font: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --maxw: 460px;
+}
+
+:root[data-theme='dark'] {
+  --cream: #211b1d;
+  --cream-deep: #2a2224;
+  --surface: #2c2426;
+  --ink: #f3e9e8;
+  --ink-soft: #c3b3b3;
+  --ink-faint: #8e7e7e;
+  --line: #3a2f31;
+  --rose-soft: #5a3b44;
+  --safe-bg: #2a3a2a;
+  --caution-bg: #3d3025;
+  --alert-bg: #3d2a2d;
+  --unknown-bg: #332c29;
+  --lavender-soft: #322b3a;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+}

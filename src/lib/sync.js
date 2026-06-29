@@ -1,0 +1,269 @@
+// Cloud sync layer over Supabase.
+//
+// Local IndexedDB stays the source of truth (offline-first). These functions
+// mirror local state to the cloud and reconcile on login. Every export is a
+// safe no-op when cloud isn't configured or the user isn't signed in, so the
+// db.js fire-and-forget hooks never need to know about auth state.
+
+import { supabase, isCloudEnabled } from './supabase.js'
+import {
+  upsertRemoteScan,
+  listUnsyncedScans,
+  markScanSynced,
+  setScanShare,
+  upsertRemoteWatchlistItem,
+  listWatchlist,
+  applyRemoteProfile,
+  getProfile,
+  getCachedDataset,
+  setCachedDataset,
+} from '../db/db.js'
+import { setDataset, datasetMeta } from '../core/classifier.js'
+
+// ----------------------------------------------------------------- auth
+export async function currentUserId() {
+  if (!isCloudEnabled) return null
+  const { data } = await supabase.auth.getSession()
+  return data.session?.user?.id || null
+}
+
+export async function getCurrentUser() {
+  if (!isCloudEnabled) return null
+  const { data } = await supabase.auth.getUser()
+  return data.user || null
+}
+
+export function onAuthChange(cb) {
+  if (!isCloudEnabled) return () => {}
+  const { data } = supabase.auth.onAuthStateChange((_event, session) =>
+    cb(session?.user || null),
+  )
+  return () => data.subscription.unsubscribe()
+}
+
+export async function signUp(email, password) {
+  if (!isCloudEnabled) throw new Error('cloud-disabled')
+  const { data, error } = await supabase.auth.signUp({ email, password })
+  if (error) throw error
+  return data.user
+}
+
+export async function signIn(email, password) {
+  if (!isCloudEnabled) throw new Error('cloud-disabled')
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error) throw error
+  return data.user
+}
+
+export async function signInWithGoogle() {
+  if (!isCloudEnabled) throw new Error('cloud-disabled')
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  })
+  if (error) throw error
+}
+
+export async function signOut() {
+  if (!isCloudEnabled) return
+  await supabase.auth.signOut()
+}
+
+// ------------------------------------------------------------- mappers
+const toCloudScan = (r, userId) => ({
+  id: r.id,
+  user_id: userId,
+  barcode: r.barcode,
+  product_name: r.productName,
+  brand: r.brand,
+  image_url: r.imageUrl,
+  source: r.source,
+  overall: r.overall,
+  summary: r.summary,
+  items: r.items,
+  share_id: r.shareId || null,
+  is_public: Boolean(r.shareId),
+  created_at: r.createdAt,
+})
+
+export const fromCloudScan = (row) => ({
+  id: row.id,
+  barcode: row.barcode,
+  productName: row.product_name,
+  brand: row.brand,
+  imageUrl: row.image_url,
+  source: row.source,
+  overall: row.overall,
+  summary: row.summary,
+  items: row.items,
+  shareId: row.share_id,
+  createdAt: row.created_at,
+})
+
+// ------------------------------------------------------ push hooks (db.js)
+export async function pushScan(record) {
+  const userId = await currentUserId()
+  if (!userId) return
+  const { error } = await supabase.from('scans').upsert(toCloudScan(record, userId))
+  if (!error) await markScanSynced(record.id)
+}
+
+export async function pushScanDelete(id) {
+  const userId = await currentUserId()
+  if (!userId) return
+  await supabase.from('scans').delete().eq('id', id)
+}
+
+export async function pushWatchlistAdd({ norm, display }) {
+  const userId = await currentUserId()
+  if (!userId) return
+  await supabase.from('watchlist').upsert({ user_id: userId, norm, display })
+}
+
+export async function pushWatchlistRemove(norm) {
+  const userId = await currentUserId()
+  if (!userId) return
+  await supabase.from('watchlist').delete().eq('user_id', userId).eq('norm', norm)
+}
+
+export async function pushProfile(profile) {
+  const userId = await currentUserId()
+  if (!userId) return
+  await supabase.from('profiles').upsert({
+    id: userId,
+    name: profile.name,
+    skin_type: profile.skinType,
+    concerns: profile.concerns,
+    dark_mode: profile.darkMode,
+    ai_enabled: profile.aiEnabled,
+    updated_at: new Date().toISOString(),
+  })
+}
+
+// ------------------------------------------------------------- full sync
+export async function fullSync() {
+  const userId = await currentUserId()
+  if (!userId) return { ok: false }
+
+  // 1. Profile — pull cloud, fall back to pushing local on first login.
+  const { data: prof } = await supabase.from('profiles').select('*').eq('id', userId).single()
+  if (prof) {
+    await applyRemoteProfile({
+      name: prof.name || '',
+      skinType: prof.skin_type || '',
+      concerns: prof.concerns || [],
+      darkMode: prof.dark_mode || false,
+      aiEnabled: prof.ai_enabled || false,
+    })
+  } else {
+    await pushProfile(await getProfile())
+  }
+
+  // 2. Scans — pull cloud into local, then push local unsynced.
+  const { data: cloudScans } = await supabase.from('scans').select('*').eq('user_id', userId)
+  for (const row of cloudScans || []) {
+    await upsertRemoteScan(fromCloudScan(row))
+  }
+  const pending = await listUnsyncedScans()
+  if (pending.length) {
+    const { error } = await supabase
+      .from('scans')
+      .upsert(pending.map((r) => toCloudScan(r, userId)))
+    if (!error) for (const r of pending) await markScanSynced(r.id)
+  }
+
+  // 3. Watchlist — union both directions.
+  const { data: cloudWatch } = await supabase.from('watchlist').select('*').eq('user_id', userId)
+  for (const row of cloudWatch || []) {
+    await upsertRemoteWatchlistItem({
+      norm: row.norm,
+      display: row.display,
+      addedAt: row.added_at,
+    })
+  }
+  const localWatch = await listWatchlist()
+  const cloudNorms = new Set((cloudWatch || []).map((w) => w.norm))
+  const toPush = localWatch.filter((w) => !cloudNorms.has(w.norm))
+  if (toPush.length) {
+    await supabase
+      .from('watchlist')
+      .upsert(toPush.map((w) => ({ user_id: userId, norm: w.norm, display: w.display })))
+  }
+
+  return { ok: true }
+}
+
+// ------------------------------------------------------------- sharing
+export async function createShareLink(scanId) {
+  const userId = await currentUserId()
+  if (!userId) throw new Error('sign-in-required')
+  const shareId = (globalThis.crypto?.randomUUID?.() || `${Date.now()}${Math.random()}`)
+    .replace(/-/g, '')
+    .slice(0, 12)
+  const { error } = await supabase
+    .from('scans')
+    .update({ share_id: shareId, is_public: true })
+    .eq('id', scanId)
+    .eq('user_id', userId)
+  if (error) throw error
+  await setScanShare(scanId, shareId)
+  return `${window.location.origin}/share/${shareId}`
+}
+
+export async function fetchSharedScan(shareId) {
+  if (!isCloudEnabled) return null
+  const { data, error } = await supabase
+    .from('scans')
+    .select('*')
+    .eq('share_id', shareId)
+    .eq('is_public', true)
+    .single()
+  if (error || !data) return null
+  return fromCloudScan(data)
+}
+
+// -------------------------------------------------- remote updatable dataset
+// On startup, load a cached remote dataset if it's newer than the bundled one.
+export async function loadCachedDataset() {
+  const cached = await getCachedDataset()
+  if (cached?.meta?.cosing_version > datasetMeta.version) {
+    setDataset(cached.ingredients, cached.meta)
+    return cached.meta.cosing_version
+  }
+  return null
+}
+
+// Check the cloud for a newer dataset version and download it if present.
+export async function syncDataset() {
+  if (!isCloudEnabled) return null
+  const { data: meta } = await supabase
+    .from('dataset_meta')
+    .select('*')
+    .eq('id', 1)
+    .single()
+  if (!meta || !(meta.cosing_version > datasetMeta.version)) return null
+
+  const { data: rows, error } = await supabase.from('ingredients').select('*')
+  if (error || !rows?.length) return null
+
+  const ingredients = rows.map((r) => ({
+    id: r.id,
+    inci: r.inci,
+    norm: r.norm,
+    common: r.common,
+    function: r.function,
+    annex: r.annex,
+    annexLabel: r.annex_label,
+    safety: r.safety,
+    concern: r.concern || [],
+    note: r.note || '',
+  }))
+  const newMeta = {
+    cosing_version: meta.cosing_version,
+    generatedAt: meta.generated_at,
+    count: meta.count,
+  }
+  await setCachedDataset(newMeta, ingredients)
+  setDataset(ingredients, newMeta)
+  return meta.cosing_version
+}

@@ -1,0 +1,45 @@
+.riskbanner {
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+.riskbanner--safe { background: var(--safe-bg); color: var(--safe); }
+.riskbanner--caution { background: var(--caution-bg); color: #b5703f; }
+.riskbanner--alert { background: var(--alert-bg); color: var(--alert); }
+
+.riskbanner__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.riskbanner__title { font-size: 19px; font-weight: 800; }
+.riskbanner__sub { font-size: 13px; opacity: 0.85; }
+
+.riskbanner__counts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+.riskbanner__count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 10px 4px;
+}
+.riskbanner__count strong { font-size: 18px; color: var(--ink); }
+.riskbanner__count span:last-child { font-size: 11px; color: var(--ink-soft); font-weight: 700; }
+
+.riskbanner__watch {
+  margin-top: 12px;
+  background: var(--surface);
+  color: var(--alert);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}

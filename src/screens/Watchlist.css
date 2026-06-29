@@ -1,0 +1,35 @@
+.watchlist__title { font-size: 22px; }
+.watchlist__intro { font-size: 14px; margin: 6px 0 18px; }
+
+.watchlist__search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border-radius: var(--radius-pill);
+  padding: 12px 16px; box-shadow: var(--shadow-sm); margin-bottom: 10px;
+}
+.watchlist__input { flex: 1; border: none; background: none; font-size: 15px; color: var(--ink); }
+.watchlist__input:focus { outline: none; }
+.watchlist__add { color: var(--rose); }
+
+.watchlist__suggest {
+  display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px;
+}
+.watchlist__sugg {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border-radius: var(--radius-sm);
+  padding: 12px 14px; box-shadow: var(--shadow-sm); text-align: left;
+  font-size: 14px;
+}
+
+.watchlist__list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.watchlist__empty { width: 100%; padding: 28px 16px; }
+.watchlist__chip {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--rose-soft); color: var(--rose-dark);
+  padding: 8px 8px 8px 14px; border-radius: var(--radius-pill);
+  font-size: 13px; font-weight: 700;
+}
+.watchlist__chip button {
+  display: grid; place-items: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(168, 83, 106, 0.18); color: var(--rose-dark);
+}
