@@ -16,11 +16,11 @@ export function normalizeName(name) {
 // directions, warnings and manufacturer info. The real list is introduced by an
 // "Ingredients:" label (in several languages) and ends where the maker/distributor
 // boilerplate begins. Slice out just that section so we don't classify noise.
-// Keyed on the "gredient" core, which survives OCR mangling better than the
-// leading "In-" (e.g. OCR reads "Ingredients:" as "sgredients:"). Also covers
-// es/fr/it/de labels.
+// Keyed on the "dient" core followed by a separator — the part of the
+// "Ingredients:" label that best survives OCR mangling (seen as "sgredients:",
+// "<dients:", etc.). Also covers es/fr/it ("…dientes/dienti") and de labels.
 const ING_LABEL =
-  /(?:gr[ée]dient[a-zé]*|inhaltsstoffe|composici[oó]n|composition)\s*[:;.\-]\s*/gi
+  /(?:\w*dient\w*|inhaltsstoffe|composici[oó]n|composition)\s*[:;.\-]\s*/gi
 const END_MARKER =
   /\b(?:manufactured|distributed|made\s+in|imported|marketed\s+by|produced\s+by|www\.|https?:\/\/|directions?\s*:|warnings?\s*:|caution\s*:|for\s+external\s+use)\b/i
 
