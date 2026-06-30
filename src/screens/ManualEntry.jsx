@@ -20,10 +20,6 @@ export default function ManualEntry() {
   const prefillBarcode = params.get('barcode') || ''
   const prefillName = params.get('productName') || ''
   const reason = params.get('reason')
-  // Arrived here because a scan/lookup didn't return ingredients — foreground the
-  // "photo of the label" (OCR) path, which is the universal fallback for any
-  // product not in the online databases.
-  const fromScan = Boolean(reason)
 
   const [tab, setTab] = useState(reason ? 'ingredients' : 'barcode')
   const [notice, setNotice] = useState(reason ? REASONS[reason] : '')
@@ -150,30 +146,6 @@ export default function ManualEntry() {
         </div>
       ) : (
         <div className="manual__panel">
-          {/* Photo / OCR is the primary action when we got here from a scan that
-              had no ingredients — it works for any product, any country. */}
-          <button
-            className={`btn btn--block ${fromScan ? 'btn--primary btn--lg' : 'btn--outline'}`}
-            onClick={() => fileRef.current?.click()}
-            disabled={working}
-          >
-            <Camera size={18} /> {progress || 'Take a photo of the ingredient list'}
-          </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            hidden
-            onChange={handleImage}
-          />
-          <p className="faint manual__hint">
-            Point your camera at the INCI list printed on the package — we'll read
-            and classify it automatically.
-          </p>
-
-          <div className="manual__or">or type it in</div>
-
           <label className="manual__label">Product name (optional)</label>
           <input
             className="input"
@@ -182,15 +154,43 @@ export default function ManualEntry() {
             onChange={(e) => setProductName(e.target.value)}
           />
           <label className="manual__label">Ingredient list (INCI)</label>
-          <textarea
-            className="input manual__textarea"
-            placeholder="Aqua, Glycerin, Niacinamide, Phenoxyethanol, Parfum…"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={7}
-          />
+          <div className="manual__textwrap">
+            <textarea
+              className="input manual__textarea"
+              placeholder="Aqua, Glycerin, Niacinamide, Phenoxyethanol, Parfum…"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={7}
+            />
+            {/* Camera/OCR tucked into the corner of the field. It's the fast path
+                when the label is in hand — and gets out of the way (hidden) the
+                moment the user starts typing the list manually. */}
+            {!text && (
+              <button
+                type="button"
+                className="manual__ocr-btn"
+                onClick={() => fileRef.current?.click()}
+                disabled={working}
+                data-tooltip={working ? progress || 'Reading…' : 'Scan the label with your camera'}
+                aria-label="Scan the ingredient list with your camera"
+              >
+                {working ? <span className="spinner spinner--sm" /> : <Camera size={18} />}
+              </button>
+            )}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              hidden
+              onChange={handleImage}
+            />
+          </div>
+          <p className="faint manual__hint">
+            {progress || "Tap the camera to read the INCI list from the package, or type it in."}
+          </p>
           <button
-            className={`btn btn--block btn--lg ${fromScan ? 'btn--outline' : 'btn--primary'}`}
+            className="btn btn--primary btn--block btn--lg"
             onClick={submitIngredients}
             disabled={working}
           >
