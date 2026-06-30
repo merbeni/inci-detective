@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Barcode, ListPlus, ImageUp } from 'lucide-react'
+import { ArrowLeft, Barcode, ListPlus, Camera } from 'lucide-react'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { runOcr } from '../capture/ocr.js'
 import { saveScan } from '../db/db.js'
@@ -20,6 +20,10 @@ export default function ManualEntry() {
   const prefillBarcode = params.get('barcode') || ''
   const prefillName = params.get('productName') || ''
   const reason = params.get('reason')
+  // Arrived here because a scan/lookup didn't return ingredients — foreground the
+  // "photo of the label" (OCR) path, which is the universal fallback for any
+  // product not in the online databases.
+  const fromScan = Boolean(reason)
 
   const [tab, setTab] = useState(reason ? 'ingredients' : 'barcode')
   const [notice, setNotice] = useState(reason ? REASONS[reason] : '')
@@ -146,6 +150,30 @@ export default function ManualEntry() {
         </div>
       ) : (
         <div className="manual__panel">
+          {/* Photo / OCR is the primary action when we got here from a scan that
+              had no ingredients — it works for any product, any country. */}
+          <button
+            className={`btn btn--block ${fromScan ? 'btn--primary btn--lg' : 'btn--outline'}`}
+            onClick={() => fileRef.current?.click()}
+            disabled={working}
+          >
+            <Camera size={18} /> {progress || 'Take a photo of the ingredient list'}
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            hidden
+            onChange={handleImage}
+          />
+          <p className="faint manual__hint">
+            Point your camera at the INCI list printed on the package — we'll read
+            and classify it automatically.
+          </p>
+
+          <div className="manual__or">or type it in</div>
+
           <label className="manual__label">Product name (optional)</label>
           <input
             className="input"
@@ -162,22 +190,7 @@ export default function ManualEntry() {
             rows={7}
           />
           <button
-            className="btn btn--outline btn--block"
-            onClick={() => fileRef.current?.click()}
-            disabled={working}
-          >
-            <ImageUp size={18} /> {progress || 'Scan label from photo (OCR)'}
-          </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            hidden
-            onChange={handleImage}
-          />
-          <button
-            className="btn btn--primary btn--block btn--lg"
+            className={`btn btn--block btn--lg ${fromScan ? 'btn--outline' : 'btn--primary'}`}
             onClick={submitIngredients}
             disabled={working}
           >

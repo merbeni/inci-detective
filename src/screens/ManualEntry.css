@@ -35,3 +35,23 @@
 .manual__textarea { resize: vertical; line-height: 1.5; }
 .manual__hint { font-size: 12px; margin: 0; }
 .manual__panel .btn { margin-top: 6px; }
+
+.manual__or {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 10px 0 2px;
+}
+.manual__or::before,
+.manual__or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--cream-deep);
+}
