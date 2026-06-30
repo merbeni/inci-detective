@@ -72,12 +72,30 @@ create table if not exists public.dataset_meta (
   updated_at timestamptz default now()
 );
 
+-- ----------------------------------------------- products (community catalogue)
+-- Crowd-sourced barcode -> ingredient list. When a product isn't in Open Beauty
+-- Facts, a signed-in user can contribute the list (typed or read via OCR) and it
+-- becomes available to every other user scanning the same barcode. Publicly
+-- readable; only authenticated users may write.
+create table if not exists public.products (
+  barcode text primary key,
+  product_name text default '',
+  brand text default '',
+  ingredients_text text not null,
+  source text default 'ocr',           -- ocr | manual
+  contributed_by uuid references auth.users on delete set null,
+  confirmations int default 1,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
 -- ---------------------------------------------------------- Row Level Security
 alter table public.profiles      enable row level security;
 alter table public.scans         enable row level security;
 alter table public.watchlist     enable row level security;
 alter table public.ingredients   enable row level security;
 alter table public.dataset_meta  enable row level security;
+alter table public.products      enable row level security;
 
 -- profiles: owner only
 drop policy if exists "own profile" on public.profiles;
@@ -104,6 +122,16 @@ drop policy if exists "read ingredients" on public.ingredients;
 create policy "read ingredients" on public.ingredients for select using (true);
 drop policy if exists "read dataset_meta" on public.dataset_meta;
 create policy "read dataset_meta" on public.dataset_meta for select using (true);
+
+-- products: world-readable; only signed-in users may contribute/update.
+drop policy if exists "read products" on public.products;
+create policy "read products" on public.products for select using (true);
+drop policy if exists "contribute products" on public.products;
+create policy "contribute products" on public.products
+  for insert with check (auth.uid() is not null);
+drop policy if exists "update products" on public.products;
+create policy "update products" on public.products
+  for update using (auth.uid() is not null) with check (auth.uid() is not null);
 
 -- -------------------------------------------- auto-create a profile per new user
 create or replace function public.handle_new_user()

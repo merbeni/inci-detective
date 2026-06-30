@@ -193,6 +193,50 @@ export async function fullSync() {
   return { ok: true }
 }
 
+// ----------------------------------------- community product catalogue
+// A crowd-sourced barcode -> ingredient list, filled in by users when a product
+// isn't in Open Beauty Facts. Public read (works signed-out); writes need auth.
+
+const fromCloudProduct = (row) => ({
+  barcode: row.barcode,
+  productName: row.product_name || '',
+  brand: row.brand || '',
+  ingredientsText: row.ingredients_text || '',
+  source: row.source || 'ocr',
+})
+
+// Look up a barcode in our shared catalogue. Returns null (no-op) when cloud is
+// off, offline, or the product hasn't been contributed yet.
+export async function lookupCommunityProduct(barcode) {
+  if (!isCloudEnabled || !barcode) return null
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('barcode', barcode)
+    .maybeSingle()
+  if (error || !data || !data.ingredients_text) return null
+  return fromCloudProduct(data)
+}
+
+// Contribute a barcode -> ingredient list to the shared catalogue. Best-effort:
+// silently no-ops unless a user is signed in (RLS) and we have real data.
+export async function pushProduct({ barcode, productName, brand, ingredientsText, source }) {
+  const userId = await currentUserId()
+  if (!userId || !barcode || !ingredientsText) return
+  await supabase.from('products').upsert(
+    {
+      barcode,
+      product_name: productName || '',
+      brand: brand || '',
+      ingredients_text: ingredientsText,
+      source: source || 'ocr',
+      contributed_by: userId,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'barcode' },
+  )
+}
+
 // ------------------------------------------------------------- sharing
 export async function createShareLink(scanId) {
   const userId = await currentUserId()

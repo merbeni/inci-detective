@@ -86,16 +86,32 @@ export async function saveScan(scan) {
     productName: scan.productName || 'Unknown product',
     brand: scan.brand || '',
     imageUrl: scan.imageUrl || '',
-    source: scan.source || 'barcode', // barcode | ocr | manual
+    source: scan.source || 'barcode', // barcode | ocr | manual | community
     overall: scan.overall,
     summary: scan.summary,
     items: scan.items,
+    rawText: scan.rawText || '', // kept for re-analysis + community contribution
     shareId: scan.shareId || null,
     synced: 0,
     createdAt: scan.createdAt || new Date().toISOString(),
   }
   await db.scans.put(record)
   cloud('pushScan', record)
+  // Contribute newly entered ingredient lists (typed or via OCR) to the shared
+  // community catalogue so anyone scanning this barcode later gets them instantly.
+  if (
+    record.barcode &&
+    record.rawText &&
+    (record.source === 'ocr' || record.source === 'manual')
+  ) {
+    cloud('pushProduct', {
+      barcode: record.barcode,
+      productName: record.productName,
+      brand: record.brand,
+      ingredientsText: record.rawText,
+      source: record.source,
+    })
+  }
   return record
 }
 
