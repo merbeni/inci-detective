@@ -187,7 +187,8 @@ export default function ManualEntry() {
             />
           </div>
           <p className="faint manual__hint">
-            {progress || "Tap the camera to read the INCI list from the package, or type it in."}
+            {progress ||
+              'Tip: fill the frame with just the ingredient list (close-up, flat, good light) for the best read — or type it in.'}
           </p>
           <button
             className="btn btn--primary btn--block btn--lg"

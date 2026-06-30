@@ -12,12 +12,35 @@ export function normalizeName(name) {
     .trim()
 }
 
+// On a full-label photo the OCR text is mostly NOT ingredients — it's
+// directions, warnings and manufacturer info. The real list is introduced by an
+// "Ingredients:" label (in several languages) and ends where the maker/distributor
+// boilerplate begins. Slice out just that section so we don't classify noise.
+// Keyed on the "gredient" core, which survives OCR mangling better than the
+// leading "In-" (e.g. OCR reads "Ingredients:" as "sgredients:"). Also covers
+// es/fr/it/de labels.
+const ING_LABEL =
+  /(?:gr[ée]dient[a-zé]*|inhaltsstoffe|composici[oó]n|composition)\s*[:;.\-]\s*/gi
+const END_MARKER =
+  /\b(?:manufactured|distributed|made\s+in|imported|marketed\s+by|produced\s+by|www\.|https?:\/\/|directions?\s*:|warnings?\s*:|caution\s*:|for\s+external\s+use)\b/i
+
+export function extractIngredientSection(raw) {
+  let text = String(raw)
+  // Take everything after the LAST "Ingredients:" label (handles OTC drug
+  // labels with an earlier "Active Ingredient:" block). If no label was read
+  // (e.g. a tight close-up of just the list), keep the whole text.
+  let lastEnd = -1
+  for (const m of text.matchAll(ING_LABEL)) lastEnd = m.index + m[0].length
+  if (lastEnd >= 0) text = text.slice(lastEnd)
+  // Cut trailing manufacturer / distributor / web boilerplate.
+  const end = text.match(END_MARKER)
+  if (end) text = text.slice(0, end.index)
+  return text.trim()
+}
+
 export function parseInciList(raw) {
   if (!raw) return []
-  let text = String(raw)
-
-  // Drop a leading "Ingredients:" / "Ingredientes:" label.
-  text = text.replace(/^\s*ingredient(e)?s?\s*[:\-]/i, '')
+  const text = extractIngredientSection(raw)
 
   // Treat newlines, bullets and semicolons as separators alongside commas.
   const parts = text
@@ -28,10 +51,18 @@ export function parseInciList(raw) {
   const seen = new Set()
   const result = []
   parts.forEach((display, index) => {
-    // Strip trailing percentage / parenthetical concentration notes.
-    const clean = display.replace(/\([^)]*\)/g, '').replace(/\d+(\.\d+)?\s*%/g, '').trim()
+    // Strip parenthetical/bracketed notes (concentrations, batch codes) and %.
+    const clean = display
+      .replace(/\([^)]*\)/g, '')
+      .replace(/\[[^\]]*\]?/g, '') // closed or unclosed (OCR'd batch codes)
+      .replace(/\d+(\.\d+)?\s*%/g, '')
+      .trim()
     const norm = normalizeName(clean)
     if (!norm || norm.length < 2) return
+    // Drop leftover prose: real INCI names are short (≤5 words). Longer tokens
+    // are OCR-captured sentences (warnings, "Manufactured in the USA…") that
+    // slipped past the section slice.
+    if (norm.split(' ').length > 5) return
     if (seen.has(norm)) return
     seen.add(norm)
     // Combined synonyms like "Aqua/Water/Eau" — keep each variant as an
