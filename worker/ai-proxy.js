@@ -38,6 +38,14 @@ export default {
     const prompt = (body.prompt || '').toString().slice(0, 8000)
     if (!prompt) return json({ error: 'missing prompt' }, 400, cors)
 
+    // Honor a caller-supplied generationConfig, clamped to safe bounds (the OCR
+    // cleanup task needs more output tokens and a lower temperature than chat).
+    const reqCfg = body.generationConfig || {}
+    const generationConfig = {
+      temperature: clamp(Number(reqCfg.temperature ?? 0.4), 0, 1),
+      maxOutputTokens: clamp(Math.round(Number(reqCfg.maxOutputTokens ?? 512)), 1, 2048),
+    }
+
     const upstream = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${env.GEMINI_API_KEY}`,
       {
@@ -45,7 +53,7 @@ export default {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.4, maxOutputTokens: 512 },
+          generationConfig,
         }),
       },
     )
@@ -57,6 +65,11 @@ export default {
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
     return json({ text, model: MODEL }, 200, cors)
   },
+}
+
+function clamp(n, lo, hi) {
+  if (!Number.isFinite(n)) return lo
+  return Math.min(hi, Math.max(lo, n))
 }
 
 function json(obj, status, cors) {

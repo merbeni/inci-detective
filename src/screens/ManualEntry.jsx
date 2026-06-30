@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Barcode, ListPlus, Camera } from 'lucide-react'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { runOcr } from '../capture/ocr.js'
+import { cleanOcrTextWithAI } from '../ai/gemini.js'
 import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import './ManualEntry.css'
@@ -15,7 +16,7 @@ const REASONS = {
 
 export default function ManualEntry() {
   const navigate = useNavigate()
-  const { showToast } = useApp()
+  const { showToast, profile } = useApp()
   const [params] = useSearchParams()
   const prefillBarcode = params.get('barcode') || ''
   const prefillName = params.get('productName') || ''
@@ -83,8 +84,22 @@ export default function ManualEntry() {
     setProgress('Reading image…')
     try {
       const img = await loadImage(file)
-      const ocrText = await runOcr(img, (p) => setProgress(`Reading… ${Math.round(p * 100)}%`))
-      setText((t) => (t ? t + '\n' : '') + ocrText.trim())
+      let result = (
+        await runOcr(img, (p) => setProgress(`Reading… ${Math.round(p * 100)}%`))
+      ).trim()
+      // Opt-in: let Gemini reconstruct a clean INCI list from the noisy OCR text
+      // (fixes the speckle/truncation a phone photo introduces). Best-effort —
+      // falls back to the raw OCR text if AI is off, offline or fails.
+      if (result && profile?.aiEnabled && navigator.onLine) {
+        setProgress('Cleaning up with AI…')
+        try {
+          const cleaned = await cleanOcrTextWithAI(result, profile)
+          if (cleaned) result = cleaned
+        } catch {
+          /* keep the raw OCR text */
+        }
+      }
+      setText((t) => (t ? t + '\n' : '') + result)
       setTab('ingredients')
       showToast('Text extracted — review and analyze')
     } catch {
