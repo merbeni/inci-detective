@@ -4,11 +4,12 @@
 
 import { lookupBarcode } from '../capture/openBeautyFacts.js'
 import { parseInciList } from './inciParse.js'
-import { classifyList } from './classifier.js'
+import { classifyList, ensureDataset } from './classifier.js'
 import { watchlistNormSet } from '../db/db.js'
 import { lookupCommunityProduct } from '../lib/sync.js'
 
 export async function analyzeIngredientsText(text, meta = {}) {
+  await ensureDataset()
   const tokens = parseInciList(text)
   const watch = await watchlistNormSet()
   const { items, summary, overall, watchlistHits } = classifyList(tokens, watch)

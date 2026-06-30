@@ -6,20 +6,28 @@
 // separate, versionable config (risk-mapping.json). The output is a compact
 // JSON bundled into the app and pre-cached by the service worker.
 //
-// In production this script would parse the official ECHA CosIng CSV. Here it
-// reads a curated source (data/cosing-source.json) of common ingredients so the
-// app is genuinely functional offline without shipping the full 27k catalogue.
+// The full ECHA CosIng catalogue (data/cosing-full.json, produced by
+// scripts/import-cosing.mjs) is the base layer for coverage. A small hand-curated
+// source (data/cosing-source.json) is overlaid on top: it carries the friendly
+// `common` names and the `concern` flags (sensitivity, acne…) that the raw CosIng
+// export doesn't have, and wins on conflicts.
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = resolve(here, '..')
 
-const source = JSON.parse(
+const fullPath = resolve(root, 'data/cosing-full.json')
+const cosingFull = existsSync(fullPath)
+  ? JSON.parse(readFileSync(fullPath, 'utf-8'))
+  : []
+const curated = JSON.parse(
   readFileSync(resolve(root, 'data/cosing-source.json'), 'utf-8'),
 )
+// Base layer first (full catalogue), curated overrides last so they win.
+const source = [...cosingFull, ...curated]
 const mapping = JSON.parse(
   readFileSync(resolve(root, 'data/risk-mapping.json'), 'utf-8'),
 )
@@ -56,43 +64,50 @@ for (const record of source) {
   const norm = normalize(record.inci)
   if (!norm) continue
   const safety = deriveSafety(record)
-  const entry = {
-    id: norm.replace(/ /g, '-'),
-    inci: record.inci,
-    norm,
-    common: record.common || '',
-    function: record.function || '',
-    annex: record.annex || 'none',
-    annexLabel: mapping.annexLabels[record.annex || 'none'],
-    safety,
-    concern: record.concern || [],
-    note: record.note || '',
-  }
-  // De-dup by normalized key, keeping the higher-risk classification.
+  // Compact entry: empty fields are omitted to keep the bundled JSON small (the
+  // app falls back to '' / [] at runtime). `annexLabel` is resolved at runtime
+  // from the annex code via the shipped annexLabels map, not stored per row.
+  const entry = { inci: record.inci, norm, annex: record.annex || 'none', safety }
+  if (record.common) entry.common = record.common
+  if (record.function) entry.function = record.function
+  if (record.concern?.length) entry.concern = record.concern
+  if (record.note) entry.note = record.note
+  // Merge on the normalized key. Later sources (curated) win on descriptive
+  // fields; the safety level is always the higher-risk of the two so a curated
+  // entry can never silently downgrade a restricted CosIng ingredient.
   const existing = seen.get(norm)
-  if (!existing || SAFETY_RANK[entry.safety] > SAFETY_RANK[existing.safety]) {
+  if (!existing) {
     seen.set(norm, entry)
+  } else {
+    // Curated (processed last) wins on present fields; omitted fields fall back
+    // to the CosIng values. Safety stays at the higher-risk of the two.
+    const merged = { ...existing, ...entry }
+    if (SAFETY_RANK[existing.safety] >= SAFETY_RANK[entry.safety]) {
+      merged.safety = existing.safety
+      merged.annex = existing.annex
+    }
+    seen.set(norm, merged)
   }
 }
 
 const ingredients = [...seen.values()].sort((a, b) => a.norm.localeCompare(b.norm))
 
-const output = {
+const meta = {
   cosing_version: mapping.version,
   generatedAt: new Date().toISOString().slice(0, 10),
   count: ingredients.length,
   unknownLevel: mapping.unknownLevel,
   annexLabels: mapping.annexLabels,
-  ingredients,
 }
+const output = { ...meta, ingredients }
 
 const outDir = resolve(root, 'src/data')
 mkdirSync(outDir, { recursive: true })
-writeFileSync(
-  resolve(outDir, 'ingredients.json'),
-  JSON.stringify(output),
-  'utf-8',
-)
+// The full catalogue (multi-MB) is lazy-loaded only when an analysis runs.
+writeFileSync(resolve(outDir, 'ingredients.json'), JSON.stringify(output), 'utf-8')
+// A tiny sidecar with just the metadata + annex labels, imported eagerly so the
+// Profile screen and the remote-dataset version check don't pull in the big file.
+writeFileSync(resolve(outDir, 'dataset-meta.json'), JSON.stringify(meta), 'utf-8')
 
 const counts = ingredients.reduce((acc, i) => {
   acc[i.safety] = (acc[i.safety] || 0) + 1

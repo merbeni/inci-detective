@@ -5,7 +5,7 @@ import {
   addWatchlistItem,
   removeWatchlistItem,
 } from '../db/db.js'
-import { allIngredients } from '../core/classifier.js'
+import { allIngredients, ensureDataset } from '../core/classifier.js'
 import { normalizeName } from '../core/inciParse.js'
 import { useApp } from '../context/AppContext.jsx'
 import './Watchlist.css'
@@ -14,21 +14,25 @@ export default function Watchlist() {
   const { showToast } = useApp()
   const [items, setItems] = useState([])
   const [q, setQ] = useState('')
+  // The ingredient catalogue is lazy-loaded; flip this once it's ready so the
+  // autocomplete suggestions recompute.
+  const [datasetReady, setDatasetReady] = useState(false)
 
   const refresh = () => listWatchlist().then(setItems)
   useEffect(() => {
     refresh()
+    ensureDataset().then(() => setDatasetReady(true))
   }, [])
 
   const watchedNorms = useMemo(() => new Set(items.map((i) => i.norm)), [items])
 
   const suggestions = useMemo(() => {
     const term = normalizeName(q)
-    if (term.length < 2) return []
+    if (term.length < 2 || !datasetReady) return []
     return allIngredients()
       .filter((i) => !watchedNorms.has(i.norm) && i.norm.includes(term))
       .slice(0, 6)
-  }, [q, watchedNorms])
+  }, [q, watchedNorms, datasetReady])
 
   async function add(norm, display) {
     await addWatchlistItem(norm, display)

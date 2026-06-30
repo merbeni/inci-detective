@@ -7,41 +7,81 @@
 //  - an ingredient not found in the dataset is classified as Caution, never
 //    Alert — the deliberate "don't alarm without evidence" decision (1.4).
 
-import dataset from '../data/ingredients.json'
+import bundledMeta from '../data/dataset-meta.json'
 import { similarity } from './levenshtein.js'
 import { normalizeName } from './inciParse.js'
 
 const FUZZY_THRESHOLD = 0.85
 const MIN_FUZZY_LEN = 5
 
-// Mutable active dataset — starts as the bundled JSON (instant, offline) and can
-// be swapped at runtime for a newer one fetched from the cloud (remote dataset).
-let active = dataset
+// The full ~28k catalogue is multi-MB, so it is loaded lazily (a dynamic import)
+// the first time an analysis runs — it stays out of the initial app bundle. Only
+// the tiny metadata sidecar (version, annex labels) is imported eagerly.
+let active = {
+  ingredients: [],
+  unknownLevel: bundledMeta.unknownLevel,
+  annexLabels: bundledMeta.annexLabels,
+}
+let loaded = false
+let loadingPromise = null
+
+export function ensureDataset() {
+  if (loaded) return Promise.resolve()
+  if (!loadingPromise) {
+    loadingPromise = import('../data/ingredients.json').then((mod) => {
+      const ds = mod.default
+      setDataset(ds.ingredients, ds)
+      loaded = true
+    })
+  }
+  return loadingPromise
+}
+
 let byNorm = new Map()
+// Fuzzy candidates are bucketed by normalized-name length so a near-match scan
+// only compares against entries of a similar length — keeps it fast over ~28k.
+let byLen = new Map()
 function rebuildIndex() {
   byNorm = new Map()
-  for (const ing of active.ingredients) byNorm.set(ing.norm, ing)
+  byLen = new Map()
+  for (const ing of active.ingredients) {
+    byNorm.set(ing.norm, ing)
+    const L = ing.norm.length
+    let bucket = byLen.get(L)
+    if (!bucket) byLen.set(L, (bucket = []))
+    bucket.push(ing)
+  }
 }
 rebuildIndex()
 
-export const datasetMeta = {
-  version: dataset.cosing_version,
-  generatedAt: dataset.generatedAt,
-  count: dataset.count,
-  unknownLevel: dataset.unknownLevel,
+// Resolve an annex code to its human label from the active dataset's map.
+function annexLabelFor(annex) {
+  return (active.annexLabels && active.annexLabels[annex]) || ''
 }
 
-// Replace the active dataset (e.g. a newer CosIng version from Supabase).
-// `meta` = { cosing_version, generatedAt, count, unknownLevel }.
+export const datasetMeta = {
+  version: bundledMeta.cosing_version,
+  generatedAt: bundledMeta.generatedAt,
+  count: bundledMeta.count,
+  unknownLevel: bundledMeta.unknownLevel,
+}
+
+// Replace the active dataset (e.g. the lazy-loaded bundle, or a newer CosIng
+// version from Supabase). `meta` = { cosing_version, generatedAt, unknownLevel,
+// annexLabels }.
 export function setDataset(ingredients, meta = {}) {
   active = {
     ingredients,
-    unknownLevel: meta.unknownLevel || dataset.unknownLevel,
+    unknownLevel: meta.unknownLevel || bundledMeta.unknownLevel,
+    annexLabels: meta.annexLabels || bundledMeta.annexLabels,
   }
   rebuildIndex()
   datasetMeta.version = meta.cosing_version || datasetMeta.version
   datasetMeta.generatedAt = meta.generatedAt || datasetMeta.generatedAt
   datasetMeta.count = ingredients.length
+  // The catalogue is now populated (bundle or a newer remote one), so the lazy
+  // loader must not later overwrite it with the bundled file.
+  loaded = true
 }
 
 export const SAFETY_ORDER = { safe: 0, caution: 1, alert: 2 }
@@ -57,15 +97,20 @@ export function matchIngredient(norm) {
 
   if (norm.length < MIN_FUZZY_LEN) return null
 
+  // Only scan entries whose length is within the window that could still clear
+  // the similarity threshold — at 0.85, lengths differing by >15% can't qualify.
+  const window = Math.max(1, Math.floor(norm.length * 0.15))
   let best = null
   let bestScore = 0
-  for (const ing of active.ingredients) {
-    // Cheap length pre-filter before the expensive distance computation.
-    if (Math.abs(ing.norm.length - norm.length) > norm.length * 0.4) continue
-    const score = similarity(norm, ing.norm)
-    if (score > bestScore) {
-      bestScore = score
-      best = ing
+  for (let L = norm.length - window; L <= norm.length + window; L++) {
+    const bucket = byLen.get(L)
+    if (!bucket) continue
+    for (const ing of bucket) {
+      const score = similarity(norm, ing.norm)
+      if (score > bestScore) {
+        bestScore = score
+        best = ing
+      }
     }
   }
   if (best && bestScore >= FUZZY_THRESHOLD) {
@@ -117,15 +162,15 @@ export function classifyToken(token, watchlistNorms = new Set()) {
     norm: token.norm,
     position: token.position,
     matchedInci: e.inci,
-    common: e.common,
-    function: e.function,
+    common: e.common || '',
+    function: e.function || '',
     annex: e.annex,
-    annexLabel: e.annexLabel,
+    annexLabel: annexLabelFor(e.annex),
     safety: e.safety,
     confidence: match.confidence,
-    concern: e.concern,
+    concern: e.concern || [],
     unknown: false,
-    note: e.note,
+    note: e.note || '',
     onWatchlist,
   }
 }
