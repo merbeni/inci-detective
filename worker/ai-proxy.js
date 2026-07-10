@@ -35,8 +35,30 @@ export default {
     } catch {
       return json({ error: 'invalid body' }, 400, cors)
     }
-    const prompt = (body.prompt || '').toString().slice(0, 8000)
-    if (!prompt) return json({ error: 'missing prompt' }, 400, cors)
+    // Accept either a ready-made `parts` array (text + optional inline image for
+    // vision OCR) or a legacy plain `prompt` string. Cap text length; images pass
+    // through (the client already downscales them before upload).
+    let parts
+    if (Array.isArray(body.parts) && body.parts.length) {
+      parts = body.parts
+        .map((p) => {
+          if (p?.text != null) return { text: String(p.text).slice(0, 8000) }
+          if (p?.inlineData?.data) {
+            return {
+              inlineData: {
+                mimeType: String(p.inlineData.mimeType || 'image/jpeg'),
+                data: String(p.inlineData.data),
+              },
+            }
+          }
+          return null
+        })
+        .filter(Boolean)
+    } else {
+      const prompt = (body.prompt || '').toString().slice(0, 8000)
+      if (prompt) parts = [{ text: prompt }]
+    }
+    if (!parts || !parts.length) return json({ error: 'missing prompt' }, 400, cors)
 
     // Honor a caller-supplied generationConfig, clamped to safe bounds (the OCR
     // cleanup task needs more output tokens and a lower temperature than chat).
@@ -52,7 +74,7 @@ export default {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{ parts }],
           generationConfig,
         }),
       },

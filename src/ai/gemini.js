@@ -44,13 +44,13 @@ Respond with:
 Keep it under 200 words.`
 }
 
-async function callDirect(prompt, apiKey, generationConfig) {
+async function callDirect(parts, apiKey, generationConfig) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: [{ parts }],
       generationConfig: generationConfig || { temperature: 0.4, maxOutputTokens: 512 },
     }),
   })
@@ -59,23 +59,26 @@ async function callDirect(prompt, apiKey, generationConfig) {
   return data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
 }
 
-async function callProxy(prompt, generationConfig) {
+async function callProxy(parts, generationConfig) {
   const res = await fetch(PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, model: MODEL, generationConfig }),
+    body: JSON.stringify({ parts, model: MODEL, generationConfig }),
   })
   if (!res.ok) throw new Error(`AI proxy error ${res.status}`)
   const data = await res.json()
   return data.text || ''
 }
 
-// Route a prompt to whichever Gemini path is configured (own key first, else the
-// shared proxy). Low temperature for the deterministic tasks below.
-function runGemini(prompt, profile, generationConfig) {
+// Route content to whichever Gemini path is configured (own key first, else the
+// shared proxy). Accepts either a plain prompt string (text task) or a ready-made
+// `parts` array (e.g. text + inline image for vision). Low temperature for the
+// deterministic tasks below.
+function runGemini(input, profile, generationConfig) {
+  const parts = typeof input === 'string' ? [{ text: input }] : input
   return profile?.geminiKey
-    ? callDirect(prompt, profile.geminiKey, generationConfig)
-    : callProxy(prompt, generationConfig)
+    ? callDirect(parts, profile.geminiKey, generationConfig)
+    : callProxy(parts, generationConfig)
 }
 
 export async function analyzeWithAI(analysis, profile) {
@@ -116,7 +119,47 @@ export async function cleanOcrTextWithAI(rawText, profile) {
     temperature: 0.1,
     maxOutputTokens: 1024,
   })
-  // Strip any stray quoting/markdown the model might add; keep a single line.
+  return cleanInciLine(text)
+}
+
+// Read the ingredient list straight from the photo. Gemini is multimodal, so
+// letting it see the label beats running Tesseract first and then repairing the
+// mangled text: there's no lossy OCR step in between. This is the preferred
+// online path; on-device Tesseract stays the offline fallback.
+const OCR_IMAGE_PROMPT = `You are reading a photo of a cosmetic product label.
+Extract ONLY the cosmetic ingredient list (INCI names), in the order printed.
+- Ignore directions, warnings, marketing copy, batch codes and manufacturer info.
+- Fix distortions from the photo (glare, curved surface, small print) to the
+  intended INCI name ONLY when you are confident of the ingredient.
+- Return a single line of comma-separated INCI names. No numbering, no markdown,
+  no commentary. If the image has no ingredient list, return an empty string.`
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result).split(',')[1] || '')
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+export async function ocrImageWithAI(file, profile) {
+  if (!navigator.onLine) throw new Error('offline')
+  if (!file) return ''
+  const data = await fileToBase64(file)
+  const parts = [
+    { text: OCR_IMAGE_PROMPT },
+    { inlineData: { mimeType: file.type || 'image/jpeg', data } },
+  ]
+  const text = await runGemini(parts, profile, {
+    temperature: 0.1,
+    maxOutputTokens: 1024,
+  })
+  return cleanInciLine(text)
+}
+
+// Normalize a model reply down to one clean comma-separated INCI line.
+function cleanInciLine(text) {
   return text
     .replace(/^```[a-z]*\n?|```$/gim, '')
     .replace(/^["'\s]+|["'\s]+$/g, '')

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Barcode, ListPlus, Camera } from 'lucide-react'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { runOcr } from '../capture/ocr.js'
-import { cleanOcrTextWithAI } from '../ai/gemini.js'
+import { cleanOcrTextWithAI, ocrImageWithAI } from '../ai/gemini.js'
 import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import './ManualEntry.css'
@@ -81,23 +81,44 @@ export default function ManualEntry() {
     const file = e.target.files?.[0]
     if (!file) return
     setWorking(true)
-    setProgress('Reading image…')
     try {
-      const img = await loadImage(file)
-      let result = (
-        await runOcr(img, (p) => setProgress(`Reading… ${Math.round(p * 100)}%`))
-      ).trim()
-      // Opt-in: let Gemini reconstruct a clean INCI list from the noisy OCR text
-      // (fixes the speckle/truncation a phone photo introduces). Best-effort —
-      // falls back to the raw OCR text if AI is off, offline or fails.
-      if (result && profile?.aiEnabled && navigator.onLine) {
-        setProgress('Cleaning up with AI…')
+      let result = ''
+      const useAI = profile?.aiEnabled && navigator.onLine
+
+      // Preferred path: hand the photo straight to Gemini's vision model. It
+      // reads the label far more reliably than on-device OCR on curved bottles
+      // and small print — and there's no lossy Tesseract step to repair after.
+      if (useAI) {
+        setProgress('Reading with AI…')
         try {
-          const cleaned = await cleanOcrTextWithAI(result, profile)
-          if (cleaned) result = cleaned
+          result = (await ocrImageWithAI(file, profile)).trim()
         } catch {
-          /* keep the raw OCR text */
+          result = ''
         }
+      }
+
+      // Fallback: on-device Tesseract (offline, or if the AI path failed). When
+      // AI is available we still let it clean up the noisy OCR text.
+      if (!result) {
+        setProgress('Reading image…')
+        const img = await loadImage(file)
+        result = (
+          await runOcr(img, (p) => setProgress(`Reading… ${Math.round(p * 100)}%`))
+        ).trim()
+        if (result && useAI) {
+          setProgress('Cleaning up with AI…')
+          try {
+            const cleaned = await cleanOcrTextWithAI(result, profile)
+            if (cleaned) result = cleaned
+          } catch {
+            /* keep the raw OCR text */
+          }
+        }
+      }
+
+      if (!result) {
+        showToast('Could not read that image')
+        return
       }
       setText((t) => (t ? t + '\n' : '') + result)
       setTab('ingredients')
