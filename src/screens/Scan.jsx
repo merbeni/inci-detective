@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { X, Keyboard, ScanText } from 'lucide-react'
 import { startBarcodeScan } from '../capture/barcode.js'
 import { runOcr } from '../capture/ocr.js'
+import { ocrImageWithAI, cleanOcrTextWithAI, describeAiError } from '../ai/gemini.js'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
@@ -11,7 +12,7 @@ import './Scan.css'
 
 export default function Scan() {
   const navigate = useNavigate()
-  const { showToast } = useApp()
+  const { showToast, profile } = useApp()
   const videoRef = useRef(null)
   const busyRef = useRef(false)
   const [status, setStatus] = useState(() => t('scan.point'))
@@ -74,18 +75,49 @@ export default function Scan() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // OCR the current camera frame as a label-text fallback.
+  // Read the ingredient label from the current camera frame. Same priority
+  // chain as the photo flow in ManualEntry: Gemini vision when AI is enabled
+  // and online (far better on curved bottles / small print), on-device
+  // Tesseract as the offline fallback, AI cleanup of the noisy OCR text last.
   async function handleOcr() {
     if (busyRef.current || !videoRef.current) return
     busyRef.current = true
     setWorking(true)
     setStatus(t('scan.reading'))
     try {
-      const text = await runOcr(videoRef.current, (p) =>
-        setStatus(t('scan.readingPct', { pct: Math.round(p * 100) })),
-      )
+      const video = videoRef.current
+      const useAI = profile?.aiEnabled && navigator.onLine
+      let text = ''
+
+      if (useAI) {
+        const frame = await frameToBlob(video)
+        if (frame) {
+          setStatus(t('manual.aiReading'))
+          try {
+            text = (await ocrImageWithAI(frame, profile)).trim()
+          } catch (err) {
+            showToast(describeAiError(err))
+          }
+        }
+      }
+
+      if (!text) {
+        text = await runOcr(video, (p) =>
+          setStatus(t('scan.readingPct', { pct: Math.round(p * 100) })),
+        )
+        if (text && useAI) {
+          setStatus(t('manual.aiCleaning'))
+          try {
+            const cleaned = await cleanOcrTextWithAI(text, profile)
+            if (cleaned) text = cleaned
+          } catch {
+            /* keep the raw OCR text */
+          }
+        }
+      }
+
       const analysis = await analyzeIngredientsText(text, {
-        productName: 'Scanned label',
+        productName: t('scan.scannedLabel'),
         source: 'ocr',
       })
       if (analysis.summary.total === 0) {
@@ -139,4 +171,17 @@ export default function Scan() {
       </div>
     </div>
   )
+}
+
+// Grab the current video frame as a JPEG blob (full camera resolution; the AI
+// path downscales it again before upload).
+function frameToBlob(video) {
+  const w = video.videoWidth
+  const h = video.videoHeight
+  if (!w || !h) return Promise.resolve(null)
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  canvas.getContext('2d').drawImage(video, 0, 0, w, h)
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.9))
 }

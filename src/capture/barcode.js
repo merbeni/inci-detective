@@ -13,8 +13,10 @@ import { DecodeHintType, BarcodeFormat } from '@zxing/library'
 
 const VIDEO_CONSTRAINTS = {
   facingMode: { ideal: 'environment' },
-  width: { ideal: 1280 },
-  height: { ideal: 720 },
+  // Ask for full HD: a low-res frame is the #1 reason an EAN-13 fails to
+  // decode. `ideal` degrades gracefully on cameras that can't provide it.
+  width: { ideal: 1920 },
+  height: { ideal: 1080 },
 }
 
 const WANTED_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'qr_code']

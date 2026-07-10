@@ -50,6 +50,7 @@ export const en = {
   'scan.ocrFailed': 'OCR failed — try manual entry',
   'scan.error': 'Something went wrong — try manual entry',
   'scan.scanLabel': 'Scan label text',
+  'scan.scannedLabel': 'Scanned label',
   'scan.enterManually': 'Enter manually',
   'scan.close': 'Close',
 
