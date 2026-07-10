@@ -117,6 +117,13 @@ export const es = {
   'analysis.linkCopied': 'Link copiado',
   'analysis.shareFailed': 'No se pudo crear el link',
   'analysis.deleted': 'Escaneo borrado',
+  'analysis.unsaved': 'Análisis sin guardar',
+  'analysis.nameLabel': 'Nombre del producto',
+  'analysis.save': 'Guardar',
+  'analysis.saveHint': 'Ponele un nombre y guardalo para verlo en tu historial.',
+  'analysis.nameRequired': 'Poné un nombre al producto para guardarlo',
+  'analysis.saved': 'Guardado en tu historial',
+  'analysis.saveFailed': 'No se pudo guardar — probá de nuevo',
 
   // Historial
   'history.title': 'Historial de escaneos',

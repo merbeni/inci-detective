@@ -15,7 +15,9 @@ export async function analyzeIngredientsText(text, meta = {}) {
   const { items, summary, overall, watchlistHits } = classifyList(tokens, watch)
   return {
     barcode: meta.barcode || null,
-    productName: meta.productName || 'Manual entry',
+    // Empty when unknown: the preview screen requires the user to name the
+    // product before saving, so history never fills up with generic entries.
+    productName: meta.productName || '',
     brand: meta.brand || '',
     imageUrl: meta.imageUrl || '',
     source: meta.source || 'manual',
@@ -51,7 +53,7 @@ export async function analyzeBarcode(barcode) {
   if (local?.ingredientsText) {
     const analysis = await analyzeIngredientsText(local.ingredientsText, {
       barcode,
-      productName: local.productName || lookup.productName || 'Unknown product',
+      productName: local.productName || lookup.productName || '',
       brand: local.brand || lookup.brand || '',
       imageUrl: lookup.imageUrl || '',
       source: 'local',
@@ -66,7 +68,7 @@ export async function analyzeBarcode(barcode) {
   if (community?.ingredientsText) {
     const analysis = await analyzeIngredientsText(community.ingredientsText, {
       barcode,
-      productName: community.productName || lookup.productName || 'Unknown product',
+      productName: community.productName || lookup.productName || '',
       brand: community.brand || lookup.brand || '',
       imageUrl: lookup.imageUrl || '',
       source: 'community',

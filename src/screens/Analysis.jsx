@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Sparkles, Trash2, Share2 } from 'lucide-react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { ArrowLeft, Sparkles, Trash2, Share2, Save } from 'lucide-react'
 import {
   getScan,
+  saveScan,
   deleteScan,
   addWatchlistItem,
   removeWatchlistItem,
@@ -22,17 +23,31 @@ import './Analysis.css'
 export default function Analysis() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { profile, showToast, cloudEnabled, user } = useApp()
-  const [scan, setScan] = useState(null)
-  const [notFound, setNotFound] = useState(false)
+
+  // Preview mode (/analysis/new): a just-computed, NOT yet persisted analysis
+  // handed over via router state. The user reviews it, names the product
+  // (required) and explicitly saves — nothing lands in history on its own.
+  const isPreview = id === 'new'
+  const previewAnalysis = isPreview ? location.state?.analysis : null
+
+  // In preview the analysis is already in hand — no async load needed.
+  const [scan, setScan] = useState(() => (isPreview ? previewAnalysis || null : null))
+  const [notFound, setNotFound] = useState(() => isPreview && !previewAnalysis)
   const [ai, setAi] = useState(null)
   const [aiLoading, setAiLoading] = useState(false)
   const [sharing, setSharing] = useState(false)
+  const [name, setName] = useState(previewAnalysis?.productName || '')
+  const [saving, setSaving] = useState(false)
 
   // Personal relevance: dataset concern flags the user's skin profile cares about.
   const personalFlags = useMemo(() => personalFlagSet(profile), [profile])
 
   useEffect(() => {
+    // Preview state is initialized synchronously above; navigating from
+    // /analysis/new to the saved /analysis/:id re-runs this and loads from db.
+    if (isPreview) return
     let active = true
     Promise.all([getScan(id), watchlistNormSet()]).then(([s, watch]) => {
       if (!active) return
@@ -48,7 +63,26 @@ export default function Analysis() {
     return () => {
       active = false
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
+
+  async function handleSave() {
+    const trimmed = name.trim()
+    if (!trimmed) {
+      showToast(t('analysis.nameRequired'))
+      return
+    }
+    setSaving(true)
+    try {
+      const saved = await saveScan({ ...scan, productName: trimmed })
+      showToast(t('analysis.saved'))
+      navigate(`/analysis/${saved.id}`, { replace: true })
+    } catch {
+      showToast(t('analysis.saveFailed'))
+    } finally {
+      setSaving(false)
+    }
+  }
 
   async function toggleWatch(item) {
     if (item.onWatchlist) {
@@ -140,12 +174,14 @@ export default function Analysis() {
           <ArrowLeft size={22} />
         </button>
         <div className="analysis__titles">
-          <h1>{scan.productName}</h1>
+          <h1>{isPreview ? name.trim() || t('analysis.unsaved') : scan.productName}</h1>
           {scan.brand && <span className="muted">{scan.brand}</span>}
         </div>
-        <button className="analysis__del" onClick={handleDelete} aria-label={t('analysis.delete')}>
-          <Trash2 size={18} />
-        </button>
+        {!isPreview && (
+          <button className="analysis__del" onClick={handleDelete} aria-label={t('analysis.delete')}>
+            <Trash2 size={18} />
+          </button>
+        )}
       </header>
 
       <RiskBanner
@@ -155,18 +191,42 @@ export default function Analysis() {
         personalHits={countPersonalHits(scan.items, personalFlags)}
       />
 
-      <div className="analysis__actions">
-        <button className="btn btn--outline" onClick={runAi} disabled={aiLoading}>
-          {aiLoading ? <span className="spinner" /> : <Sparkles size={18} />}
-          {aiLoading ? t('analysis.aiAnalyzing') : t('analysis.aiButton')}
-        </button>
-        {cloudEnabled && (
-          <button className="btn btn--outline" onClick={handleShare} disabled={sharing}>
-            {sharing ? <span className="spinner" /> : <Share2 size={18} />}
-            {t('analysis.share')}
+      {isPreview ? (
+        <div className="analysis__save card">
+          <label className="manual__label">{t('analysis.nameLabel')}</label>
+          <div className="analysis__save-row">
+            <input
+              className="input"
+              placeholder={t('manual.namePlaceholder')}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoFocus={!name}
+            />
+            <button
+              className="btn btn--primary"
+              onClick={handleSave}
+              disabled={saving || !name.trim()}
+            >
+              {saving ? <span className="spinner" /> : <Save size={18} />}
+              {t('analysis.save')}
+            </button>
+          </div>
+          <p className="faint analysis__save-hint">{t('analysis.saveHint')}</p>
+        </div>
+      ) : (
+        <div className="analysis__actions">
+          <button className="btn btn--outline" onClick={runAi} disabled={aiLoading}>
+            {aiLoading ? <span className="spinner" /> : <Sparkles size={18} />}
+            {aiLoading ? t('analysis.aiAnalyzing') : t('analysis.aiButton')}
           </button>
-        )}
-      </div>
+          {cloudEnabled && (
+            <button className="btn btn--outline" onClick={handleShare} disabled={sharing}>
+              {sharing ? <span className="spinner" /> : <Share2 size={18} />}
+              {t('analysis.share')}
+            </button>
+          )}
+        </div>
+      )}
 
       {ai && (
         <div className="analysis__ai">

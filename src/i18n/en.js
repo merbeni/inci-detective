@@ -117,6 +117,13 @@ export const en = {
   'analysis.linkCopied': 'Share link copied',
   'analysis.shareFailed': 'Could not create share link',
   'analysis.deleted': 'Scan deleted',
+  'analysis.unsaved': 'Unsaved analysis',
+  'analysis.nameLabel': 'Product name',
+  'analysis.save': 'Save',
+  'analysis.saveHint': 'Name it and save it to keep it in your history.',
+  'analysis.nameRequired': 'Name the product to save it',
+  'analysis.saved': 'Saved to your history',
+  'analysis.saveFailed': 'Could not save — try again',
 
   // History
   'history.title': 'Scan history',

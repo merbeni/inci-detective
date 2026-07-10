@@ -5,7 +5,6 @@ import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { looksLikeIngredientList } from '../core/classifier.js'
 import { runOcr } from '../capture/ocr.js'
 import { cleanOcrTextWithAI, ocrImageWithAI, describeAiError } from '../ai/gemini.js'
-import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import { t } from '../i18n/index.js'
 import './ManualEntry.css'
@@ -44,8 +43,7 @@ export default function ManualEntry() {
     try {
       const result = await analyzeBarcode(barcode.trim())
       if (result.status === 'ok') {
-        const saved = await saveScan(result.analysis)
-        navigate(`/analysis/${saved.id}`, { replace: true })
+        navigate('/analysis/new', { replace: true, state: { analysis: result.analysis } })
       } else {
         setTab('ingredients')
         if (result.productName) setProductName(result.productName)
@@ -70,7 +68,7 @@ export default function ManualEntry() {
     try {
       const analysis = await analyzeIngredientsText(text, {
         barcode: barcode.trim() || null,
-        productName: productName.trim() || t('manual.defaultProduct'),
+        productName: productName.trim(),
         source: 'manual',
       })
       if (analysis.summary.total === 0) {
@@ -85,8 +83,7 @@ export default function ManualEntry() {
         showToast(t('manual.noneRecognized'))
         return
       }
-      const saved = await saveScan(analysis)
-      navigate(`/analysis/${saved.id}`, { replace: true })
+      navigate('/analysis/new', { replace: true, state: { analysis } })
     } catch {
       showToast(t('manual.analysisFailed'))
     } finally {

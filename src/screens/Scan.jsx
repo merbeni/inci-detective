@@ -6,7 +6,6 @@ import { runOcr } from '../capture/ocr.js'
 import { ocrImageWithAI, cleanOcrTextWithAI, describeAiError } from '../ai/gemini.js'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { looksLikeIngredientList } from '../core/classifier.js'
-import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import { t } from '../i18n/index.js'
 import './Scan.css'
@@ -27,8 +26,9 @@ export default function Scan() {
     try {
       const result = await analyzeBarcode(code)
       if (result.status === 'ok') {
-        const saved = await saveScan(result.analysis)
-        navigate(`/analysis/${saved.id}`, { replace: true })
+        // Nothing is saved yet — the preview screen asks for a (required)
+        // product name and an explicit save.
+        navigate('/analysis/new', { replace: true, state: { analysis: result.analysis } })
         return
       }
       // Fallbacks routed to manual entry as first-class paths (section 1.2/1.4).
@@ -117,10 +117,7 @@ export default function Scan() {
         }
       }
 
-      const analysis = await analyzeIngredientsText(text, {
-        productName: t('scan.scannedLabel'),
-        source: 'ocr',
-      })
+      const analysis = await analyzeIngredientsText(text, { source: 'ocr' })
       // Don't save garbage: a frame of something that isn't an ingredient
       // list (wrong part of the label, random object) parses into few tokens,
       // nearly all unknown. Tell the user and let them re-aim.
@@ -131,8 +128,7 @@ export default function Scan() {
         setWorking(false)
         return
       }
-      const saved = await saveScan(analysis)
-      navigate(`/analysis/${saved.id}`, { replace: true })
+      navigate('/analysis/new', { replace: true, state: { analysis } })
     } catch (e) {
       console.error(e)
       showToast(t('scan.ocrFailed'))
