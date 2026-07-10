@@ -10,7 +10,7 @@ import {
   db,
   saveAiQuery,
 } from '../db/db.js'
-import { analyzeWithAI } from '../ai/gemini.js'
+import { analyzeWithAI, describeAiError } from '../ai/gemini.js'
 import { createShareLink } from '../lib/sync.js'
 import { useApp } from '../context/AppContext.jsx'
 import RiskBanner from '../components/RiskBanner.jsx'
@@ -69,11 +69,14 @@ export default function Analysis() {
     }
     setAiLoading(true)
     try {
-      const result = await analyzeWithAI(scan, profile)
+      const result = await analyzeWithAI(scan, profile, {
+        onRetry: ({ attempt, retries }) =>
+          showToast(`Gemini is busy — retrying (${attempt}/${retries})…`),
+      })
       setAi(result.text)
       await saveAiQuery({ scanId: scan.id, model: result.model, response: result.text })
     } catch (e) {
-      showToast(e.message === 'offline' ? 'AI needs a connection' : 'AI analysis failed')
+      showToast(describeAiError(e))
     } finally {
       setAiLoading(false)
     }

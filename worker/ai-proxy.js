@@ -81,7 +81,13 @@ export default {
     )
 
     if (!upstream.ok) {
-      return json({ error: 'upstream error', status: upstream.status }, 502, cors)
+      // Forward Gemini's real status + error body so the client can classify it
+      // (rate limit vs quota vs overloaded) and decide whether to retry.
+      const errBody = await upstream.text()
+      return new Response(errBody, {
+        status: upstream.status,
+        headers: { 'Content-Type': 'application/json', ...cors },
+      })
     }
     const data = await upstream.json()
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''

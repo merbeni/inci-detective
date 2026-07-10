@@ -13,6 +13,125 @@
 const MODEL = 'gemini-2.0-flash'
 const PROXY_URL = '/api/ai'
 
+// A classified AI error so callers can react (and retry) by KIND rather than
+// parsing HTTP codes. `retryAfterMs` is set when the server tells us how long to
+// wait (Gemini's RetryInfo / Retry-After header).
+export class GeminiError extends Error {
+  constructor(kind, message, { status, retryAfterMs } = {}) {
+    super(message || kind)
+    this.name = 'GeminiError'
+    this.kind = kind // offline | rate_limit | quota | overloaded | internal | auth | bad_request | network | unknown
+    this.status = status
+    this.retryAfterMs = retryAfterMs
+  }
+}
+
+// Only transient conditions are worth retrying; auth/quota/bad_request are not.
+const RETRYABLE = new Set(['rate_limit', 'overloaded', 'internal'])
+// Don't block the UI on very long server-requested waits — surface those to the
+// user instead ("try again in Ns").
+const MAX_AUTO_WAIT_MS = 10_000
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
+
+function parseRetryDelay(details, res) {
+  if (Array.isArray(details)) {
+    for (const d of details) {
+      const m = typeof d?.retryDelay === 'string' && d.retryDelay.match(/([\d.]+)s/)
+      if (m) return Math.round(parseFloat(m[1]) * 1000)
+    }
+  }
+  const h = res?.headers?.get?.('Retry-After')
+  if (h && Number.isFinite(Number(h))) return Number(h) * 1000
+  return null
+}
+
+// Turn a non-ok fetch Response (from Google directly or via our proxy, which
+// forwards the upstream status + body) into a classified GeminiError.
+async function errorFromResponse(res) {
+  let body = null
+  try {
+    body = await res.json()
+  } catch {
+    /* non-JSON error body */
+  }
+  const err = body?.error || {}
+  const gstatus = err.status || ''
+  const msg = (err.message || '').toLowerCase()
+  const retryAfterMs = parseRetryDelay(err.details, res)
+  const code = res.status
+
+  if (code === 429 || gstatus === 'RESOURCE_EXHAUSTED') {
+    // Per-day quota vs a short per-minute rate limit: only the latter is worth
+    // auto-retrying. Heuristic: a daily message, or no short retry hint => quota.
+    const daily = /per day|perday|daily/.test(msg)
+    if (daily || !retryAfterMs) {
+      return new GeminiError('quota', err.message, { status: code, retryAfterMs })
+    }
+    return new GeminiError('rate_limit', err.message, { status: code, retryAfterMs })
+  }
+  if (code === 503 || gstatus === 'UNAVAILABLE' || msg.includes('overloaded')) {
+    return new GeminiError('overloaded', err.message, { status: code, retryAfterMs })
+  }
+  if (code === 500 || gstatus === 'INTERNAL') {
+    return new GeminiError('internal', err.message, { status: code })
+  }
+  if (code === 403 || gstatus === 'PERMISSION_DENIED' || /api[_ ]?key/.test(msg)) {
+    return new GeminiError('auth', err.message, { status: code })
+  }
+  if (code === 400) {
+    return new GeminiError('bad_request', err.message, { status: code })
+  }
+  return new GeminiError('unknown', err.message || `HTTP ${code}`, { status: code })
+}
+
+// Retry transient failures with exponential backoff, honoring a server-supplied
+// delay when present. `onRetry({ attempt, retries, waitMs, kind })` lets the UI
+// show "retrying…". Non-retryable errors (and exhausted retries) re-throw.
+async function withRetry(fn, { retries = 3, onRetry } = {}) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn()
+    } catch (err) {
+      const kind = err?.kind
+      const canRetry = RETRYABLE.has(kind) && attempt <= retries
+      // A long server-requested wait: don't stall the UI — tell the user instead.
+      if (canRetry && err.retryAfterMs && err.retryAfterMs > MAX_AUTO_WAIT_MS) throw err
+      if (!canRetry) throw err
+      const backoff = Math.min(MAX_AUTO_WAIT_MS, 500 * 2 ** (attempt - 1) + Math.random() * 300)
+      const waitMs = err.retryAfterMs || backoff
+      onRetry?.({ attempt, retries, waitMs, kind })
+      await sleep(waitMs)
+    }
+  }
+}
+
+// A user-facing message for an AI error, keyed on its kind.
+export function describeAiError(err) {
+  switch (err?.kind) {
+    case 'offline':
+      return "You're offline — connect to the internet to use AI."
+    case 'rate_limit': {
+      const s = err.retryAfterMs ? Math.ceil(err.retryAfterMs / 1000) : null
+      return s
+        ? `Gemini is rate-limiting requests — try again in ${s}s.`
+        : 'Too many requests — wait a moment and try again.'
+    }
+    case 'quota':
+      return "You've hit your Gemini quota — it resets daily, try again later."
+    case 'overloaded':
+      return 'Gemini is overloaded right now — try again in a minute.'
+    case 'internal':
+      return 'Gemini had a temporary error — please try again.'
+    case 'auth':
+      return 'Invalid Gemini API key — check it in your Profile.'
+    case 'bad_request':
+      return 'The AI request was rejected — try again or re-take the photo.'
+    default:
+      return 'AI request failed — please try again.'
+  }
+}
+
 function buildPrompt(analysis, profile) {
   const { productName, brand, overall, summary, items } = analysis
   const flagged = items
@@ -46,47 +165,57 @@ Keep it under 200 words.`
 
 async function callDirect(parts, apiKey, generationConfig) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts }],
-      generationConfig: generationConfig || { temperature: 0.4, maxOutputTokens: 512 },
-    }),
-  })
-  if (!res.ok) throw new Error(`Gemini error ${res.status}`)
+  let res
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts }],
+        generationConfig: generationConfig || { temperature: 0.4, maxOutputTokens: 512 },
+      }),
+    })
+  } catch {
+    throw new GeminiError('network', 'Could not reach Gemini')
+  }
+  if (!res.ok) throw await errorFromResponse(res)
   const data = await res.json()
   return data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
 }
 
 async function callProxy(parts, generationConfig) {
-  const res = await fetch(PROXY_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ parts, model: MODEL, generationConfig }),
-  })
-  if (!res.ok) throw new Error(`AI proxy error ${res.status}`)
+  let res
+  try {
+    res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ parts, model: MODEL, generationConfig }),
+    })
+  } catch {
+    throw new GeminiError('network', 'Could not reach the AI service')
+  }
+  if (!res.ok) throw await errorFromResponse(res)
   const data = await res.json()
   return data.text || ''
 }
 
 // Route content to whichever Gemini path is configured (own key first, else the
 // shared proxy). Accepts either a plain prompt string (text task) or a ready-made
-// `parts` array (e.g. text + inline image for vision). Low temperature for the
-// deterministic tasks below.
-function runGemini(input, profile, generationConfig) {
+// `parts` array (e.g. text + inline image for vision). Transient failures are
+// retried with backoff; `options.onRetry` surfaces the wait to the UI.
+function runGemini(input, profile, generationConfig, options = {}) {
   const parts = typeof input === 'string' ? [{ text: input }] : input
-  return profile?.geminiKey
-    ? callDirect(parts, profile.geminiKey, generationConfig)
-    : callProxy(parts, generationConfig)
+  const call = () =>
+    profile?.geminiKey
+      ? callDirect(parts, profile.geminiKey, generationConfig)
+      : callProxy(parts, generationConfig)
+  return withRetry(call, { onRetry: options.onRetry })
 }
 
-export async function analyzeWithAI(analysis, profile) {
-  if (!navigator.onLine) {
-    throw new Error('offline')
-  }
+export async function analyzeWithAI(analysis, profile, options = {}) {
+  if (!navigator.onLine) throw new GeminiError('offline', 'offline')
   const prompt = buildPrompt(analysis, profile)
-  const text = await runGemini(prompt, profile)
+  const text = await runGemini(prompt, profile, undefined, options)
   return { text, model: MODEL, prompt }
 }
 
@@ -111,14 +240,11 @@ Raw OCR text:
 """
 `
 
-export async function cleanOcrTextWithAI(rawText, profile) {
-  if (!navigator.onLine) throw new Error('offline')
+export async function cleanOcrTextWithAI(rawText, profile, options = {}) {
+  if (!navigator.onLine) throw new GeminiError('offline', 'offline')
   if (!rawText || !rawText.trim()) return ''
   const prompt = `${OCR_CLEAN_PROMPT}${rawText.trim()}\n"""`
-  const text = await runGemini(prompt, profile, {
-    temperature: 0.1,
-    maxOutputTokens: 1024,
-  })
+  const text = await runGemini(prompt, profile, { temperature: 0.1, maxOutputTokens: 1024 }, options)
   return cleanInciLine(text)
 }
 
@@ -143,18 +269,15 @@ function fileToBase64(file) {
   })
 }
 
-export async function ocrImageWithAI(file, profile) {
-  if (!navigator.onLine) throw new Error('offline')
+export async function ocrImageWithAI(file, profile, options = {}) {
+  if (!navigator.onLine) throw new GeminiError('offline', 'offline')
   if (!file) return ''
   const data = await fileToBase64(file)
   const parts = [
     { text: OCR_IMAGE_PROMPT },
     { inlineData: { mimeType: file.type || 'image/jpeg', data } },
   ]
-  const text = await runGemini(parts, profile, {
-    temperature: 0.1,
-    maxOutputTokens: 1024,
-  })
+  const text = await runGemini(parts, profile, { temperature: 0.1, maxOutputTokens: 1024 }, options)
   return cleanInciLine(text)
 }
 

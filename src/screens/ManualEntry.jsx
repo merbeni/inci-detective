@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Barcode, ListPlus, Camera } from 'lucide-react'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { runOcr } from '../capture/ocr.js'
-import { cleanOcrTextWithAI, ocrImageWithAI } from '../ai/gemini.js'
+import { cleanOcrTextWithAI, ocrImageWithAI, describeAiError } from '../ai/gemini.js'
 import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import './ManualEntry.css'
@@ -84,6 +84,8 @@ export default function ManualEntry() {
     try {
       let result = ''
       const useAI = profile?.aiEnabled && navigator.onLine
+      const onRetry = ({ attempt, retries }) =>
+        setProgress(`AI is busy — retrying (${attempt}/${retries})…`)
 
       // Preferred path: hand the photo straight to Gemini's vision model. It
       // reads the label far more reliably than on-device OCR on curved bottles
@@ -91,8 +93,10 @@ export default function ManualEntry() {
       if (useAI) {
         setProgress('Reading with AI…')
         try {
-          result = (await ocrImageWithAI(file, profile)).trim()
-        } catch {
+          result = (await ocrImageWithAI(file, profile, { onRetry })).trim()
+        } catch (err) {
+          // Tell the user why AI didn't run, then fall back to on-device OCR.
+          showToast(describeAiError(err))
           result = ''
         }
       }
@@ -108,7 +112,7 @@ export default function ManualEntry() {
         if (result && useAI) {
           setProgress('Cleaning up with AI…')
           try {
-            const cleaned = await cleanOcrTextWithAI(result, profile)
+            const cleaned = await cleanOcrTextWithAI(result, profile, { onRetry })
             if (cleaned) result = cleaned
           } catch {
             /* keep the raw OCR text */
