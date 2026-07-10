@@ -12,7 +12,7 @@
 import { json } from './util.js'
 
 const EMBED_MODEL = '@cf/baai/bge-small-en-v1.5'
-const GEN_MODEL = 'gemini-2.0-flash'
+const GEN_MODEL = 'gemini-2.5-flash'
 
 export async function handleSearch(request, env, cors) {
   let body
@@ -65,10 +65,11 @@ Answer in under 150 words: a one-line intro, then a bullet list of 3-6 picks,
 each with a few words on why. Do not invent ingredients not in the list.`
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEN_MODEL}:generateContent?key=${env.GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEN_MODEL}:generateContent`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      // Key goes in a header, not the query string — URLs end up in logs.
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { temperature: 0.4, maxOutputTokens: 400 },

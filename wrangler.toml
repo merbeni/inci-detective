@@ -20,5 +20,19 @@ binding = "VECTORIZE"
 index_name = "inci-ingredients"
 
 # Allowed CORS origins (comma-separated). Add your real Vercel domain here.
+# APP_ORIGIN / SUPABASE_* feed the /share/* OG-preview route: the anon key is
+# the same public one the client ships, safe to keep in plain vars.
 [vars]
 ALLOWED_ORIGIN = "https://inci-detective.vercel.app,http://localhost:5173"
+APP_ORIGIN = "https://inci-detective.vercel.app"
+SUPABASE_URL = "https://shmdzlffwjhxcrhtkpfd.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_Q0Bps6Y1EvJP1KrVEq_xgA_kBjt8FMm"
+
+# Per-IP rate limit for /api/ai and /api/search (both spend paid quota).
+# 20 requests / 60s per IP is generous for a human, hostile to a scraper.
+# `namespace_id` is just a unique-per-worker numeric label, not an account id.
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }
