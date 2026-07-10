@@ -11,3 +11,9 @@ src/data/ingredients.json
 src/data/dataset-meta.json
 # raw CosIng CSV (6 MB) — regenerable; data/cosing-full.json is the committed source
 data/cosing-raw/
+# cached embedding vectors (44 MB) from scripts/test-embeddings.mjs — regenerable
+data/embeddings-cache.bin
+# Vectorize corpus (large) from scripts/build-vectors.mjs — uploaded, not committed
+data/vectors.ndjson
+# wrangler local state
+.wrangler

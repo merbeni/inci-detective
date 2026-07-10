@@ -1,0 +1,24 @@
+# Cloudflare Worker config for INCI Detective's server-side AI.
+#
+# Deploy:  npx wrangler deploy
+# Secret:  npx wrangler secret put GEMINI_API_KEY
+#
+# The Vectorize index must exist first:
+#   npx wrangler vectorize create inci-ingredients --dimensions=384 --metric=cosine
+
+name = "inci-detective-api"
+main = "worker/index.js"
+compatibility_date = "2024-09-23"
+
+# Workers AI — used to embed search queries (bge-small-en-v1.5, 384 dims).
+[ai]
+binding = "AI"
+
+# Vectorize — the ingredient vector index.
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "inci-ingredients"
+
+# Allowed CORS origins (comma-separated). Add your real Vercel domain here.
+[vars]
+ALLOWED_ORIGIN = "https://inci-detective.vercel.app,http://localhost:5173"
