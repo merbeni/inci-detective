@@ -22,7 +22,9 @@ recommended in that document section by section.
 | Local DB           | Dexie.js over IndexedDB |
 | Dataset            | CosIng-derived JSON, built at build time, precached by the SW |
 | Product lookup     | Open Beauty Facts API (with offline / not-found fallbacks) |
-| AI (opt-in)        | Gemini 2.0 Flash via a Cloudflare Worker reverse proxy, or a user-supplied key |
+| AI (opt-in)        | Gemini 2.5 Flash via a Cloudflare Worker reverse proxy, or a user-supplied key |
+| Semantic search    | Workers AI (`bge-small-en-v1.5`) + Cloudflare Vectorize, RAG answers via Gemini |
+| i18n               | es/en (`src/i18n/`), auto-detected from the device, switchable in Profile |
 
 ## How the pieces map to the design doc
 
@@ -102,16 +104,45 @@ IndexedDB stays the source of truth (instant, offline). Local writes fire a
 best-effort push to Supabase; on login / reconnect, `fullSync()` reconciles both
 ways (last-write-wins on the shared UUID key). The Gemini key is **never** synced.
 
-## AI proxy (optional)
+## Cloudflare Worker (optional — AI proxy, semantic search, share previews)
 
-Deploy `worker/ai-proxy.js` as a Cloudflare Worker / Pages Function routed at
-`/api/ai`:
+`worker/` is a single Cloudflare Worker (`inci-detective-api`) with three routes:
+
+- `POST /api/ai` — Gemini reverse proxy. The API key lives only in the Worker's
+  encrypted secret; requests are rate-limited per IP and image uploads capped.
+- `POST /api/search` — semantic ingredient search: embeds the query with
+  Workers AI (`bge-small-en-v1.5`, same model the corpus was built with) and
+  queries the Vectorize index; `mode: "rag"` also returns a Gemini-written
+  recommendation grounded in the retrieved candidates.
+- `GET /share/:id` — server-rendered Open Graph tags for shared analyses, so
+  WhatsApp/Telegram link previews work (bots get meta tags, humans get the SPA).
+
+Deploy:
 
 ```bash
-wrangler secret put GEMINI_API_KEY     # never shipped to the client
-# set ALLOWED_ORIGIN to your Pages domain
+npx wrangler vectorize create inci-ingredients --dimensions=384 --metric=cosine
+npx wrangler secret put GEMINI_API_KEY      # never shipped to the client
+npx wrangler deploy
+# build + upload the vector corpus (needs CF_ACCOUNT_ID + a "Workers AI: Read" token)
+node scripts/build-vectors.mjs
+npx wrangler vectorize insert inci-ingredients --file data/vectors.ndjson
 ```
+
+Then point the `/api/*` and `/share/*` rewrites in `vercel.json` at your
+`workers.dev` subdomain. Vars in `wrangler.toml`: `ALLOWED_ORIGIN`, `APP_ORIGIN`,
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` (the public anon key, used read-only for
+share previews).
 
 Alternatively, each user can paste their own Google AI Studio key in Profile →
 the request then goes directly to Gemini (the "bring your own key" scaling path
 from §1.4). AI is strictly opt-in; core classification never depends on it.
+
+## Dev workflow
+
+```bash
+npm run lint     # ESLint (flat config)
+npm test         # Vitest — parser / classifier / levenshtein suites
+npm run build    # dataset + PWA
+```
+
+CI (GitHub Actions) runs lint → test → build on every push/PR to main.
