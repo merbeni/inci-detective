@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Barcode, ListPlus, Camera } from 'lucide-react'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
+import { looksLikeIngredientList } from '../core/classifier.js'
 import { runOcr } from '../capture/ocr.js'
 import { cleanOcrTextWithAI, ocrImageWithAI, describeAiError } from '../ai/gemini.js'
 import { saveScan } from '../db/db.js'
@@ -76,6 +77,14 @@ export default function ManualEntry() {
         showToast(t('manual.noParse'))
         return
       }
+      // Typed/reviewed text gets a softer gate than OCR: any real INCI name
+      // resolves against the catalogue, so zero matches means the text isn't
+      // an ingredient list (or is beyond salvage) — don't save an all-unknown
+      // "analysis" that tells the user nothing.
+      if (analysis.summary.total === analysis.summary.unknown) {
+        showToast(t('manual.noneRecognized'))
+        return
+      }
       const saved = await saveScan(analysis)
       navigate(`/analysis/${saved.id}`, { replace: true })
     } catch {
@@ -132,6 +141,13 @@ export default function ManualEntry() {
 
       if (!result) {
         showToast(t('manual.cantRead'))
+        return
+      }
+      // Reject photos of something that isn't an ingredient list (a pet, the
+      // directions side of the box) instead of filling the field with noise.
+      const probe = await analyzeIngredientsText(result)
+      if (!looksLikeIngredientList(probe.summary)) {
+        showToast(t('manual.notALabel'))
         return
       }
       setText((prev) => (prev ? prev + '\n' : '') + result)

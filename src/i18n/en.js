@@ -47,6 +47,8 @@ export const en = {
   'scan.reading': 'Reading label text…',
   'scan.readingPct': 'Reading label… {pct}%',
   'scan.noIngredients': 'No ingredients detected — try manual entry',
+  'scan.notALabel':
+    "That doesn't look like an ingredient list — get closer to the label and try again",
   'scan.ocrFailed': 'OCR failed — try manual entry',
   'scan.error': 'Something went wrong — try manual entry',
   'scan.scanLabel': 'Scan label text',
@@ -90,6 +92,10 @@ export const en = {
   'manual.readingPct': 'Reading… {pct}%',
   'manual.aiCleaning': 'Cleaning up with AI…',
   'manual.cantRead': 'Could not read that image',
+  'manual.notALabel':
+    "The photo doesn't seem to contain an ingredient list — try another shot",
+  'manual.noneRecognized':
+    "We couldn't recognize any ingredient in that text — check it and try again",
   'manual.extracted': 'Text extracted — review and analyze',
   'manual.defaultProduct': 'Manual entry',
 

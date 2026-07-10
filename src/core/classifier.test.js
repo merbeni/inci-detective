@@ -4,6 +4,7 @@ import {
   matchIngredient,
   classifyToken,
   classifyList,
+  looksLikeIngredientList,
   datasetMeta,
 } from './classifier.js'
 import { parseInciList } from './inciParse.js'
@@ -107,6 +108,25 @@ describe('classifyList', () => {
     const tokens = parseInciList('Aqua, Glycerin, Phenoxyethanol')
     const { watchlistHits } = classifyList(tokens, new Set(['glycerin', 'phenoxyethanol']))
     expect(watchlistHits).toBe(2)
+  })
+})
+
+describe('looksLikeIngredientList', () => {
+  it('accepts a real parsed label (mostly known ingredients)', () => {
+    const { summary } = classifyList(parseInciList('Aqua, Glycerin, Phenoxyethanol, Unknownium'))
+    expect(looksLikeIngredientList(summary)).toBe(true)
+  })
+
+  it('rejects OCR noise from a photo of something else (all unknown)', () => {
+    const { summary } = classifyList(parseInciList('wrn kzt, peo xd, blorp fx, qee ss'))
+    expect(looksLikeIngredientList(summary)).toBe(false)
+  })
+
+  it('rejects too-short parses and empty/missing summaries', () => {
+    const { summary } = classifyList(parseInciList('Aqua, Glycerin'))
+    expect(looksLikeIngredientList(summary)).toBe(false) // < 3 tokens
+    expect(looksLikeIngredientList(null)).toBe(false)
+    expect(looksLikeIngredientList({ total: 0, unknown: 0 })).toBe(false)
   })
 })
 

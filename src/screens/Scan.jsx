@@ -5,6 +5,7 @@ import { startBarcodeScan } from '../capture/barcode.js'
 import { runOcr } from '../capture/ocr.js'
 import { ocrImageWithAI, cleanOcrTextWithAI, describeAiError } from '../ai/gemini.js'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
+import { looksLikeIngredientList } from '../core/classifier.js'
 import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import { t } from '../i18n/index.js'
@@ -120,9 +121,14 @@ export default function Scan() {
         productName: t('scan.scannedLabel'),
         source: 'ocr',
       })
-      if (analysis.summary.total === 0) {
-        showToast(t('scan.noIngredients'))
-        navigate('/manual', { replace: true })
+      // Don't save garbage: a frame of something that isn't an ingredient
+      // list (wrong part of the label, random object) parses into few tokens,
+      // nearly all unknown. Tell the user and let them re-aim.
+      if (!looksLikeIngredientList(analysis.summary)) {
+        showToast(t('scan.notALabel'))
+        setStatus(t('scan.point'))
+        busyRef.current = false
+        setWorking(false)
         return
       }
       const saved = await saveScan(analysis)

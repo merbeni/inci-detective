@@ -181,6 +181,17 @@ export function classifyToken(token, watchlistNorms = new Set()) {
   }
 }
 
+// Sanity gate for OCR'd / pasted text: a real INCI list parses into at least a
+// few tokens and most of them resolve against the ~28.7k-entry catalogue. A
+// photo of something else (a pet, a directions paragraph) yields few tokens,
+// almost all unknown — callers should reject it instead of saving a garbage
+// analysis.
+export function looksLikeIngredientList(summary) {
+  if (!summary || summary.total < 3) return false
+  const known = summary.total - summary.unknown
+  return known / summary.total >= 0.4
+}
+
 // Classify a full parsed list and produce summary counts.
 export function classifyList(tokens, watchlistNorms = new Set()) {
   const items = tokens.map((t) => classifyToken(t, watchlistNorms))
