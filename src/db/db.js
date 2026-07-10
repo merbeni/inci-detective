@@ -27,6 +27,13 @@ db.version(1).stores({
   datasetCache: 'key',
 })
 
+// v2: on-device product memory — barcode -> ingredient list, filled the first
+// time the user enters/OCRs a product's ingredients. Re-scanning that barcode
+// later resolves instantly, offline, signed-in or not.
+db.version(2).stores({
+  products: 'barcode',
+})
+
 // Fire-and-forget cloud mirror. No-op when sync/cloud isn't available.
 function cloud(method, ...args) {
   import('../lib/sync.js')
@@ -98,13 +105,22 @@ export async function saveScan(scan) {
   }
   await db.scans.put(record)
   cloud('pushScan', record)
-  // Contribute newly entered ingredient lists (typed or via OCR) to the shared
-  // community catalogue so anyone scanning this barcode later gets them instantly.
+  // Remember newly entered ingredient lists (typed or via OCR): locally so THIS
+  // device resolves the barcode instantly next time, and in the shared community
+  // catalogue (best-effort, needs sign-in) so everyone else gets them too.
   if (
     record.barcode &&
     record.rawText &&
     (record.source === 'ocr' || record.source === 'manual')
   ) {
+    await db.products.put({
+      barcode: record.barcode,
+      productName: record.productName,
+      brand: record.brand,
+      ingredientsText: record.rawText,
+      source: record.source,
+      updatedAt: record.createdAt,
+    })
     cloud('pushProduct', {
       barcode: record.barcode,
       productName: record.productName,
@@ -114,6 +130,12 @@ export async function saveScan(scan) {
     })
   }
   return record
+}
+
+// On-device product memory lookup (see db.version(2)).
+export async function getLocalProduct(barcode) {
+  if (!barcode) return null
+  return db.products.get(barcode)
 }
 
 // Insert/update a scan that originated from the cloud (already synced).

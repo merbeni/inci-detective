@@ -72,7 +72,12 @@ each with a few words on why. Do not invent ingredients not in the list.`
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 400 },
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 600,
+          // Reasoning spends the same budget and truncates the answer.
+          thinkingConfig: { thinkingBudget: 0 },
+        },
       }),
     },
   )

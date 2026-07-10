@@ -56,7 +56,14 @@ export async function handleAi(request, env, cors) {
   const reqCfg = body.generationConfig || {}
   const generationConfig = {
     temperature: clamp(Number(reqCfg.temperature ?? 0.4), 0, 1),
-    maxOutputTokens: clamp(Math.round(Number(reqCfg.maxOutputTokens ?? 512)), 1, 2048),
+    maxOutputTokens: clamp(Math.round(Number(reqCfg.maxOutputTokens ?? 1024)), 1, 4096),
+  }
+  // 2.5-flash spends its reasoning ("thinking") from the same output budget,
+  // truncating the visible answer. Clients send thinkingBudget: 0; sanitize
+  // and forward it rather than dropping it.
+  const tb = Math.round(Number(reqCfg.thinkingConfig?.thinkingBudget))
+  if (Number.isFinite(tb)) {
+    generationConfig.thinkingConfig = { thinkingBudget: clamp(tb, 0, 8192) }
   }
 
   const upstream = await fetch(

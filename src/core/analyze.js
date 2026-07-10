@@ -5,7 +5,7 @@
 import { lookupBarcode } from '../capture/openBeautyFacts.js'
 import { parseInciList } from './inciParse.js'
 import { classifyList, ensureDataset } from './classifier.js'
-import { watchlistNormSet } from '../db/db.js'
+import { watchlistNormSet, getLocalProduct } from '../db/db.js'
 import { lookupCommunityProduct } from '../lib/sync.js'
 
 export async function analyzeIngredientsText(text, meta = {}) {
@@ -45,7 +45,21 @@ export async function analyzeBarcode(barcode) {
     return { status: 'ok', analysis }
   }
 
-  // 2. Fall back to our own crowd-sourced catalogue — ingredients other users
+  // 2. This device already knows the product — the user entered/OCR'd its
+  //    ingredients before. Instant, offline, no account needed.
+  const local = await getLocalProduct(barcode).catch(() => null)
+  if (local?.ingredientsText) {
+    const analysis = await analyzeIngredientsText(local.ingredientsText, {
+      barcode,
+      productName: local.productName || lookup.productName || 'Unknown product',
+      brand: local.brand || lookup.brand || '',
+      imageUrl: lookup.imageUrl || '',
+      source: 'local',
+    })
+    return { status: 'ok', analysis }
+  }
+
+  // 3. Fall back to our own crowd-sourced catalogue — ingredients other users
   //    contributed (OCR/manual) for this barcode. Works signed-out (public
   //    read) and no-ops when offline or the product hasn't been contributed.
   const community = await lookupCommunityProduct(barcode).catch(() => null)
@@ -60,7 +74,7 @@ export async function analyzeBarcode(barcode) {
     return { status: 'ok', analysis }
   }
 
-  // 3. No ingredients anywhere — route the UI to the OCR / manual fallback.
+  // 4. No ingredients anywhere — route the UI to the OCR / manual fallback.
   if (!lookup.found) {
     return { status: lookup.offline ? 'offline' : 'not_found', barcode }
   }

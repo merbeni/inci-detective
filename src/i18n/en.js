@@ -215,6 +215,14 @@ export const en = {
   'aiError.badRequest': 'The AI request was rejected — try again or re-take the photo.',
   'aiError.default': 'AI request failed — please try again.',
 
+  // Regulatory annexes (CosIng)
+  'annex.II': 'Annex II — prohibited in cosmetics',
+  'annex.III': 'Annex III — allowed with restrictions',
+  'annex.IV': 'Annex IV — allowed colorant',
+  'annex.V': 'Annex V — allowed preservative (with conditions)',
+  'annex.VI': 'Annex VI — allowed UV filter (with conditions)',
+  'annex.none': 'Not regulated / generally recognized',
+
   // Skin types
   'skin.normal': 'Normal',
   'skin.normal.desc': 'Balanced, rarely reactive',

@@ -215,10 +215,21 @@ function runGemini(input, profile, generationConfig, options = {}) {
   return withRetry(call, { onRetry: options.onRetry })
 }
 
+// 2.5-flash "thinks" before answering and the reasoning spends the SAME
+// maxOutputTokens budget as the visible answer — left on, a 512-token cap
+// returns an answer cut off mid-word. None of our tasks need reasoning, so
+// every call disables it explicitly.
+const NO_THINKING = { thinkingConfig: { thinkingBudget: 0 } }
+
 export async function analyzeWithAI(analysis, profile, options = {}) {
   if (!navigator.onLine) throw new GeminiError('offline', 'offline')
   const prompt = buildPrompt(analysis, profile)
-  const text = await runGemini(prompt, profile, undefined, options)
+  const text = await runGemini(
+    prompt,
+    profile,
+    { temperature: 0.4, maxOutputTokens: 1024, ...NO_THINKING },
+    options,
+  )
   return { text, model: MODEL, prompt }
 }
 
@@ -247,7 +258,12 @@ export async function cleanOcrTextWithAI(rawText, profile, options = {}) {
   if (!navigator.onLine) throw new GeminiError('offline', 'offline')
   if (!rawText || !rawText.trim()) return ''
   const prompt = `${OCR_CLEAN_PROMPT}${rawText.trim()}\n"""`
-  const text = await runGemini(prompt, profile, { temperature: 0.1, maxOutputTokens: 1024 }, options)
+  const text = await runGemini(
+    prompt,
+    profile,
+    { temperature: 0.1, maxOutputTokens: 2048, ...NO_THINKING },
+    options,
+  )
   return cleanInciLine(text)
 }
 
@@ -301,7 +317,12 @@ export async function ocrImageWithAI(file, profile, options = {}) {
   if (!file) return ''
   const inlineData = await imageToInlineData(file)
   const parts = [{ text: OCR_IMAGE_PROMPT }, { inlineData }]
-  const text = await runGemini(parts, profile, { temperature: 0.1, maxOutputTokens: 1024 }, options)
+  const text = await runGemini(
+    parts,
+    profile,
+    { temperature: 0.1, maxOutputTokens: 2048, ...NO_THINKING },
+    options,
+  )
   return cleanInciLine(text)
 }
 

@@ -215,6 +215,14 @@ export const es = {
   'aiError.badRequest': 'La solicitud fue rechazada — reintentá o sacá otra foto.',
   'aiError.default': 'Falló la solicitud de IA — probá de nuevo.',
 
+  // Anexos regulatorios (CosIng)
+  'annex.II': 'Anexo II — prohibido en cosméticos',
+  'annex.III': 'Anexo III — permitido con restricciones',
+  'annex.IV': 'Anexo IV — colorante permitido',
+  'annex.V': 'Anexo V — conservante permitido (con condiciones)',
+  'annex.VI': 'Anexo VI — filtro UV permitido (con condiciones)',
+  'annex.none': 'No regulado / de uso general reconocido',
+
   // Tipos de piel
   'skin.normal': 'Normal',
   'skin.normal.desc': 'Equilibrada, rara vez reactiva',
