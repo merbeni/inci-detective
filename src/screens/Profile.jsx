@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pencil, Moon, Sparkles, Database, Check, Cloud, CloudOff, RefreshCw, LogOut } from 'lucide-react'
+import { Pencil, Moon, Sparkles, Database, Check, Cloud, CloudOff, RefreshCw, LogOut, Languages } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { db } from '../db/db.js'
 import { datasetMeta } from '../core/classifier.js'
 import { SKIN_TYPES, CONCERNS } from '../core/constants.js'
+import { t, getLang, LANGUAGES } from '../i18n/index.js'
 import './Profile.css'
 
 export default function Profile() {
@@ -18,7 +19,6 @@ export default function Profile() {
     db.scans.count().then(setScanCount)
   }, [])
 
-  const skinLabel = SKIN_TYPES.find((s) => s.id === profile.skinType)?.label
   const initial = (profile.name || '?').trim().charAt(0).toUpperCase()
 
   function toggleConcern(id) {
@@ -33,8 +33,8 @@ export default function Profile() {
       <header className="profile__head">
         <div className="profile__avatar">{initial}</div>
         <div>
-          <h1 className="profile__name">{profile.name || 'Your profile'}</h1>
-          <span className="muted">{scanCount} products scanned</span>
+          <h1 className="profile__name">{profile.name || t('profile.title')}</h1>
+          <span className="muted">{t('profile.scanned', { n: scanCount })}</span>
         </div>
       </header>
 
@@ -45,18 +45,18 @@ export default function Profile() {
               <div className="profile__account-info">
                 <Cloud size={18} className="profile__rowicon" />
                 <div className="profile__rowtext">
-                  <span>{user.email || 'Signed in'}</span>
+                  <span>{user.email || t('profile.signedInFallback')}</span>
                   <span className="faint">
-                    {syncing ? 'Syncing…' : 'Synced across your devices'}
+                    {syncing ? t('profile.syncing') : t('profile.synced')}
                   </span>
                 </div>
               </div>
               <div className="profile__account-actions">
                 <button className="btn btn--outline" onClick={runSync} disabled={syncing}>
-                  <RefreshCw size={16} /> Sync now
+                  <RefreshCw size={16} /> {t('profile.syncNow')}
                 </button>
                 <button className="btn btn--ghost" onClick={signOut}>
-                  <LogOut size={16} /> Sign out
+                  <LogOut size={16} /> {t('profile.signOut')}
                 </button>
               </div>
             </>
@@ -64,11 +64,11 @@ export default function Profile() {
             <div className="profile__account-info">
               <CloudOff size={18} className="faint" />
               <div className="profile__rowtext">
-                <span>Not signed in</span>
-                <span className="faint">Sign in to sync and share your scans</span>
+                <span>{t('profile.notSignedIn')}</span>
+                <span className="faint">{t('profile.signInSub')}</span>
               </div>
               <button className="btn btn--primary" onClick={() => navigate('/auth')}>
-                Sign in
+                {t('profile.signIn')}
               </button>
             </div>
           )}
@@ -77,48 +77,50 @@ export default function Profile() {
 
       <section className="card profile__section">
         <div className="profile__section-head">
-          <h2>Skin profile</h2>
+          <h2>{t('profile.skinProfile')}</h2>
           <button className="profile__edit" onClick={() => setEditing((e) => !e)}>
-            <Pencil size={15} /> {editing ? 'Done' : 'Edit'}
+            <Pencil size={15} /> {editing ? t('profile.done') : t('profile.edit')}
           </button>
         </div>
 
         {!editing ? (
           <div className="profile__chips">
-            {skinLabel ? (
-              <span className="profile__chip profile__chip--solid">{skinLabel}</span>
+            {profile.skinType ? (
+              <span className="profile__chip profile__chip--solid">
+                {t(`skin.${profile.skinType}`)}
+              </span>
             ) : (
-              <span className="faint">No skin type set</span>
+              <span className="faint">{t('profile.noSkinType')}</span>
             )}
             {profile.concerns.map((c) => (
               <span key={c} className="profile__chip">
-                {CONCERNS.find((x) => x.id === c)?.label || c}
+                {t(`concern.${c}`)}
               </span>
             ))}
           </div>
         ) : (
           <div className="profile__editor">
-            <label className="profile__label">Skin type</label>
+            <label className="profile__label">{t('profile.skinType')}</label>
             <div className="profile__chips">
-              {SKIN_TYPES.map((s) => (
+              {SKIN_TYPES.map((id) => (
                 <button
-                  key={s.id}
-                  className={`profile__chip ${profile.skinType === s.id ? 'profile__chip--solid' : ''}`}
-                  onClick={() => updateProfile({ skinType: s.id })}
+                  key={id}
+                  className={`profile__chip ${profile.skinType === id ? 'profile__chip--solid' : ''}`}
+                  onClick={() => updateProfile({ skinType: id })}
                 >
-                  {s.label}
+                  {t(`skin.${id}`)}
                 </button>
               ))}
             </div>
-            <label className="profile__label">Concerns</label>
+            <label className="profile__label">{t('profile.concerns')}</label>
             <div className="profile__chips">
-              {CONCERNS.map((c) => (
+              {CONCERNS.map((id) => (
                 <button
-                  key={c.id}
-                  className={`profile__chip ${profile.concerns.includes(c.id) ? 'profile__chip--solid' : ''}`}
-                  onClick={() => toggleConcern(c.id)}
+                  key={id}
+                  className={`profile__chip ${profile.concerns.includes(id) ? 'profile__chip--solid' : ''}`}
+                  onClick={() => toggleConcern(id)}
                 >
-                  {c.label}
+                  {t(`concern.${id}`)}
                 </button>
               ))}
             </div>
@@ -127,16 +129,30 @@ export default function Profile() {
       </section>
 
       <section className="card profile__section">
-        <h2>Preferences</h2>
+        <h2>{t('profile.preferences')}</h2>
 
-        <Row icon={<Moon size={18} />} label="Dark mode">
+        <Row icon={<Languages size={18} />} label={t('profile.language')}>
+          <div className="profile__chips">
+            {LANGUAGES.map((l) => (
+              <button
+                key={l.id}
+                className={`profile__chip ${getLang() === l.id ? 'profile__chip--solid' : ''}`}
+                onClick={() => updateProfile({ language: l.id })}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        </Row>
+
+        <Row icon={<Moon size={18} />} label={t('profile.darkMode')}>
           <Toggle
             on={profile.darkMode}
             onClick={() => updateProfile({ darkMode: !profile.darkMode })}
           />
         </Row>
 
-        <Row icon={<Sparkles size={18} />} label="AI analysis (opt-in)" sub="Uses Gemini when online">
+        <Row icon={<Sparkles size={18} />} label={t('profile.ai')} sub={t('profile.aiSub')}>
           <Toggle
             on={profile.aiEnabled}
             onClick={() => updateProfile({ aiEnabled: !profile.aiEnabled })}
@@ -145,12 +161,12 @@ export default function Profile() {
 
         {profile.aiEnabled && (
           <div className="profile__keyrow">
-            <label className="profile__label">Your Gemini API key (optional)</label>
+            <label className="profile__label">{t('profile.keyLabel')}</label>
             <div className="profile__keyfield">
               <input
                 className="input"
                 type="password"
-                placeholder="Leave empty to use the app proxy"
+                placeholder={t('profile.keyPlaceholder')}
                 value={keyInput}
                 onChange={(e) => setKeyInput(e.target.value)}
               />
@@ -158,15 +174,13 @@ export default function Profile() {
                 className="btn btn--primary"
                 onClick={() => {
                   updateProfile({ geminiKey: keyInput.trim() })
-                  showToast('API key saved')
+                  showToast(t('profile.keySaved'))
                 }}
               >
                 <Check size={18} />
               </button>
             </div>
-            <p className="faint profile__keyhint">
-              Bring your own key from Google AI Studio so your usage never hits shared limits.
-            </p>
+            <p className="faint profile__keyhint">{t('profile.keyHint')}</p>
           </div>
         )}
       </section>
@@ -174,9 +188,9 @@ export default function Profile() {
       <section className="card profile__section profile__dataset">
         <Database size={18} className="faint" />
         <div>
-          <strong>CosIng dataset v{datasetMeta.version}</strong>
+          <strong>{t('profile.dataset', { v: datasetMeta.version })}</strong>
           <div className="faint">
-            {datasetMeta.count} ingredients · built {datasetMeta.generatedAt}
+            {t('profile.datasetSub', { n: datasetMeta.count, d: datasetMeta.generatedAt })}
           </div>
         </div>
       </section>

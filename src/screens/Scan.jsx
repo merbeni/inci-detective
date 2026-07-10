@@ -6,6 +6,7 @@ import { runOcr } from '../capture/ocr.js'
 import { analyzeBarcode, analyzeIngredientsText } from '../core/analyze.js'
 import { saveScan } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
+import { t } from '../i18n/index.js'
 import './Scan.css'
 
 export default function Scan() {
@@ -13,8 +14,33 @@ export default function Scan() {
   const { showToast } = useApp()
   const videoRef = useRef(null)
   const busyRef = useRef(false)
-  const [status, setStatus] = useState('Point at a barcode')
+  const [status, setStatus] = useState(() => t('scan.point'))
   const [working, setWorking] = useState(false)
+
+  async function handleBarcode(code) {
+    if (busyRef.current) return
+    busyRef.current = true
+    setWorking(true)
+    setStatus(t('scan.found', { code }))
+    try {
+      const result = await analyzeBarcode(code)
+      if (result.status === 'ok') {
+        const saved = await saveScan(result.analysis)
+        navigate(`/analysis/${saved.id}`, { replace: true })
+        return
+      }
+      // Fallbacks routed to manual entry as first-class paths (section 1.2/1.4).
+      const params = new URLSearchParams({ barcode: code, reason: result.status })
+      if (result.productName) params.set('productName', result.productName)
+      if (result.brand) params.set('brand', result.brand)
+      navigate(`/manual?${params.toString()}`, { replace: true })
+    } catch (e) {
+      console.error(e)
+      showToast(t('scan.error'))
+      busyRef.current = false
+      setWorking(false)
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -31,7 +57,7 @@ export default function Scan() {
         (code) => !cancelled && handleBarcode(code),
         (err) => {
           console.warn('camera error', err)
-          setStatus('Camera unavailable — use manual entry')
+          setStatus(t('scan.cameraUnavailable'))
         },
       ).then((c) => {
         controls = c
@@ -48,47 +74,22 @@ export default function Scan() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function handleBarcode(code) {
-    if (busyRef.current) return
-    busyRef.current = true
-    setWorking(true)
-    setStatus(`Found ${code} — looking up…`)
-    try {
-      const result = await analyzeBarcode(code)
-      if (result.status === 'ok') {
-        const saved = await saveScan(result.analysis)
-        navigate(`/analysis/${saved.id}`, { replace: true })
-        return
-      }
-      // Fallbacks routed to manual entry as first-class paths (section 1.2/1.4).
-      const params = new URLSearchParams({ barcode: code, reason: result.status })
-      if (result.productName) params.set('productName', result.productName)
-      if (result.brand) params.set('brand', result.brand)
-      navigate(`/manual?${params.toString()}`, { replace: true })
-    } catch (e) {
-      console.error(e)
-      showToast('Something went wrong — try manual entry')
-      busyRef.current = false
-      setWorking(false)
-    }
-  }
-
   // OCR the current camera frame as a label-text fallback.
   async function handleOcr() {
     if (busyRef.current || !videoRef.current) return
     busyRef.current = true
     setWorking(true)
-    setStatus('Reading label text…')
+    setStatus(t('scan.reading'))
     try {
       const text = await runOcr(videoRef.current, (p) =>
-        setStatus(`Reading label… ${Math.round(p * 100)}%`),
+        setStatus(t('scan.readingPct', { pct: Math.round(p * 100) })),
       )
       const analysis = await analyzeIngredientsText(text, {
         productName: 'Scanned label',
         source: 'ocr',
       })
       if (analysis.summary.total === 0) {
-        showToast('No ingredients detected — try manual entry')
+        showToast(t('scan.noIngredients'))
         navigate('/manual', { replace: true })
         return
       }
@@ -96,7 +97,7 @@ export default function Scan() {
       navigate(`/analysis/${saved.id}`, { replace: true })
     } catch (e) {
       console.error(e)
-      showToast('OCR failed — try manual entry')
+      showToast(t('scan.ocrFailed'))
       busyRef.current = false
       setWorking(false)
     }
@@ -106,7 +107,7 @@ export default function Scan() {
     <div className="scan">
       <video ref={videoRef} className="scan__video" muted playsInline />
       <div className="scan__overlay">
-        <button className="scan__close" onClick={() => navigate('/')} aria-label="Close">
+        <button className="scan__close" onClick={() => navigate('/')} aria-label={t('scan.close')}>
           <X size={24} />
         </button>
 
@@ -125,14 +126,14 @@ export default function Scan() {
 
         <div className="scan__actions">
           <button className="scan__action" onClick={handleOcr} disabled={working}>
-            <ScanText size={20} /> Scan label text
+            <ScanText size={20} /> {t('scan.scanLabel')}
           </button>
           <button
             className="scan__action"
             onClick={() => navigate('/manual')}
             disabled={working}
           >
-            <Keyboard size={20} /> Enter manually
+            <Keyboard size={20} /> {t('scan.enterManually')}
           </button>
         </div>
       </div>

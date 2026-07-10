@@ -8,6 +8,7 @@ import {
 import { allIngredients, ensureDataset } from '../core/classifier.js'
 import { normalizeName } from '../core/inciParse.js'
 import { useApp } from '../context/AppContext.jsx'
+import { t } from '../i18n/index.js'
 import './Watchlist.css'
 
 export default function Watchlist() {
@@ -38,7 +39,7 @@ export default function Watchlist() {
     await addWatchlistItem(norm, display)
     setQ('')
     await refresh()
-    showToast('Added to watchlist')
+    showToast(t('watchlist.added'))
   }
 
   async function addCustom() {
@@ -54,21 +55,23 @@ export default function Watchlist() {
 
   return (
     <div className="screen watchlist">
-      <h1 className="watchlist__title">Watchlist</h1>
-      <p className="muted watchlist__intro">
-        Ingredients you want to avoid. We'll flag them in every scan.
-      </p>
+      <h1 className="watchlist__title">{t('watchlist.title')}</h1>
+      <p className="muted watchlist__intro">{t('watchlist.intro')}</p>
 
       <div className="watchlist__search">
         <Search size={18} className="faint" />
         <input
           className="watchlist__input"
-          placeholder="Search ingredients to avoid"
+          placeholder={t('watchlist.search')}
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
         {q && (
-          <button className="watchlist__add" onClick={addCustom} aria-label="Add custom">
+          <button
+            className="watchlist__add"
+            onClick={addCustom}
+            aria-label={t('watchlist.addCustom')}
+          >
             <Plus size={18} />
           </button>
         )}
@@ -77,7 +80,7 @@ export default function Watchlist() {
       {suggestions.length > 0 && (
         <div className="watchlist__suggest">
           {suggestions.map((s) => (
-            <button key={s.id} className="watchlist__sugg" onClick={() => add(s.norm, s.inci)}>
+            <button key={s.norm} className="watchlist__sugg" onClick={() => add(s.norm, s.inci)}>
               <span>
                 <strong>{s.inci}</strong>
                 {s.common && <span className="faint"> · {s.common}</span>}
@@ -90,14 +93,12 @@ export default function Watchlist() {
 
       <div className="watchlist__list">
         {items.length === 0 ? (
-          <div className="card center muted watchlist__empty">
-            Your watchlist is empty.
-          </div>
+          <div className="card center muted watchlist__empty">{t('watchlist.empty')}</div>
         ) : (
           items.map((i) => (
             <div key={i.id} className="watchlist__chip">
               <span>{i.display}</span>
-              <button onClick={() => remove(i.id)} aria-label="Remove">
+              <button onClick={() => remove(i.id)} aria-label={t('watchlist.remove')}>
                 <X size={16} />
               </button>
             </div>

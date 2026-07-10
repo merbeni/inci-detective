@@ -20,7 +20,7 @@ export function normalizeName(name) {
 // "Ingredients:" label that best survives OCR mangling (seen as "sgredients:",
 // "<dients:", etc.). Also covers es/fr/it ("…dientes/dienti") and de labels.
 const ING_LABEL =
-  /(?:\w*dient\w*|inhaltsstoffe|composici[oó]n|composition)\s*[:;.\-]\s*/gi
+  /(?:\w*dient\w*|inhaltsstoffe|composici[oó]n|composition)\s*[:;.-]\s*/gi
 const END_MARKER =
   /\b(?:manufactured|distributed|made\s+in|imported|marketed\s+by|produced\s+by|www\.|https?:\/\/|directions?\s*:|warnings?\s*:|caution\s*:|for\s+external\s+use)\b/i
 

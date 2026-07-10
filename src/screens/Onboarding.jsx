@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Leaf, ArrowRight, Check } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { SKIN_TYPES, CONCERNS } from '../core/constants.js'
+import { t } from '../i18n/index.js'
 import './Onboarding.css'
 
 export default function Onboarding() {
@@ -45,19 +46,17 @@ export default function Onboarding() {
               <Leaf size={34} strokeWidth={2.4} />
             </span>
             <h1>INCI Detective</h1>
-            <p className="muted">
-              Let's personalize your experience so your scans match your skin.
-            </p>
+            <p className="muted">{t('onb.welcome')}</p>
           </div>
         )}
 
         {step === 1 && (
           <div className="onb__step">
-            <h2>What's your name?</h2>
-            <p className="muted">We'll use it to personalize the app.</p>
+            <h2>{t('onb.nameQ')}</h2>
+            <p className="muted">{t('onb.nameSub')}</p>
             <input
               className="input onb__input"
-              placeholder="Your name"
+              placeholder={t('onb.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
@@ -67,20 +66,20 @@ export default function Onboarding() {
 
         {step === 2 && (
           <div className="onb__step">
-            <h2>Your skin type</h2>
-            <p className="muted">Pick the one that fits best.</p>
+            <h2>{t('onb.skinQ')}</h2>
+            <p className="muted">{t('onb.skinSub')}</p>
             <div className="onb__cards">
-              {SKIN_TYPES.map((s) => (
+              {SKIN_TYPES.map((id) => (
                 <button
-                  key={s.id}
-                  className={`onb__card ${skinType === s.id ? 'is-sel' : ''}`}
-                  onClick={() => setSkinType(s.id)}
+                  key={id}
+                  className={`onb__card ${skinType === id ? 'is-sel' : ''}`}
+                  onClick={() => setSkinType(id)}
                 >
                   <div className="onb__card-main">
-                    <strong>{s.label}</strong>
-                    <span className="faint">{s.desc}</span>
+                    <strong>{t(`skin.${id}`)}</strong>
+                    <span className="faint">{t(`skin.${id}.desc`)}</span>
                   </div>
-                  {skinType === s.id && <Check size={18} className="onb__card-check" />}
+                  {skinType === id && <Check size={18} className="onb__card-check" />}
                 </button>
               ))}
             </div>
@@ -89,16 +88,16 @@ export default function Onboarding() {
 
         {step === 3 && (
           <div className="onb__step">
-            <h2>Any skin concerns?</h2>
-            <p className="muted">Select all that apply — they coexist.</p>
+            <h2>{t('onb.concernsQ')}</h2>
+            <p className="muted">{t('onb.concernsSub')}</p>
             <div className="onb__chips">
-              {CONCERNS.map((c) => (
+              {CONCERNS.map((id) => (
                 <button
-                  key={c.id}
-                  className={`onb__chip ${concerns.includes(c.id) ? 'is-sel' : ''}`}
-                  onClick={() => toggleConcern(c.id)}
+                  key={id}
+                  className={`onb__chip ${concerns.includes(id) ? 'is-sel' : ''}`}
+                  onClick={() => toggleConcern(id)}
                 >
-                  {c.label}
+                  {t(`concern.${id}`)}
                 </button>
               ))}
             </div>
@@ -109,7 +108,7 @@ export default function Onboarding() {
       <div className="onb__footer">
         {step === 0 && (
           <button className="btn btn--primary btn--block btn--lg" onClick={next}>
-            Get Started <ArrowRight size={18} />
+            {t('onb.start')} <ArrowRight size={18} />
           </button>
         )}
         {step === 1 && (
@@ -118,7 +117,7 @@ export default function Onboarding() {
             onClick={next}
             disabled={!name.trim()}
           >
-            Continue <ArrowRight size={18} />
+            {t('onb.continue')} <ArrowRight size={18} />
           </button>
         )}
         {step === 2 && (
@@ -127,17 +126,17 @@ export default function Onboarding() {
             onClick={next}
             disabled={!skinType}
           >
-            Continue <ArrowRight size={18} />
+            {t('onb.continue')} <ArrowRight size={18} />
           </button>
         )}
         {step === 3 && (
           <button className="btn btn--primary btn--block btn--lg" onClick={finish}>
-            Complete Setup <Check size={18} />
+            {t('onb.finish')} <Check size={18} />
           </button>
         )}
         {step > 0 && step < 3 && (
           <button className="btn btn--ghost btn--block" onClick={finish}>
-            Skip for now
+            {t('onb.skip')}
           </button>
         )}
       </div>

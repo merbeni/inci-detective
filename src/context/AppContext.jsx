@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react'
 import { getProfile, updateProfile as persistProfile } from '../db/db.js'
+import { setLang, detectLang, t } from '../i18n/index.js'
 import { isCloudEnabled } from '../lib/supabase.js'
 import {
   onAuthChange,
@@ -19,11 +20,29 @@ export function AppProvider({ children }) {
   const [syncing, setSyncing] = useState(false)
   const [toast, setToast] = useState(null)
 
+  // Resolve the active language BEFORE children render, so every t() call in
+  // this pass already reads the right dictionary. Idempotent module state, not
+  // React state — a language change flows through the profile update below.
+  if (profile) setLang(profile.language || detectLang())
+
   const reloadProfile = useCallback(async () => {
     const p = await getProfile()
     setProfile(p)
     return p
   }, [])
+
+  const runSync = useCallback(async () => {
+    setSyncing(true)
+    try {
+      await fullSync()
+      await syncDataset().catch(() => {})
+      await reloadProfile()
+    } catch {
+      /* offline or transient — stays queued */
+    } finally {
+      setSyncing(false)
+    }
+  }, [reloadProfile])
 
   // Initial load + remote dataset (cached) + auth wiring.
   useEffect(() => {
@@ -55,26 +74,13 @@ export function AppProvider({ children }) {
     const onOnline = () => user && runSync()
     window.addEventListener('online', onOnline)
     return () => window.removeEventListener('online', onOnline)
-  }, [user])
-
-  const runSync = useCallback(async () => {
-    setSyncing(true)
-    try {
-      await fullSync()
-      await syncDataset().catch(() => {})
-      await reloadProfile()
-    } catch {
-      /* offline or transient — stays queued */
-    } finally {
-      setSyncing(false)
-    }
-  }, [reloadProfile])
+  }, [user, runSync])
 
   // Apply dark mode to the document root.
   useEffect(() => {
     if (!profile) return
     document.documentElement.dataset.theme = profile.darkMode ? 'dark' : 'light'
-  }, [profile?.darkMode])
+  }, [profile])
 
   const updateProfile = useCallback(async (patch) => {
     const next = await persistProfile(patch)
@@ -82,15 +88,19 @@ export function AppProvider({ children }) {
     return next
   }, [])
 
+  // Track the hide timer so back-to-back toasts don't get cut short by the
+  // previous toast's timeout.
+  const toastTimer = useRef(null)
   const showToast = useCallback((message) => {
     setToast(message)
-    setTimeout(() => setToast(null), 2200)
+    clearTimeout(toastTimer.current)
+    toastTimer.current = setTimeout(() => setToast(null), 2200)
   }, [])
 
   const signOut = useCallback(async () => {
     await cloudSignOut()
     setUser(null)
-    showToast('Signed out')
+    showToast(t('profile.signedOut'))
   }, [showToast])
 
   return (

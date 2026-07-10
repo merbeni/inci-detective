@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Leaf } from 'lucide-react'
 import { fetchSharedScan } from '../lib/sync.js'
 import { isCloudEnabled } from '../lib/supabase.js'
+import { t } from '../i18n/index.js'
 import RiskBanner from '../components/RiskBanner.jsx'
 import IngredientCard from '../components/IngredientCard.jsx'
 import './Analysis.css'
@@ -12,13 +13,11 @@ export default function Shared() {
   const { shareId } = useParams()
   const navigate = useNavigate()
   const [scan, setScan] = useState(null)
-  const [state, setState] = useState('loading') // loading | ok | missing
+  // loading | ok | missing — starts at missing when there's no cloud to ask.
+  const [state, setState] = useState(isCloudEnabled ? 'loading' : 'missing')
 
   useEffect(() => {
-    if (!isCloudEnabled) {
-      setState('missing')
-      return
-    }
+    if (!isCloudEnabled) return
     fetchSharedScan(shareId).then((s) => {
       if (s) {
         setScan(s)
@@ -40,9 +39,9 @@ export default function Shared() {
   if (state === 'missing') {
     return (
       <div className="screen center">
-        <p className="muted">This shared analysis isn't available.</p>
+        <p className="muted">{t('shared.unavailable')}</p>
         <button className="btn btn--primary" onClick={() => navigate('/')}>
-          Open INCI Detective
+          {t('shared.open')}
         </button>
       </div>
     )
@@ -61,7 +60,7 @@ export default function Shared() {
       </header>
 
       <div className="card center muted" style={{ marginBottom: 16, fontSize: 13 }}>
-        Shared analysis · read-only
+        {t('shared.readonly')}
       </div>
 
       <RiskBanner
@@ -71,7 +70,7 @@ export default function Shared() {
       />
 
       <div className="analysis__list">
-        <span className="eyebrow">{scan.summary.total} ingredients</span>
+        <span className="eyebrow">{t('analysis.count', { n: scan.summary.total })}</span>
         {scan.items.map((item) => (
           <IngredientCard key={`${item.norm}-${item.position}`} item={{ ...item, onWatchlist: false }} />
         ))}
@@ -82,7 +81,7 @@ export default function Shared() {
         style={{ marginTop: 20 }}
         onClick={() => navigate('/')}
       >
-        Scan your own products
+        {t('shared.cta')}
       </button>
     </div>
   )

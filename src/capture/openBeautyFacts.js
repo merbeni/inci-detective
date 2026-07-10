@@ -68,7 +68,7 @@ export async function lookupBarcode(barcode) {
   // Walk the sources, but stop early as soon as we find one that actually has
   // an ingredient list — a bare name-only hit shouldn't block a richer one.
   for (const base of SOURCES) {
-    let p = null
+    let p
     try {
       p = await querySource(base, barcode)
     } catch {

@@ -48,6 +48,7 @@ const DEFAULT_PROFILE = {
   concerns: [],
   darkMode: false,
   aiEnabled: false,
+  language: '', // '' = auto-detect from the device; 'es' | 'en' when set
   geminiKey: '', // stays local only, never synced to the cloud
   onboarded: false,
   createdAt: null,
@@ -115,9 +116,12 @@ export async function saveScan(scan) {
   return record
 }
 
-// Insert/replace a scan that originated from the cloud (already synced).
+// Insert/update a scan that originated from the cloud (already synced).
+// Merged over the existing local record: the cloud row doesn't carry local-only
+// fields (rawText), and a plain put() would silently erase them on every sync.
 export async function upsertRemoteScan(record) {
-  await db.scans.put({ ...record, synced: 1 })
+  const existing = await db.scans.get(record.id)
+  await db.scans.put({ ...existing, ...record, synced: 1 })
 }
 
 export async function markScanSynced(id) {

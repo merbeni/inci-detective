@@ -39,8 +39,10 @@ if (!url || !serviceKey) {
 const dataset = JSON.parse(readFileSync(resolve(root, 'src/data/ingredients.json'), 'utf-8'))
 const supabase = createClient(url, serviceKey, { auth: { persistSession: false } })
 
+// `norm` is the dataset's unique merge key, so it doubles as the row id (the
+// built entries carry no separate `id` field).
 const rows = dataset.ingredients.map((i) => ({
-  id: i.id,
+  id: i.norm,
   inci: i.inci,
   norm: i.norm,
   common: i.common,

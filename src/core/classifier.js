@@ -9,7 +9,6 @@
 
 import bundledMeta from '../data/dataset-meta.json'
 import { similarity } from './levenshtein.js'
-import { normalizeName } from './inciParse.js'
 
 const FUZZY_THRESHOLD = 0.85
 const MIN_FUZZY_LEN = 5
@@ -28,11 +27,18 @@ let loadingPromise = null
 export function ensureDataset() {
   if (loaded) return Promise.resolve()
   if (!loadingPromise) {
-    loadingPromise = import('../data/ingredients.json').then((mod) => {
-      const ds = mod.default
-      setDataset(ds.ingredients, ds)
-      loaded = true
-    })
+    loadingPromise = import('../data/ingredients.json')
+      .then((mod) => {
+        const ds = mod.default
+        setDataset(ds.ingredients, ds)
+        loaded = true
+      })
+      .catch((err) => {
+        // A failed chunk load (flaky first visit, before the SW has precached)
+        // must not poison the cache — clear it so the next analysis retries.
+        loadingPromise = null
+        throw err
+      })
   }
   return loadingPromise
 }

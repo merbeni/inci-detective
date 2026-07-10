@@ -10,7 +10,10 @@
 // Either way this only runs when the user explicitly enables it and there is
 // connectivity. The core classification never depends on it.
 
-const MODEL = 'gemini-2.0-flash'
+import { t, getLang } from '../i18n/index.js'
+
+// 2.5-flash: the 2.0 family no longer has a free tier (limit: 0 on free keys).
+const MODEL = 'gemini-2.5-flash'
 const PROXY_URL = '/api/ai'
 
 // A classified AI error so callers can react (and retry) by KIND rather than
@@ -110,25 +113,23 @@ async function withRetry(fn, { retries = 3, onRetry } = {}) {
 export function describeAiError(err) {
   switch (err?.kind) {
     case 'offline':
-      return "You're offline — connect to the internet to use AI."
+      return t('aiError.offline')
     case 'rate_limit': {
       const s = err.retryAfterMs ? Math.ceil(err.retryAfterMs / 1000) : null
-      return s
-        ? `Gemini is rate-limiting requests — try again in ${s}s.`
-        : 'Too many requests — wait a moment and try again.'
+      return s ? t('aiError.rateLimit', { s }) : t('aiError.rateLimitNoWait')
     }
     case 'quota':
-      return "You've hit your Gemini quota — it resets daily, try again later."
+      return t('aiError.quota')
     case 'overloaded':
-      return 'Gemini is overloaded right now — try again in a minute.'
+      return t('aiError.overloaded')
     case 'internal':
-      return 'Gemini had a temporary error — please try again.'
+      return t('aiError.internal')
     case 'auth':
-      return 'Invalid Gemini API key — check it in your Profile.'
+      return t('aiError.auth')
     case 'bad_request':
-      return 'The AI request was rejected — try again or re-take the photo.'
+      return t('aiError.badRequest')
     default:
-      return 'AI request failed — please try again.'
+      return t('aiError.default')
   }
 }
 
@@ -160,16 +161,18 @@ Respond with:
 1. A 2-3 sentence overall take.
 2. A short bullet list explaining the most relevant flagged ingredients.
 3. One practical tip tailored to the user's skin profile if provided.
-Keep it under 200 words.`
+Keep it under 200 words.
+Respond in ${getLang() === 'es' ? 'Spanish (rioplatense-neutral, informal "vos/tú" ok)' : 'English'}.`
 }
 
 async function callDirect(parts, apiKey, generationConfig) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
   let res
   try {
     res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      // Key in a header, not the query string, so it never lands in URL logs.
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
       body: JSON.stringify({
         contents: [{ parts }],
         generationConfig: generationConfig || { temperature: 0.4, maxOutputTokens: 512 },

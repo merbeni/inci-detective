@@ -4,6 +4,7 @@ import { Search, ChevronRight } from 'lucide-react'
 import { listScans } from '../db/db.js'
 import RiskBadge from '../components/RiskBadge.jsx'
 import { relativeDate } from '../core/format.js'
+import { t } from '../i18n/index.js'
 import './History.css'
 
 export default function History() {
@@ -27,13 +28,13 @@ export default function History() {
 
   return (
     <div className="screen history">
-      <h1 className="history__title">Scan history</h1>
+      <h1 className="history__title">{t('history.title')}</h1>
 
       <div className="history__search">
         <Search size={18} className="faint" />
         <input
           className="history__input"
-          placeholder="Search by product or brand"
+          placeholder={t('history.search')}
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
@@ -41,7 +42,7 @@ export default function History() {
 
       {filtered.length === 0 ? (
         <div className="card center muted history__empty">
-          {scans.length === 0 ? 'No scans yet.' : 'No matches found.'}
+          {scans.length === 0 ? t('history.empty') : t('history.noMatches')}
         </div>
       ) : (
         <div className="history__list">
@@ -55,7 +56,7 @@ export default function History() {
                 <span className="history__name">{s.productName}</span>
                 {s.brand && <span className="history__brand">{s.brand}</span>}
                 <span className="history__meta">
-                  {s.summary.total} ingredients · {relativeDate(s.createdAt)}
+                  {t('home.ingredients', { n: s.summary.total })} · {relativeDate(s.createdAt)}
                 </span>
               </div>
               <RiskBadge level={s.overall} />

@@ -5,6 +5,7 @@ import { listScans } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import RiskBadge from '../components/RiskBadge.jsx'
 import { relativeDate } from '../core/format.js'
+import { t } from '../i18n/index.js'
 import './Home.css'
 
 export default function Home() {
@@ -25,41 +26,39 @@ export default function Home() {
           </span>
           <div>
             <h1 className="home__title">INCI Detective</h1>
-            <p className="home__tagline">Know what's in your skincare</p>
+            <p className="home__tagline">{t('home.tagline')}</p>
           </div>
         </div>
       </header>
 
       {profile.name && (
-        <p className="home__greet">Hi {profile.name} 👋</p>
+        <p className="home__greet">{t('home.greet', { name: profile.name })}</p>
       )}
 
       <button className="home__cta" onClick={() => navigate('/scan')}>
         <span className="home__cta-ring">
           <ScanLine size={40} strokeWidth={2.2} />
         </span>
-        <span className="home__cta-label">Scan a Product</span>
-        <span className="home__cta-sub">Point your camera at the barcode</span>
+        <span className="home__cta-label">{t('home.cta')}</span>
+        <span className="home__cta-sub">{t('home.ctaSub')}</span>
       </button>
 
       <button className="btn btn--outline btn--block" onClick={() => navigate('/manual')}>
-        <Keyboard size={18} /> Enter barcode manually
+        <Keyboard size={18} /> {t('home.manual')}
       </button>
 
       <section className="home__recent">
         <div className="home__recent-head">
-          <span className="eyebrow">Recent scans</span>
+          <span className="eyebrow">{t('home.recent')}</span>
           {recent.length > 0 && (
             <button className="home__seeall" onClick={() => navigate('/history')}>
-              See all
+              {t('home.seeAll')}
             </button>
           )}
         </div>
 
         {recent.length === 0 ? (
-          <div className="card center muted home__empty">
-            No scans yet. Your analyzed products will appear here.
-          </div>
+          <div className="card center muted home__empty">{t('home.empty')}</div>
         ) : (
           <div className="home__recent-list">
             {recent.map((s) => (
@@ -71,7 +70,7 @@ export default function Home() {
                 <div className="home__recent-info">
                   <span className="home__recent-name">{s.productName}</span>
                   <span className="home__recent-meta">
-                    {s.summary.total} ingredients · {relativeDate(s.createdAt)}
+                    {t('home.ingredients', { n: s.summary.total })} · {relativeDate(s.createdAt)}
                   </span>
                 </div>
                 <RiskBadge level={s.overall} />

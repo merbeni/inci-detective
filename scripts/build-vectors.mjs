@@ -13,6 +13,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 
 const ACCOUNT = process.env.CF_ACCOUNT_ID
 const TOKEN = process.env.CF_API_TOKEN
@@ -34,6 +35,12 @@ function embedText(i) {
   if (i.concern?.length) parts.push(i.concern.join(', '))
   return parts.join('. ')
 }
+
+// Stable per-ingredient id so re-running upserts in place instead of leaving
+// stale vectors behind (positional ids shift whenever the dataset changes).
+// Hash of the normalized name because Vectorize ids are capped at 64 bytes
+// and many INCI norms are longer.
+const vectorId = (norm) => createHash('sha256').update(norm).digest('hex').slice(0, 32)
 
 const MODEL = '@cf/baai/bge-small-en-v1.5'
 const ENDPOINT = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}/ai/run/${MODEL}`
@@ -61,7 +68,7 @@ for (let start = 0; start < items.length; start += BATCH) {
   slice.forEach((it, k) => {
     lines.push(
       JSON.stringify({
-        id: String(start + k),
+        id: vectorId(it.norm),
         values: vecs[k].map((v) => Math.round(v * 1e6) / 1e6),
         metadata: { inci: it.inci, fn: it.function || '', safety: it.safety, annex: it.annex },
       }),

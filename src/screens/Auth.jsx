@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Leaf, Mail } from 'lucide-react'
 import { signIn, signUp, signInWithGoogle } from '../lib/sync.js'
 import { useApp } from '../context/AppContext.jsx'
+import { t } from '../i18n/index.js'
 import './Auth.css'
 
 export default function Auth() {
@@ -19,14 +20,17 @@ export default function Auth() {
     try {
       if (mode === 'signup') {
         await signUp(email.trim(), password)
-        showToast('Account created — check your email to confirm')
+        // Account needs email confirmation before it's usable — stay here and
+        // let the toast explain instead of bouncing to an unauthenticated profile.
+        showToast(t('auth.created'))
+        setMode('signin')
       } else {
         await signIn(email.trim(), password)
-        showToast('Signed in')
+        showToast(t('auth.signedIn'))
+        navigate('/profile', { replace: true })
       }
-      navigate('/profile', { replace: true })
     } catch (err) {
-      showToast(err.message || 'Authentication failed')
+      showToast(err.message || t('auth.failed'))
     } finally {
       setBusy(false)
     }
@@ -36,13 +40,13 @@ export default function Auth() {
     try {
       await signInWithGoogle()
     } catch (err) {
-      showToast(err.message || 'Google sign-in failed')
+      showToast(err.message || t('auth.googleFailed'))
     }
   }
 
   return (
     <div className="screen auth">
-      <button className="manual__back" onClick={() => navigate(-1)} aria-label="Back">
+      <button className="manual__back" onClick={() => navigate(-1)} aria-label={t('manual.back')}>
         <ArrowLeft size={22} />
       </button>
 
@@ -50,15 +54,15 @@ export default function Auth() {
         <span className="auth__logo">
           <Leaf size={26} strokeWidth={2.4} />
         </span>
-        <h1>{mode === 'signup' ? 'Create account' : 'Welcome back'}</h1>
-        <p className="muted">Sync your scans, watchlist and profile across devices.</p>
+        <h1>{mode === 'signup' ? t('auth.create') : t('auth.welcome')}</h1>
+        <p className="muted">{t('auth.sub')}</p>
       </div>
 
       <form className="auth__form" onSubmit={submit}>
         <input
           className="input"
           type="email"
-          placeholder="Email"
+          placeholder={t('auth.email')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
@@ -67,7 +71,7 @@ export default function Auth() {
         <input
           className="input"
           type="password"
-          placeholder="Password"
+          placeholder={t('auth.password')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
@@ -76,19 +80,19 @@ export default function Auth() {
         />
         <button className="btn btn--primary btn--block btn--lg" disabled={busy}>
           {busy ? <span className="spinner" /> : <Mail size={18} />}
-          {mode === 'signup' ? 'Sign up' : 'Sign in'}
+          {mode === 'signup' ? t('auth.signUp') : t('auth.signIn')}
         </button>
       </form>
 
       <button className="btn btn--outline btn--block auth__google" onClick={google}>
-        Continue with Google
+        {t('auth.google')}
       </button>
 
       <button
         className="btn btn--ghost btn--block"
         onClick={() => setMode((m) => (m === 'signin' ? 'signup' : 'signin'))}
       >
-        {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+        {mode === 'signin' ? t('auth.toSignup') : t('auth.toSignin')}
       </button>
     </div>
   )
