@@ -75,7 +75,9 @@
   flex: 1;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   background: rgba(255, 255, 255, 0.92);
-  color: var(--ink);
+  /* Fixed ink: the button sits on the camera feed and is always white, so the
+     text must not follow the theme (dark mode flips --ink to near-white). */
+  color: #3b2a2e;
   padding: 14px; border-radius: var(--radius-pill);
   font-weight: 700; font-size: 14px;
 }

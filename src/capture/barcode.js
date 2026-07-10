@@ -98,28 +98,22 @@ async function scanWithNative(videoEl, onResult, onError) {
 
 // --- ZXing fallback ------------------------------------------------------
 
-// ZXing throws these on almost every frame while hunting for a code: no symbol
-// found, or a partial read that fails its checksum/format check. They are normal
-// scanning noise, NOT a camera failure — swallow them and keep polling.
-const TRANSIENT_DECODE_ERRORS = new Set([
-  'NotFoundException',
-  'ChecksumException',
-  'FormatException',
-])
-
 async function scanWithZxing(videoEl, onResult, onError) {
   const reader = new BrowserMultiFormatReader(hints)
   let stopped = false
   let controls
 
-  const onDecode = (result, err) => {
+  // Decode failures land in this callback on almost every frame while hunting
+  // for a code (nothing in view, partial reads failing checksum, occasional
+  // internal exceptions). The camera is already streaming by the time it runs,
+  // so none of them are fatal — swallow and keep polling. Real camera errors
+  // throw from decodeFromConstraints below.
+  const onDecode = (result) => {
     if (stopped) return
     if (result) {
       stopped = true
       onResult(result.getText())
       controls?.stop()
-    } else if (err && !TRANSIENT_DECODE_ERRORS.has(err.name) && onError) {
-      onError(err)
     }
   }
 

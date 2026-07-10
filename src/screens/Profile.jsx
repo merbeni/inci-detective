@@ -14,6 +14,9 @@ export default function Profile() {
   const [editing, setEditing] = useState(false)
   const [scanCount, setScanCount] = useState(0)
   const [keyInput, setKeyInput] = useState(profile.geminiKey || '')
+  // The proxy needs zero setup; the bring-your-own-key field is advanced-only,
+  // so keep it collapsed unless a key is already saved.
+  const [showKey, setShowKey] = useState(Boolean(profile.geminiKey))
 
   useEffect(() => {
     db.scans.count().then(setScanCount)
@@ -159,7 +162,13 @@ export default function Profile() {
           />
         </Row>
 
-        {profile.aiEnabled && (
+        {profile.aiEnabled && !showKey && (
+          <button className="btn btn--ghost btn--block" onClick={() => setShowKey(true)}>
+            {t('profile.useOwnKey')}
+          </button>
+        )}
+
+        {profile.aiEnabled && showKey && (
           <div className="profile__keyrow">
             <label className="profile__label">{t('profile.keyLabel')}</label>
             <div className="profile__keyfield">

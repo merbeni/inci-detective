@@ -272,14 +272,35 @@ function fileToBase64(file) {
   })
 }
 
+// Phone photos run 5-15 MB — past the proxy's upload cap, so sending them raw
+// makes the AI path fail and silently fall back to noisy on-device OCR. Label
+// text is still perfectly readable at ~1600px, so downscale + re-encode first;
+// uploads get ~20x smaller and faster too.
+const MAX_IMAGE_SIDE = 1600
+
+async function imageToInlineData(file) {
+  try {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' })
+    const scale = Math.min(1, MAX_IMAGE_SIDE / Math.max(bmp.width, bmp.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bmp.width * scale)
+    canvas.height = Math.round(bmp.height * scale)
+    canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height)
+    bmp.close?.()
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
+    const data = dataUrl.split(',')[1] || ''
+    if (data) return { mimeType: 'image/jpeg', data }
+  } catch {
+    /* createImageBitmap (or its EXIF option) unsupported — fall through */
+  }
+  return { mimeType: file.type || 'image/jpeg', data: await fileToBase64(file) }
+}
+
 export async function ocrImageWithAI(file, profile, options = {}) {
   if (!navigator.onLine) throw new GeminiError('offline', 'offline')
   if (!file) return ''
-  const data = await fileToBase64(file)
-  const parts = [
-    { text: OCR_IMAGE_PROMPT },
-    { inlineData: { mimeType: file.type || 'image/jpeg', data } },
-  ]
+  const inlineData = await imageToInlineData(file)
+  const parts = [{ text: OCR_IMAGE_PROMPT }, { inlineData }]
   const text = await runGemini(parts, profile, { temperature: 0.1, maxOutputTokens: 1024 }, options)
   return cleanInciLine(text)
 }
