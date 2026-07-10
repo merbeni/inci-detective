@@ -261,7 +261,7 @@ export async function fetchSharedScan(shareId) {
     .select('*')
     .eq('share_id', shareId)
     .eq('is_public', true)
-    .single()
+    .maybeSingle()
   if (error || !data) return null
   return fromCloudScan(data)
 }

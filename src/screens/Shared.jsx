@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Leaf } from 'lucide-react'
 import { fetchSharedScan } from '../lib/sync.js'
 import { isCloudEnabled } from '../lib/supabase.js'
-import { t } from '../i18n/index.js'
+import { t, tn } from '../i18n/index.js'
 import RiskBanner from '../components/RiskBanner.jsx'
 import IngredientCard from '../components/IngredientCard.jsx'
 import './Analysis.css'
@@ -70,7 +70,7 @@ export default function Shared() {
       />
 
       <div className="analysis__list">
-        <span className="eyebrow">{t('analysis.count', { n: scan.summary.total })}</span>
+        <span className="eyebrow">{tn('analysis.count', scan.summary.total)}</span>
         {scan.items.map((item) => (
           <IngredientCard key={`${item.norm}-${item.position}`} item={{ ...item, onWatchlist: false }} />
         ))}

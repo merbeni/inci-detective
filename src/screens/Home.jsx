@@ -5,7 +5,7 @@ import { listScans } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import RiskBadge from '../components/RiskBadge.jsx'
 import { relativeDate } from '../core/format.js'
-import { t } from '../i18n/index.js'
+import { t, tn } from '../i18n/index.js'
 import './Home.css'
 
 export default function Home() {
@@ -70,7 +70,7 @@ export default function Home() {
                 <div className="home__recent-info">
                   <span className="home__recent-name">{s.productName}</span>
                   <span className="home__recent-meta">
-                    {t('home.ingredients', { n: s.summary.total })} · {relativeDate(s.createdAt)}
+                    {tn('home.ingredients', s.summary.total)} · {relativeDate(s.createdAt)}
                   </span>
                 </div>
                 <RiskBadge level={s.overall} />

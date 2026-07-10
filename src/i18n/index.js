@@ -10,7 +10,7 @@
 
 import { en } from './en.js'
 import { es } from './es.js'
-import { FUNCTIONS_ES } from './functions-es.js'
+import { FUNCTIONS_ES, NOTES_ES } from './functions-es.js'
 
 const DICTS = { en, es }
 
@@ -43,6 +43,14 @@ export function t(key, vars) {
   return s
 }
 
+// Plural-aware t(): with n === 1 uses "<key>.one" when the dictionary defines
+// it ("1 producto escaneado"), otherwise falls back to the plural template.
+export function tn(key, n, vars) {
+  const one = `${key}.one`
+  const hasOne = DICTS[current][one] !== undefined || DICTS.en[one] !== undefined
+  return t(n === 1 && hasOne ? one : key, { n, ...vars })
+}
+
 // Translate a dataset `function` string ("Humectant / solvent") segment by
 // segment, preserving separators. Unknown terms pass through in English.
 export function translateFunction(fn) {
@@ -58,4 +66,11 @@ export function translateFunction(fn) {
       return part.replace(part.trim(), hit)
     })
     .join('')
+}
+
+// Translate a curated dataset note (fixed set of English sentences). Exact
+// match; unknown notes pass through in English.
+export function translateNote(note) {
+  if (!note || current !== 'es') return note || ''
+  return NOTES_ES[note] || note
 }

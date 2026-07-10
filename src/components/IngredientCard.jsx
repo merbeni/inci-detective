@@ -1,6 +1,6 @@
 import { Eye, EyeOff, Sparkle } from 'lucide-react'
 import RiskBadge from './RiskBadge.jsx'
-import { t, translateFunction } from '../i18n/index.js'
+import { t, translateFunction, translateNote } from '../i18n/index.js'
 import { isPersonallyRelevant, isHighConcentration } from '../core/personal.js'
 import './IngredientCard.css'
 
@@ -50,7 +50,7 @@ export default function IngredientCard({ item, onToggleWatch, personalFlags }) {
             )}
           </div>
         )}
-        {item.note && <div className="ingcard__note">{item.note}</div>}
+        {item.note && <div className="ingcard__note">{translateNote(item.note)}</div>}
       </div>
       {onToggleWatch && (
         <button

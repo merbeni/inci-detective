@@ -14,10 +14,11 @@ import {
 import { analyzeWithAI, describeAiError } from '../ai/gemini.js'
 import { createShareLink } from '../lib/sync.js'
 import { useApp } from '../context/AppContext.jsx'
-import { t } from '../i18n/index.js'
+import { t, tn } from '../i18n/index.js'
 import { personalFlagSet, countPersonalHits } from '../core/personal.js'
 import RiskBanner from '../components/RiskBanner.jsx'
 import IngredientCard from '../components/IngredientCard.jsx'
+import AiText from '../components/AiText.jsx'
 import './Analysis.css'
 
 export default function Analysis() {
@@ -233,13 +234,13 @@ export default function Analysis() {
           <div className="analysis__ai-head">
             <Sparkles size={16} /> {t('analysis.aiHead')}
           </div>
-          <p>{ai}</p>
+          <AiText text={ai} />
           <span className="faint analysis__ai-note">{t('analysis.aiNote')}</span>
         </div>
       )}
 
       <div className="analysis__list">
-        <span className="eyebrow">{t('analysis.count', { n: scan.summary.total })}</span>
+        <span className="eyebrow">{tn('analysis.count', scan.summary.total)}</span>
         {scan.items.map((item) => (
           <IngredientCard
             key={`${item.norm}-${item.position}`}

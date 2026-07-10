@@ -17,8 +17,10 @@ export const es = {
   'banner.caution.sub': 'Algunos ingredientes a tener en cuenta',
   'banner.alert.title': 'Contiene alertas',
   'banner.alert.sub': 'Uno o más ingredientes de alto riesgo',
-  'banner.watchlist': '⚠ {n} ingrediente(s) de tu lista de vigilados',
-  'banner.personal': '★ {n} ingrediente(s) relevantes para tu perfil de piel',
+  'banner.watchlist': '⚠ {n} ingredientes de tu lista de vigilados',
+  'banner.watchlist.one': '⚠ 1 ingrediente de tu lista de vigilados',
+  'banner.personal': '★ {n} ingredientes relevantes para tu perfil de piel',
+  'banner.personal.one': '★ 1 ingrediente relevante para tu perfil de piel',
 
   // Tarjeta de ingrediente
   'ingcard.onWatchlist': 'En tu lista de vigilados',
@@ -39,6 +41,7 @@ export const es = {
   'home.seeAll': 'Ver todos',
   'home.empty': 'Todavía no hay escaneos. Tus productos analizados van a aparecer acá.',
   'home.ingredients': '{n} ingredientes',
+  'home.ingredients.one': '1 ingrediente',
 
   // Escaneo
   'scan.point': 'Apuntá a un código de barras',
@@ -109,6 +112,7 @@ export const es = {
   'analysis.aiHead': 'Explicación de la IA',
   'analysis.aiNote': 'Generado con Gemini · solo informativo',
   'analysis.count': '{n} ingredientes',
+  'analysis.count.one': '1 ingrediente',
   'analysis.enableAiFirst': 'Primero activá el análisis con IA en tu perfil',
   'analysis.retrying': 'Gemini está ocupado — reintentando ({attempt}/{retries})…',
   'analysis.watchAdded': 'Agregado a vigilados',
@@ -146,6 +150,7 @@ export const es = {
   // Perfil
   'profile.title': 'Tu perfil',
   'profile.scanned': '{n} productos escaneados',
+  'profile.scanned.one': '1 producto escaneado',
   'profile.signedInFallback': 'Sesión iniciada',
   'profile.syncing': 'Sincronizando…',
   'profile.synced': 'Sincronizado entre tus dispositivos',

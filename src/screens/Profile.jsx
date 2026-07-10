@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext.jsx'
 import { db } from '../db/db.js'
 import { datasetMeta } from '../core/classifier.js'
 import { SKIN_TYPES, CONCERNS } from '../core/constants.js'
-import { t, getLang, LANGUAGES } from '../i18n/index.js'
+import { t, tn, getLang, LANGUAGES } from '../i18n/index.js'
 import './Profile.css'
 
 export default function Profile() {
@@ -37,7 +37,7 @@ export default function Profile() {
         <div className="profile__avatar">{initial}</div>
         <div>
           <h1 className="profile__name">{profile.name || t('profile.title')}</h1>
-          <span className="muted">{t('profile.scanned', { n: scanCount })}</span>
+          <span className="muted">{tn('profile.scanned', scanCount)}</span>
         </div>
       </header>
 

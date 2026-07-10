@@ -19,7 +19,13 @@
   display: flex; align-items: center; gap: 6px;
   font-weight: 800; color: var(--rose); font-size: 14px; margin-bottom: 8px;
 }
-.analysis__ai p { margin: 0; font-size: 14px; white-space: pre-wrap; line-height: 1.55; }
+.analysis__ai p { margin: 0 0 8px; font-size: 14px; line-height: 1.55; }
+.analysis__ai p:last-of-type { margin-bottom: 0; }
+.analysis__ai .aitext__list {
+  margin: 0 0 8px; padding-left: 18px;
+  font-size: 14px; line-height: 1.55;
+  display: flex; flex-direction: column; gap: 5px;
+}
 .analysis__ai-note { display: block; margin-top: 10px; font-size: 11px; }
 
 .analysis__list { display: flex; flex-direction: column; gap: 9px; }

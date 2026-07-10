@@ -4,7 +4,7 @@ import { Search, ChevronRight } from 'lucide-react'
 import { listScans } from '../db/db.js'
 import RiskBadge from '../components/RiskBadge.jsx'
 import { relativeDate } from '../core/format.js'
-import { t } from '../i18n/index.js'
+import { t, tn } from '../i18n/index.js'
 import './History.css'
 
 export default function History() {
@@ -56,7 +56,7 @@ export default function History() {
                 <span className="history__name">{s.productName}</span>
                 {s.brand && <span className="history__brand">{s.brand}</span>}
                 <span className="history__meta">
-                  {t('home.ingredients', { n: s.summary.total })} · {relativeDate(s.createdAt)}
+                  {tn('home.ingredients', s.summary.total)} · {relativeDate(s.createdAt)}
                 </span>
               </div>
               <RiskBadge level={s.overall} />

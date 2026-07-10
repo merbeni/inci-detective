@@ -17,8 +17,10 @@ export const en = {
   'banner.caution.sub': 'Some ingredients to be aware of',
   'banner.alert.title': 'Contains alerts',
   'banner.alert.sub': 'One or more high-risk ingredients',
-  'banner.watchlist': '⚠ {n} ingredient(s) on your watchlist',
-  'banner.personal': '★ {n} ingredient(s) relevant to your skin profile',
+  'banner.watchlist': '⚠ {n} ingredients on your watchlist',
+  'banner.watchlist.one': '⚠ 1 ingredient on your watchlist',
+  'banner.personal': '★ {n} ingredients relevant to your skin profile',
+  'banner.personal.one': '★ 1 ingredient relevant to your skin profile',
 
   // Ingredient card
   'ingcard.onWatchlist': 'On your watchlist',
@@ -39,6 +41,7 @@ export const en = {
   'home.seeAll': 'See all',
   'home.empty': 'No scans yet. Your analyzed products will appear here.',
   'home.ingredients': '{n} ingredients',
+  'home.ingredients.one': '1 ingredient',
 
   // Scan
   'scan.point': 'Point at a barcode',
@@ -109,6 +112,7 @@ export const en = {
   'analysis.aiHead': 'AI explanation',
   'analysis.aiNote': 'Generated with Gemini · informational only',
   'analysis.count': '{n} ingredients',
+  'analysis.count.one': '1 ingredient',
   'analysis.enableAiFirst': 'Enable AI analysis in your profile first',
   'analysis.retrying': 'Gemini is busy — retrying ({attempt}/{retries})…',
   'analysis.watchAdded': 'Added to watchlist',
@@ -146,6 +150,7 @@ export const en = {
   // Profile
   'profile.title': 'Your profile',
   'profile.scanned': '{n} products scanned',
+  'profile.scanned.one': '1 product scanned',
   'profile.signedInFallback': 'Signed in',
   'profile.syncing': 'Syncing…',
   'profile.synced': 'Synced across your devices',

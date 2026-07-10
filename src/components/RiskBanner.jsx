@@ -1,5 +1,5 @@
 import { ShieldCheck, AlertTriangle, OctagonAlert } from 'lucide-react'
-import { t } from '../i18n/index.js'
+import { t, tn } from '../i18n/index.js'
 import './RiskBanner.css'
 
 const ICONS = {
@@ -29,10 +29,10 @@ export default function RiskBanner({ overall, summary, watchlistHits, personalHi
         <Count n={summary.unknown} label={t('badge.unknown')} cls="unknown" />
       </div>
       {watchlistHits > 0 && (
-        <div className="riskbanner__watch">{t('banner.watchlist', { n: watchlistHits })}</div>
+        <div className="riskbanner__watch">{tn('banner.watchlist', watchlistHits)}</div>
       )}
       {personalHits > 0 && (
-        <div className="riskbanner__watch">{t('banner.personal', { n: personalHits })}</div>
+        <div className="riskbanner__watch">{tn('banner.personal', personalHits)}</div>
       )}
     </div>
   )
