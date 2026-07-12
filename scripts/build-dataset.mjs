@@ -72,6 +72,12 @@ for (const record of source) {
   if (record.function) entry.function = record.function
   if (record.concern?.length) entry.concern = record.concern
   if (record.note) entry.note = record.note
+  // Curated aliases (label variants, Spanish common names, trade names) are
+  // normalized here so the runtime can index them for exact matching directly.
+  if (record.aliases?.length) {
+    const alias = [...new Set(record.aliases.map(normalize).filter((a) => a && a !== norm))]
+    if (alias.length) entry.alias = alias
+  }
   // Merge on the normalized key. Later sources (curated) win on descriptive
   // fields; the safety level is always the higher-risk of the two so a curated
   // entry can never silently downgrade a restricted CosIng ingredient.
@@ -85,6 +91,9 @@ for (const record of source) {
     if (SAFETY_RANK[existing.safety] >= SAFETY_RANK[entry.safety]) {
       merged.safety = existing.safety
       merged.annex = existing.annex
+    }
+    if (existing.alias || entry.alias) {
+      merged.alias = [...new Set([...(existing.alias || []), ...(entry.alias || [])])]
     }
     seen.set(norm, merged)
   }

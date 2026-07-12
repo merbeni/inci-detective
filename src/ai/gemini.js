@@ -134,7 +134,7 @@ export function describeAiError(err) {
 }
 
 function buildPrompt(analysis, profile) {
-  const { productName, brand, overall, summary, items } = analysis
+  const { productName, brand, overall, summary, items, score } = analysis
   const flagged = items
     .filter((i) => i.safety !== 'safe')
     .slice(0, 25)
@@ -146,12 +146,13 @@ function buildPrompt(analysis, profile) {
     ? `Concerns: ${profile.concerns.join(', ')}.`
     : ''
 
-  return `You are a cosmetic-ingredient assistant for a consumer skincare app.
-Explain in plain, friendly language (no medical claims, no diagnosis) what the
-flagged ingredients in this product mean for the user.
+  return `You are a cosmetic-ingredient assistant for a consumer cosmetics app
+(skincare, makeup, hair and body care). Explain in plain, friendly language
+(no medical claims, no diagnosis) what the flagged ingredients in this product
+mean for the user.
 
 Product: ${productName}${brand ? ' by ' + brand : ''}.
-Overall local rating: ${overall}. Counts: ${summary.safe} safe, ${summary.caution} caution, ${summary.alert} alert, ${summary.unknown} unknown.
+Overall local rating: ${overall}${score != null ? ` (score ${score}/100)` : ''}. Counts: ${summary.safe} safe, ${summary.caution} caution, ${summary.alert} alert, ${summary.unknown} unknown.
 ${skin} ${concerns}
 
 Flagged ingredients:

@@ -2,6 +2,7 @@ import { Eye, EyeOff, Sparkle } from 'lucide-react'
 import RiskBadge from './RiskBadge.jsx'
 import { t, translateFunction, translateNote } from '../i18n/index.js'
 import { isPersonallyRelevant, isHighConcentration } from '../core/personal.js'
+import { scoreIngredient, scoreBand } from '../core/score.js'
 import './IngredientCard.css'
 
 // Annexes with a translated label; anything else falls back to the label the
@@ -16,6 +17,8 @@ export default function IngredientCard({ item, onToggleWatch, personalFlags }) {
   const watchLabel = item.onWatchlist ? t('ingcard.removeWatch') : t('ingcard.addWatch')
   const annexLabel = KNOWN_ANNEXES.has(item.annex) ? t(`annex.${item.annex}`) : item.annexLabel
   const fn = translateFunction(item.function)
+  // Scans saved before the scoring feature carry no per-item score — derive it.
+  const score = item.score ?? scoreIngredient(item)
 
   return (
     <div className={`ingcard ingcard--${item.safety}`}>
@@ -23,7 +26,15 @@ export default function IngredientCard({ item, onToggleWatch, personalFlags }) {
       <div className="ingcard__body">
         <div className="ingcard__top">
           <span className="ingcard__name">{item.matchedInci || item.display}</span>
-          <RiskBadge level={item.safety} />
+          <span className="ingcard__badges">
+            <span
+              className={`ingcard__score ingcard__score--${scoreBand(score)}`}
+              title={t('ingcard.scoreHint')}
+            >
+              {score}
+            </span>
+            <RiskBadge level={item.safety} />
+          </span>
         </div>
         {(item.common || fn) && (
           <div className="ingcard__meta">

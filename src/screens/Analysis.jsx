@@ -16,6 +16,7 @@ import { createShareLink } from '../lib/sync.js'
 import { useApp } from '../context/AppContext.jsx'
 import { t, tn } from '../i18n/index.js'
 import { personalFlagSet, countPersonalHits } from '../core/personal.js'
+import { scoreProduct } from '../core/score.js'
 import RiskBanner from '../components/RiskBanner.jsx'
 import IngredientCard from '../components/IngredientCard.jsx'
 import AiText from '../components/AiText.jsx'
@@ -76,6 +77,13 @@ export default function Analysis() {
     setSaving(true)
     try {
       const saved = await saveScan({ ...scan, productName: trimmed })
+      // An AI explanation requested while still in preview had no scan id to
+      // attach to — link it now that the scan exists.
+      if (ai) {
+        await saveAiQuery({ scanId: saved.id, model: ai.model, response: ai.text }).catch(
+          () => {},
+        )
+      }
       showToast(t('analysis.saved'))
       navigate(`/analysis/${saved.id}`, { replace: true })
     } catch {
@@ -113,8 +121,11 @@ export default function Analysis() {
         onRetry: ({ attempt, retries }) =>
           showToast(t('analysis.retrying', { attempt, retries })),
       })
-      setAi(result.text)
-      await saveAiQuery({ scanId: scan.id, model: result.model, response: result.text })
+      setAi({ text: result.text, model: result.model })
+      // In preview there is no scan id yet — handleSave links the query later.
+      if (scan.id) {
+        await saveAiQuery({ scanId: scan.id, model: result.model, response: result.text })
+      }
     } catch (e) {
       showToast(describeAiError(e))
     } finally {
@@ -190,9 +201,10 @@ export default function Analysis() {
         summary={scan.summary}
         watchlistHits={scan.watchlistHits}
         personalHits={countPersonalHits(scan.items, personalFlags)}
+        score={scan.score ?? scoreProduct(scan.items)}
       />
 
-      {isPreview ? (
+      {isPreview && (
         <div className="analysis__save card">
           <label className="manual__label">{t('analysis.nameLabel')}</label>
           <div className="analysis__save-row">
@@ -214,27 +226,29 @@ export default function Analysis() {
           </div>
           <p className="faint analysis__save-hint">{t('analysis.saveHint')}</p>
         </div>
-      ) : (
-        <div className="analysis__actions">
-          <button className="btn btn--outline" onClick={runAi} disabled={aiLoading}>
-            {aiLoading ? <span className="spinner" /> : <Sparkles size={18} />}
-            {aiLoading ? t('analysis.aiAnalyzing') : t('analysis.aiButton')}
-          </button>
-          {cloudEnabled && (
-            <button className="btn btn--outline" onClick={handleShare} disabled={sharing}>
-              {sharing ? <span className="spinner" /> : <Share2 size={18} />}
-              {t('analysis.share')}
-            </button>
-          )}
-        </div>
       )}
+
+      {/* AI works on the in-memory analysis, so it's available in preview too —
+          no need to save first. Sharing does need a persisted scan. */}
+      <div className="analysis__actions">
+        <button className="btn btn--outline" onClick={runAi} disabled={aiLoading}>
+          {aiLoading ? <span className="spinner" /> : <Sparkles size={18} />}
+          {aiLoading ? t('analysis.aiAnalyzing') : t('analysis.aiButton')}
+        </button>
+        {!isPreview && cloudEnabled && (
+          <button className="btn btn--outline" onClick={handleShare} disabled={sharing}>
+            {sharing ? <span className="spinner" /> : <Share2 size={18} />}
+            {t('analysis.share')}
+          </button>
+        )}
+      </div>
 
       {ai && (
         <div className="analysis__ai">
           <div className="analysis__ai-head">
             <Sparkles size={16} /> {t('analysis.aiHead')}
           </div>
-          <AiText text={ai} />
+          <AiText text={ai.text} />
           <span className="faint analysis__ai-note">{t('analysis.aiNote')}</span>
         </div>
       )}

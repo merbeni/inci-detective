@@ -15,8 +15,15 @@ const FIXTURE = [
   { inci: 'Glycerin', norm: 'glycerin', annex: 'none', safety: 'safe', function: 'Humectant' },
   { inci: 'Phenoxyethanol', norm: 'phenoxyethanol', annex: 'V', safety: 'caution' },
   { inci: 'Formaldehyde', norm: 'formaldehyde', annex: 'II', safety: 'alert' },
-  { inci: 'Aqua', norm: 'aqua', annex: 'none', safety: 'safe', common: 'Water' },
+  { inci: 'Aqua', norm: 'aqua', annex: 'none', safety: 'safe', common: 'Water', alias: ['agua'] },
   { inci: 'SLS', norm: 'sls', annex: 'none', safety: 'caution' },
+  {
+    inci: 'Avene Aqua',
+    norm: 'avene aqua',
+    annex: 'none',
+    safety: 'safe',
+    alias: ['agua termal de avene'],
+  },
 ]
 
 const META = {
@@ -51,6 +58,13 @@ describe('matchIngredient', () => {
 
   it('returns null when nothing clears the threshold', () => {
     expect(matchIngredient('completely unknown stuff')).toBeNull()
+  })
+
+  it('resolves aliases (label variants / Spanish names) exactly', () => {
+    const m = matchIngredient('agua termal de avene')
+    expect(m.entry.inci).toBe('Avene Aqua')
+    expect(m.confidence).toBe(1)
+    expect(matchIngredient('agua').entry.inci).toBe('Aqua')
   })
 })
 
@@ -122,9 +136,16 @@ describe('looksLikeIngredientList', () => {
     expect(looksLikeIngredientList(summary)).toBe(false)
   })
 
-  it('rejects too-short parses and empty/missing summaries', () => {
-    const { summary } = classifyList(parseInciList('Aqua, Glycerin'))
-    expect(looksLikeIngredientList(summary)).toBe(false) // < 3 tokens
+  it('accepts short real lists (a thermal-water spray has 1-2 ingredients)', () => {
+    const { summary } = classifyList(parseInciList('Avene Aqua, Nitrogen'))
+    expect(looksLikeIngredientList(summary)).toBe(true) // 1 known of 2
+    const single = classifyList(parseInciList('Aqua'))
+    expect(looksLikeIngredientList(single.summary)).toBe(true)
+  })
+
+  it('rejects short all-unknown parses and empty/missing summaries', () => {
+    const { summary } = classifyList(parseInciList('blorp fx, qee ss'))
+    expect(looksLikeIngredientList(summary)).toBe(false)
     expect(looksLikeIngredientList(null)).toBe(false)
     expect(looksLikeIngredientList({ total: 0, unknown: 0 })).toBe(false)
   })

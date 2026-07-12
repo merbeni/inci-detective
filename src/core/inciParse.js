@@ -38,13 +38,36 @@ export function extractIngredientSection(raw) {
   return text.trim()
 }
 
+// Makeup labels list their pigments in a "may contain" block: "[+/- CI 77891,
+// CI 77491]" (or "MAY CONTAIN:", "PUEDE CONTENER:"). Those ARE ingredients —
+// unwrap the block into the list instead of discarding it. Brackets that don't
+// look like an ingredient run (no comma/slash/CI code) stay for the per-token
+// batch-code strip below.
+const MAY_CONTAIN =
+  /\b(?:may contain|puede contener|peut contenir|pu[oò] contenere|kann enthalten)\b\s*:?/gi
+const INGREDIENT_BRACKET = /\bci\s*\d{5}\b|[,/]/i
+
 export function parseInciList(raw) {
   if (!raw) return []
-  const text = extractIngredientSection(raw)
+  let text = extractIngredientSection(raw)
 
-  // Treat newlines, bullets and semicolons as separators alongside commas.
+  // Chemical numbering uses commas/dots that are NOT separators
+  // ("1,2-Hexanediol", "0.5%") — swap them for sentinels before splitting,
+  // restore after.
+  text = text
+    .replace(/(\d)\s*,\s*(\d)/g, '$1@@$2')
+    .replace(/(\d)\.(\d)/g, '$1##$2')
+    .replace(/\+\/-|±/g, ' ')
+    .replace(MAY_CONTAIN, ',')
+    .replace(/\[([^\]]*)\]/g, (m, inner) =>
+      INGREDIENT_BRACKET.test(inner) ? `,${inner},` : m,
+    )
+
+  // Newlines, bullets, semicolons and full stops are separators alongside
+  // commas — minimalist labels write "Avene Aqua. Nitrogen." with periods.
   const parts = text
-    .split(/[,;•·\n\r]+/)
+    .split(/[,;.•·\n\r]+/)
+    .map((p) => p.replace(/@@/g, ',').replace(/##/g, '.'))
     .map((p) => p.trim())
     .filter(Boolean)
 

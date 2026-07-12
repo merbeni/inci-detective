@@ -12,7 +12,7 @@ export async function analyzeIngredientsText(text, meta = {}) {
   await ensureDataset()
   const tokens = parseInciList(text)
   const watch = await watchlistNormSet()
-  const { items, summary, overall, watchlistHits } = classifyList(tokens, watch)
+  const { items, summary, overall, watchlistHits, score } = classifyList(tokens, watch)
   return {
     barcode: meta.barcode || null,
     // Empty when unknown: the preview screen requires the user to name the
@@ -25,6 +25,7 @@ export async function analyzeIngredientsText(text, meta = {}) {
     items,
     summary,
     overall,
+    score,
     watchlistHits,
   }
 }

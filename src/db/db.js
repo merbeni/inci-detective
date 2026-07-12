@@ -98,6 +98,8 @@ export async function saveScan(scan) {
     overall: scan.overall,
     summary: scan.summary,
     items: scan.items,
+    // 1-100 product score; older records lack it and the UI recomputes from items.
+    score: scan.score ?? null,
     rawText: scan.rawText || '', // kept for re-analysis + community contribution
     shareId: scan.shareId || null,
     synced: 0,

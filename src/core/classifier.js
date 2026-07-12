@@ -9,6 +9,7 @@
 
 import bundledMeta from '../data/dataset-meta.json'
 import { similarity } from './levenshtein.js'
+import { scoreIngredient, scoreProduct } from './score.js'
 
 const FUZZY_THRESHOLD = 0.85
 const MIN_FUZZY_LEN = 5
@@ -56,6 +57,14 @@ function rebuildIndex() {
     let bucket = byLen.get(L)
     if (!bucket) byLen.set(L, (bucket = []))
     bucket.push(ing)
+  }
+  // Aliases (label variants, Spanish common names, trade names like
+  // "Oxybenzone" -> Benzophenone-3) resolve exact-only, and never shadow a
+  // real INCI norm.
+  for (const ing of active.ingredients) {
+    for (const alias of ing.alias || []) {
+      if (!byNorm.has(alias)) byNorm.set(alias, ing)
+    }
   }
 }
 rebuildIndex()
@@ -181,20 +190,27 @@ export function classifyToken(token, watchlistNorms = new Set()) {
   }
 }
 
-// Sanity gate for OCR'd / pasted text: a real INCI list parses into at least a
-// few tokens and most of them resolve against the ~28.7k-entry catalogue. A
-// photo of something else (a pet, a directions paragraph) yields few tokens,
-// almost all unknown — callers should reject it instead of saving a garbage
-// analysis.
+// Sanity gate for OCR'd / pasted text: a real INCI list parses into tokens
+// that mostly resolve against the ~28.7k-entry catalogue. A photo of something
+// else (a pet, a directions paragraph) yields tokens that are almost all
+// unknown — callers should reject it instead of saving a garbage analysis.
+// Very short lists are real (a thermal-water spray is just "Avene Aqua,
+// Nitrogen"), so 1-2 tokens pass as long as at least one is a known
+// ingredient — random noise that short essentially never resolves.
 export function looksLikeIngredientList(summary) {
-  if (!summary || summary.total < 3) return false
+  if (!summary || !summary.total) return false
   const known = summary.total - summary.unknown
+  if (summary.total < 3) return known >= 1
   return known / summary.total >= 0.4
 }
 
 // Classify a full parsed list and produce summary counts.
 export function classifyList(tokens, watchlistNorms = new Set()) {
-  const items = tokens.map((t) => classifyToken(t, watchlistNorms))
+  const items = tokens.map((t) => {
+    const item = classifyToken(t, watchlistNorms)
+    item.score = scoreIngredient(item)
+    return item
+  })
   const summary = { safe: 0, caution: 0, alert: 0, unknown: 0, total: items.length }
   let watchlistHits = 0
   for (const item of items) {
@@ -207,5 +223,5 @@ export function classifyList(tokens, watchlistNorms = new Set()) {
   if (summary.alert > 0) overall = 'alert'
   else if (summary.caution > 0) overall = 'caution'
 
-  return { items, summary, overall, watchlistHits }
+  return { items, summary, overall, watchlistHits, score: scoreProduct(items) }
 }

@@ -38,6 +38,24 @@
   word-break: break-word;
 }
 
+.ingcard__badges {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 1-100 ingredient score chip, colored with the same risk language. */
+.ingcard__score {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+}
+.ingcard__score--safe { background: var(--safe-bg); color: var(--safe); }
+.ingcard__score--caution { background: var(--caution-bg); color: #b5703f; }
+.ingcard__score--alert { background: var(--alert-bg); color: var(--alert); }
+
 .ingcard__meta {
   font-size: 13px;
   color: var(--ink-soft);

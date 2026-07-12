@@ -1,156 +1,2923 @@
 [
-  { "inci": "Aqua", "common": "Water", "function": "Solvent", "annex": "none", "concern": [] },
-  { "inci": "Water", "common": "Water", "function": "Solvent", "annex": "none", "concern": [] },
-  { "inci": "Glycerin", "common": "Glycerin", "function": "Humectant", "annex": "none", "concern": [] },
-  { "inci": "Sodium Hyaluronate", "common": "Hyaluronic acid (salt)", "function": "Humectant / skin conditioning", "annex": "none", "concern": [] },
-  { "inci": "Hyaluronic Acid", "common": "Hyaluronic acid", "function": "Humectant", "annex": "none", "concern": [] },
-  { "inci": "Niacinamide", "common": "Vitamin B3", "function": "Skin conditioning / brightening", "annex": "none", "concern": [] },
-  { "inci": "Panthenol", "common": "Provitamin B5", "function": "Skin conditioning / soothing", "annex": "none", "concern": [] },
-  { "inci": "Tocopherol", "common": "Vitamin E", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Tocopheryl Acetate", "common": "Vitamin E acetate", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Allantoin", "common": "Allantoin", "function": "Soothing / skin protectant", "annex": "none", "concern": [] },
-  { "inci": "Bisabolol", "common": "Bisabolol", "function": "Soothing", "annex": "none", "concern": [] },
-  { "inci": "Squalane", "common": "Squalane", "function": "Emollient", "annex": "none", "concern": [] },
-  { "inci": "Caprylic/Capric Triglyceride", "common": "Coconut-derived emollient", "function": "Emollient", "annex": "none", "concern": [] },
-  { "inci": "Butyrospermum Parkii Butter", "common": "Shea butter", "function": "Emollient", "annex": "none", "concern": [] },
-  { "inci": "Simmondsia Chinensis Seed Oil", "common": "Jojoba oil", "function": "Emollient", "annex": "none", "concern": [] },
-  { "inci": "Helianthus Annuus Seed Oil", "common": "Sunflower seed oil", "function": "Emollient", "annex": "none", "concern": [] },
-  { "inci": "Aloe Barbadensis Leaf Juice", "common": "Aloe vera", "function": "Soothing", "annex": "none", "concern": [] },
-  { "inci": "Centella Asiatica Extract", "common": "Cica / Gotu kola", "function": "Soothing / antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Camellia Sinensis Leaf Extract", "common": "Green tea extract", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Ceramide NP", "common": "Ceramide", "function": "Skin barrier", "annex": "none", "concern": [] },
-  { "inci": "Cholesterol", "common": "Cholesterol", "function": "Skin barrier", "annex": "none", "concern": [] },
-  { "inci": "Glyceryl Stearate", "common": "Glyceryl stearate", "function": "Emulsifier / emollient", "annex": "none", "concern": [] },
-  { "inci": "Cetyl Alcohol", "common": "Cetyl alcohol (fatty)", "function": "Emollient / emulsifier", "annex": "none", "concern": [] },
-  { "inci": "Cetearyl Alcohol", "common": "Cetearyl alcohol (fatty)", "function": "Emollient / emulsifier", "annex": "none", "concern": [] },
-  { "inci": "Stearic Acid", "common": "Stearic acid", "function": "Emulsifier", "annex": "none", "concern": [] },
-  { "inci": "Dimethicone", "common": "Dimethicone", "function": "Skin conditioning (silicone)", "annex": "none", "concern": ["acne"] },
-  { "inci": "Cyclopentasiloxane", "common": "Cyclopentasiloxane", "function": "Skin conditioning (silicone)", "annex": "none", "concern": [] },
-  { "inci": "Xanthan Gum", "common": "Xanthan gum", "function": "Thickener", "annex": "none", "concern": [] },
-  { "inci": "Carbomer", "common": "Carbomer", "function": "Thickener", "annex": "none", "concern": [] },
-  { "inci": "Sodium Hydroxide", "common": "Lye (pH adjuster)", "function": "pH adjuster", "annex": "none", "concern": [] },
-  { "inci": "Citric Acid", "common": "Citric acid", "function": "pH adjuster", "annex": "none", "concern": [] },
-  { "inci": "Disodium EDTA", "common": "Disodium EDTA", "function": "Chelating agent", "annex": "none", "concern": [] },
-  { "inci": "Coco-Glucoside", "common": "Coco-glucoside", "function": "Surfactant (mild)", "annex": "none", "concern": [] },
-  { "inci": "Decyl Glucoside", "common": "Decyl glucoside", "function": "Surfactant (mild)", "annex": "none", "concern": [] },
-  { "inci": "Pentylene Glycol", "common": "Pentylene glycol", "function": "Humectant / solvent", "annex": "none", "concern": [] },
-  { "inci": "Butylene Glycol", "common": "Butylene glycol", "function": "Humectant / solvent", "annex": "none", "concern": [] },
-  { "inci": "Propanediol", "common": "Propanediol", "function": "Humectant / solvent", "annex": "none", "concern": [] },
-  { "inci": "Adenosine", "common": "Adenosine", "function": "Skin conditioning (anti-aging)", "annex": "none", "concern": [] },
-  { "inci": "Madecassoside", "common": "Madecassoside", "function": "Soothing", "annex": "none", "concern": [] },
-  { "inci": "Beta-Glucan", "common": "Beta-glucan", "function": "Soothing / humectant", "annex": "none", "concern": [] },
-  { "inci": "Sodium PCA", "common": "Sodium PCA", "function": "Humectant", "annex": "none", "concern": [] },
-  { "inci": "Arginine", "common": "Arginine", "function": "Amino acid / pH adjuster", "annex": "none", "concern": [] },
-  { "inci": "Lecithin", "common": "Lecithin", "function": "Emulsifier", "annex": "none", "concern": [] },
-  { "inci": "Zinc Oxide", "common": "Zinc oxide", "function": "UV filter (mineral)", "annex": "VI", "concern": [] },
-  { "inci": "Titanium Dioxide", "common": "Titanium dioxide", "function": "UV filter (mineral) / colorant", "annex": "VI", "concern": [] },
-  { "inci": "Butyl Methoxydibenzoylmethane", "common": "Avobenzone", "function": "UV filter (chemical)", "annex": "VI", "concern": ["sensitivity"] },
-  { "inci": "Octocrylene", "common": "Octocrylene", "function": "UV filter (chemical)", "annex": "VI", "concern": ["sensitivity"] },
-  { "inci": "Homosalate", "common": "Homosalate", "function": "UV filter (chemical)", "annex": "VI", "concern": [] },
-  { "inci": "Ethylhexyl Methoxycinnamate", "common": "Octinoxate", "function": "UV filter (chemical)", "annex": "VI", "concern": ["sensitivity"] },
-  { "inci": "Ethylhexyl Salicylate", "common": "Octisalate", "function": "UV filter (chemical)", "annex": "VI", "concern": [] },
-  { "inci": "Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine", "common": "Tinosorb S", "function": "UV filter (chemical)", "annex": "VI", "concern": [] },
-  { "inci": "Phenoxyethanol", "common": "Phenoxyethanol", "function": "Preservative", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Methylparaben", "common": "Methylparaben", "function": "Preservative", "annex": "V", "concern": [] },
-  { "inci": "Ethylparaben", "common": "Ethylparaben", "function": "Preservative", "annex": "V", "concern": [] },
-  { "inci": "Propylparaben", "common": "Propylparaben", "function": "Preservative", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Butylparaben", "common": "Butylparaben", "function": "Preservative", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Sodium Benzoate", "common": "Sodium benzoate", "function": "Preservative", "annex": "V", "concern": [] },
-  { "inci": "Potassium Sorbate", "common": "Potassium sorbate", "function": "Preservative", "annex": "V", "concern": [] },
-  { "inci": "Benzyl Alcohol", "common": "Benzyl alcohol", "function": "Preservative / solvent", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Dehydroacetic Acid", "common": "Dehydroacetic acid", "function": "Preservative", "annex": "V", "concern": [] },
-  { "inci": "Chlorphenesin", "common": "Chlorphenesin", "function": "Preservative", "annex": "V", "concern": [] },
-  { "inci": "Methylisothiazolinone", "common": "MIT", "function": "Preservative", "annex": "V", "concern": ["sensitivity"], "note": "Common contact allergen; restricted to rinse-off." },
-  { "inci": "Methylchloroisothiazolinone", "common": "CMIT", "function": "Preservative", "annex": "V", "concern": ["sensitivity"], "note": "Strong contact allergen." },
-  { "inci": "Iodopropynyl Butylcarbamate", "common": "IPBC", "function": "Preservative", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Salicylic Acid", "common": "BHA", "function": "Exfoliant / keratolytic", "annex": "III", "concern": ["acne", "sensitivity"] },
-  { "inci": "Retinol", "common": "Vitamin A (retinol)", "function": "Anti-aging active", "annex": "III", "concern": ["aging", "sensitivity"], "note": "EU limits to 0.3% in face products." },
-  { "inci": "Retinyl Palmitate", "common": "Vitamin A palmitate", "function": "Anti-aging active", "annex": "III", "concern": ["aging"] },
-  { "inci": "Glycolic Acid", "common": "AHA", "function": "Exfoliant", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Lactic Acid", "common": "AHA", "function": "Exfoliant / humectant", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Benzoyl Peroxide", "common": "Benzoyl peroxide", "function": "Anti-acne active", "annex": "III", "concern": ["acne", "sensitivity"] },
-  { "inci": "Ascorbic Acid", "common": "Vitamin C", "function": "Antioxidant / brightening", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Ethylhexyl Methoxycrylene", "common": "Solastay", "function": "UV stabilizer", "annex": "none", "concern": [] },
-  { "inci": "Triethanolamine", "common": "TEA", "function": "pH adjuster / emulsifier", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Resorcinol", "common": "Resorcinol", "function": "Hair dye / antiseptic", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Sodium Lauryl Sulfate", "common": "SLS", "function": "Surfactant (strong)", "annex": "none", "concern": ["sensitivity"], "note": "Known skin irritant in leave-on products." },
-  { "inci": "Sodium Laureth Sulfate", "common": "SLES", "function": "Surfactant", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Cocamidopropyl Betaine", "common": "Cocamidopropyl betaine", "function": "Surfactant (co)", "annex": "none", "concern": ["sensitivity"], "note": "Contact allergen of the year 2004." },
-  { "inci": "Alcohol Denat", "common": "Denatured alcohol", "function": "Solvent / astringent", "annex": "none", "concern": ["sensitivity", "dryness"] },
-  { "inci": "Parfum", "common": "Fragrance", "function": "Fragrance", "annex": "none", "concern": ["sensitivity"], "note": "Undisclosed mixture; leading cause of cosmetic allergy." },
-  { "inci": "Fragrance", "common": "Fragrance", "function": "Fragrance", "annex": "none", "concern": ["sensitivity"], "note": "Undisclosed mixture; leading cause of cosmetic allergy." },
-  { "inci": "Limonene", "common": "Limonene", "function": "Fragrance / solvent", "annex": "III", "concern": ["sensitivity"], "note": "Declarable fragrance allergen." },
-  { "inci": "Linalool", "common": "Linalool", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"], "note": "Declarable fragrance allergen." },
-  { "inci": "Citronellol", "common": "Citronellol", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"], "note": "Declarable fragrance allergen." },
-  { "inci": "Geraniol", "common": "Geraniol", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"], "note": "Declarable fragrance allergen." },
-  { "inci": "Citral", "common": "Citral", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"], "note": "Declarable fragrance allergen." },
-  { "inci": "Eugenol", "common": "Eugenol", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"], "note": "Declarable fragrance allergen." },
-  { "inci": "Coumarin", "common": "Coumarin", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"], "note": "Declarable fragrance allergen." },
-  { "inci": "Benzyl Salicylate", "common": "Benzyl salicylate", "function": "Fragrance / UV", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Benzyl Benzoate", "common": "Benzyl benzoate", "function": "Fragrance / solvent", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Hexyl Cinnamal", "common": "Hexyl cinnamal", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Hydroxycitronellal", "common": "Hydroxycitronellal", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Amyl Cinnamal", "common": "Amyl cinnamal", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Cinnamal", "common": "Cinnamaldehyde", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Isoeugenol", "common": "Isoeugenol", "function": "Fragrance", "annex": "III", "concern": ["sensitivity"] },
-  { "inci": "Hydroquinone", "common": "Hydroquinone", "function": "Skin-lightening agent", "annex": "II", "concern": ["sensitivity"], "note": "Prohibited in leave-on cosmetics in the EU." },
-  { "inci": "Formaldehyde", "common": "Formaldehyde", "function": "Preservative (banned)", "annex": "II", "concern": ["sensitivity"], "note": "Prohibited; known carcinogen." },
-  { "inci": "Mercury", "common": "Mercury", "function": "Preservative (banned)", "annex": "II", "concern": ["sensitivity"], "note": "Prohibited; toxic heavy metal." },
-  { "inci": "Lead Acetate", "common": "Lead acetate", "function": "Hair colorant (banned)", "annex": "II", "concern": [], "note": "Prohibited; neurotoxic." },
-  { "inci": "Hydroquinone Methyl Ether", "common": "Mequinol", "function": "Skin-lightening (banned)", "annex": "II", "concern": [], "note": "Prohibited in cosmetics." },
-  { "inci": "Phenol", "common": "Phenol", "function": "Antiseptic (banned)", "annex": "II", "concern": ["sensitivity"], "note": "Prohibited in cosmetics." },
-  { "inci": "Methylene Glycol", "common": "Formaldehyde releaser", "function": "Preservative", "annex": "II", "concern": ["sensitivity"] },
-  { "inci": "DMDM Hydantoin", "common": "DMDM hydantoin", "function": "Preservative (formaldehyde releaser)", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Imidazolidinyl Urea", "common": "Imidazolidinyl urea", "function": "Preservative (formaldehyde releaser)", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Diazolidinyl Urea", "common": "Diazolidinyl urea", "function": "Preservative (formaldehyde releaser)", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "Triclosan", "common": "Triclosan", "function": "Preservative / antibacterial", "annex": "V", "concern": ["sensitivity"] },
-  { "inci": "BHT", "common": "Butylated hydroxytoluene", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "BHA", "common": "Butylated hydroxyanisole", "function": "Antioxidant", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Mineral Oil", "common": "Mineral oil (Paraffinum Liquidum)", "function": "Emollient / occlusive", "annex": "none", "concern": ["acne"] },
-  { "inci": "Paraffinum Liquidum", "common": "Mineral oil", "function": "Emollient / occlusive", "annex": "none", "concern": ["acne"] },
-  { "inci": "Petrolatum", "common": "Petroleum jelly", "function": "Occlusive", "annex": "none", "concern": ["acne"] },
-  { "inci": "Lanolin", "common": "Lanolin", "function": "Emollient", "annex": "none", "concern": ["acne", "sensitivity"] },
-  { "inci": "Isopropyl Myristate", "common": "Isopropyl myristate", "function": "Emollient", "annex": "none", "concern": ["acne"] },
-  { "inci": "Coconut Oil", "common": "Cocos Nucifera Oil", "function": "Emollient", "annex": "none", "concern": ["acne"] },
-  { "inci": "Cocos Nucifera Oil", "common": "Coconut oil", "function": "Emollient", "annex": "none", "concern": ["acne"] },
-  { "inci": "Propylene Glycol", "common": "Propylene glycol", "function": "Humectant / solvent", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "PEG-100 Stearate", "common": "PEG-100 stearate", "function": "Emulsifier", "annex": "none", "concern": [] },
-  { "inci": "Polysorbate 20", "common": "Polysorbate 20", "function": "Emulsifier / solubilizer", "annex": "none", "concern": [] },
-  { "inci": "Polysorbate 80", "common": "Polysorbate 80", "function": "Emulsifier", "annex": "none", "concern": [] },
-  { "inci": "CI 77491", "common": "Iron oxide red", "function": "Colorant", "annex": "IV", "concern": [] },
-  { "inci": "CI 77492", "common": "Iron oxide yellow", "function": "Colorant", "annex": "IV", "concern": [] },
-  { "inci": "CI 77499", "common": "Iron oxide black", "function": "Colorant", "annex": "IV", "concern": [] },
-  { "inci": "CI 19140", "common": "Tartrazine (Yellow 5)", "function": "Colorant", "annex": "IV", "concern": ["sensitivity"] },
-  { "inci": "CI 15985", "common": "Sunset Yellow (Yellow 6)", "function": "Colorant", "annex": "IV", "concern": ["sensitivity"] },
-  { "inci": "CI 42090", "common": "Brilliant Blue (Blue 1)", "function": "Colorant", "annex": "IV", "concern": [] },
-  { "inci": "Mica", "common": "Mica", "function": "Colorant / opacifier", "annex": "none", "concern": [] },
-  { "inci": "Talc", "common": "Talc", "function": "Bulking / absorbent", "annex": "none", "concern": [] },
-  { "inci": "Kaolin", "common": "Kaolin clay", "function": "Absorbent", "annex": "none", "concern": [] },
-  { "inci": "Bentonite", "common": "Bentonite clay", "function": "Absorbent", "annex": "none", "concern": [] },
-  { "inci": "Caffeine", "common": "Caffeine", "function": "Skin conditioning", "annex": "none", "concern": [] },
-  { "inci": "Urea", "common": "Urea", "function": "Humectant / keratolytic", "annex": "none", "concern": [] },
-  { "inci": "Azelaic Acid", "common": "Azelaic acid", "function": "Active (brightening / anti-acne)", "annex": "none", "concern": ["acne"] },
-  { "inci": "Bakuchiol", "common": "Bakuchiol", "function": "Retinol alternative", "annex": "none", "concern": [] },
-  { "inci": "Ferulic Acid", "common": "Ferulic acid", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Sodium Ascorbyl Phosphate", "common": "Vitamin C derivative", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Ascorbyl Glucoside", "common": "Vitamin C derivative", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Tetrahexyldecyl Ascorbate", "common": "Vitamin C derivative (THD)", "function": "Antioxidant", "annex": "none", "concern": [] },
-  { "inci": "Snail Secretion Filtrate", "common": "Snail mucin", "function": "Skin conditioning", "annex": "none", "concern": [] },
-  { "inci": "Hydrolyzed Collagen", "common": "Collagen", "function": "Humectant / film former", "annex": "none", "concern": [] },
-  { "inci": "Rosa Damascena Flower Water", "common": "Rose water", "function": "Skin conditioning / fragrance", "annex": "none", "concern": [] },
-  { "inci": "Melaleuca Alternifolia Leaf Oil", "common": "Tea tree oil", "function": "Essential oil / antimicrobial", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Lavandula Angustifolia Oil", "common": "Lavender oil", "function": "Essential oil / fragrance", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Mentha Piperita Oil", "common": "Peppermint oil", "function": "Essential oil", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Citrus Limon Peel Oil", "common": "Lemon peel oil", "function": "Essential oil / fragrance", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Phenylethyl Resorcinol", "common": "Symwhite", "function": "Brightening active", "annex": "none", "concern": [] },
-  { "inci": "Arbutin", "common": "Arbutin", "function": "Brightening active", "annex": "none", "concern": [] },
-  { "inci": "Tranexamic Acid", "common": "Tranexamic acid", "function": "Brightening active", "annex": "none", "concern": [] },
-  { "inci": "Kojic Acid", "common": "Kojic acid", "function": "Brightening active", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Polyglutamic Acid", "common": "Polyglutamic acid", "function": "Humectant", "annex": "none", "concern": [] },
-  { "inci": "Sodium Cocoyl Isethionate", "common": "SCI", "function": "Surfactant (mild)", "annex": "none", "concern": [] },
-  { "inci": "Cocamide MEA", "common": "Cocamide MEA", "function": "Surfactant / thickener", "annex": "none", "concern": ["sensitivity"] },
-  { "inci": "Phenethyl Alcohol", "common": "Phenethyl alcohol", "function": "Preservative / fragrance", "annex": "none", "concern": [] },
-  { "inci": "Ethylhexylglycerin", "common": "Ethylhexylglycerin", "function": "Preservative booster / emollient", "annex": "none", "concern": [] },
-  { "inci": "Caprylyl Glycol", "common": "Caprylyl glycol", "function": "Humectant / preservative booster", "annex": "none", "concern": [] },
-  { "inci": "1,2-Hexanediol", "common": "Hexanediol", "function": "Humectant / preservative booster", "annex": "none", "concern": [] }
+  {
+    "inci": "Aqua",
+    "common": "Water",
+    "function": "Solvent",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "agua",
+      "eau",
+      "agua purificada",
+      "agua destilada",
+      "purified water"
+    ]
+  },
+  {
+    "inci": "Water",
+    "common": "Water",
+    "function": "Solvent",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Glycerin",
+    "common": "Glycerin",
+    "function": "Humectant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "glicerina",
+      "glycerine",
+      "glycerol",
+      "vegetable glycerin"
+    ]
+  },
+  {
+    "inci": "Sodium Hyaluronate",
+    "common": "Hyaluronic acid (salt)",
+    "function": "Humectant / skin conditioning",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Hyaluronic Acid",
+    "common": "Hyaluronic acid",
+    "function": "Humectant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "acido hialuronico"
+    ]
+  },
+  {
+    "inci": "Niacinamide",
+    "common": "Vitamin B3",
+    "function": "Skin conditioning / brightening",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "nicotinamide",
+      "vitamin b3",
+      "vitamina b3"
+    ]
+  },
+  {
+    "inci": "Panthenol",
+    "common": "Provitamin B5",
+    "function": "Skin conditioning / soothing",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "provitamin b5",
+      "pro-vitamin b5",
+      "dl-panthenol",
+      "d-panthenol",
+      "vitamin b5"
+    ]
+  },
+  {
+    "inci": "Tocopherol",
+    "common": "Vitamin E",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "vitamin e",
+      "vitamina e"
+    ]
+  },
+  {
+    "inci": "Tocopheryl Acetate",
+    "common": "Vitamin E acetate",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "vitamin e acetate"
+    ]
+  },
+  {
+    "inci": "Allantoin",
+    "common": "Allantoin",
+    "function": "Soothing / skin protectant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "alantoina"
+    ]
+  },
+  {
+    "inci": "Bisabolol",
+    "common": "Bisabolol",
+    "function": "Soothing",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Squalane",
+    "common": "Squalane",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "escualano"
+    ]
+  },
+  {
+    "inci": "Caprylic/Capric Triglyceride",
+    "common": "Coconut-derived emollient",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Butyrospermum Parkii Butter",
+    "common": "Shea butter",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "shea butter",
+      "manteca de karite"
+    ]
+  },
+  {
+    "inci": "Simmondsia Chinensis Seed Oil",
+    "common": "Jojoba oil",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "jojoba oil",
+      "aceite de jojoba"
+    ]
+  },
+  {
+    "inci": "Helianthus Annuus Seed Oil",
+    "common": "Sunflower seed oil",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "sunflower oil",
+      "sunflower seed oil",
+      "aceite de girasol"
+    ]
+  },
+  {
+    "inci": "Aloe Barbadensis Leaf Juice",
+    "common": "Aloe vera",
+    "function": "Soothing",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "aloe vera",
+      "aloe vera juice",
+      "aloe barbadensis"
+    ]
+  },
+  {
+    "inci": "Centella Asiatica Extract",
+    "common": "Cica / Gotu kola",
+    "function": "Soothing / antioxidant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "cica",
+      "gotu kola"
+    ]
+  },
+  {
+    "inci": "Camellia Sinensis Leaf Extract",
+    "common": "Green tea extract",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "green tea extract",
+      "extracto de te verde"
+    ]
+  },
+  {
+    "inci": "Ceramide NP",
+    "common": "Ceramide",
+    "function": "Skin barrier",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Cholesterol",
+    "common": "Cholesterol",
+    "function": "Skin barrier",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Glyceryl Stearate",
+    "common": "Glyceryl stearate",
+    "function": "Emulsifier / emollient",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Cetyl Alcohol",
+    "common": "Cetyl alcohol (fatty)",
+    "function": "Emollient / emulsifier",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Cetearyl Alcohol",
+    "common": "Cetearyl alcohol (fatty)",
+    "function": "Emollient / emulsifier",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "cetostearyl alcohol"
+    ]
+  },
+  {
+    "inci": "Stearic Acid",
+    "common": "Stearic acid",
+    "function": "Emulsifier",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Dimethicone",
+    "common": "Dimethicone",
+    "function": "Skin conditioning (silicone)",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ],
+    "aliases": [
+      "dimeticona"
+    ]
+  },
+  {
+    "inci": "Cyclopentasiloxane",
+    "common": "Cyclopentasiloxane",
+    "function": "Skin conditioning (silicone)",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Xanthan Gum",
+    "common": "Xanthan gum",
+    "function": "Thickener",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Carbomer",
+    "common": "Carbomer",
+    "function": "Thickener",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Hydroxide",
+    "common": "Lye (pH adjuster)",
+    "function": "pH adjuster",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Citric Acid",
+    "common": "Citric acid",
+    "function": "pH adjuster",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Disodium EDTA",
+    "common": "Disodium EDTA",
+    "function": "Chelating agent",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Coco-Glucoside",
+    "common": "Coco-glucoside",
+    "function": "Surfactant (mild)",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Decyl Glucoside",
+    "common": "Decyl glucoside",
+    "function": "Surfactant (mild)",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Pentylene Glycol",
+    "common": "Pentylene glycol",
+    "function": "Humectant / solvent",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Butylene Glycol",
+    "common": "Butylene glycol",
+    "function": "Humectant / solvent",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Propanediol",
+    "common": "Propanediol",
+    "function": "Humectant / solvent",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Adenosine",
+    "common": "Adenosine",
+    "function": "Skin conditioning (anti-aging)",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Madecassoside",
+    "common": "Madecassoside",
+    "function": "Soothing",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Beta-Glucan",
+    "common": "Beta-glucan",
+    "function": "Soothing / humectant",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Sodium PCA",
+    "common": "Sodium PCA",
+    "function": "Humectant",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Arginine",
+    "common": "Arginine",
+    "function": "Amino acid / pH adjuster",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Lecithin",
+    "common": "Lecithin",
+    "function": "Emulsifier",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Zinc Oxide",
+    "common": "Zinc oxide",
+    "function": "UV filter (mineral)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "ci 77947",
+      "oxido de zinc"
+    ]
+  },
+  {
+    "inci": "Titanium Dioxide",
+    "common": "Titanium dioxide",
+    "function": "UV filter (mineral) / colorant",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "dioxido de titanio"
+    ]
+  },
+  {
+    "inci": "Butyl Methoxydibenzoylmethane",
+    "common": "Avobenzone",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "avobenzone"
+    ]
+  },
+  {
+    "inci": "Octocrylene",
+    "common": "Octocrylene",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Homosalate",
+    "common": "Homosalate",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": []
+  },
+  {
+    "inci": "Ethylhexyl Methoxycinnamate",
+    "common": "Octinoxate",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "octinoxate",
+      "octyl methoxycinnamate"
+    ]
+  },
+  {
+    "inci": "Ethylhexyl Salicylate",
+    "common": "Octisalate",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "octisalate",
+      "octyl salicylate"
+    ]
+  },
+  {
+    "inci": "Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine",
+    "common": "Tinosorb S",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "tinosorb s",
+      "bemotrizinol"
+    ]
+  },
+  {
+    "inci": "Phenoxyethanol",
+    "common": "Phenoxyethanol",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Methylparaben",
+    "common": "Methylparaben",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": []
+  },
+  {
+    "inci": "Ethylparaben",
+    "common": "Ethylparaben",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": []
+  },
+  {
+    "inci": "Propylparaben",
+    "common": "Propylparaben",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Butylparaben",
+    "common": "Butylparaben",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Sodium Benzoate",
+    "common": "Sodium benzoate",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": []
+  },
+  {
+    "inci": "Potassium Sorbate",
+    "common": "Potassium sorbate",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": []
+  },
+  {
+    "inci": "Benzyl Alcohol",
+    "common": "Benzyl alcohol",
+    "function": "Preservative / solvent",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Dehydroacetic Acid",
+    "common": "Dehydroacetic acid",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": []
+  },
+  {
+    "inci": "Chlorphenesin",
+    "common": "Chlorphenesin",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": []
+  },
+  {
+    "inci": "Methylisothiazolinone",
+    "common": "MIT",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Common contact allergen; restricted to rinse-off."
+  },
+  {
+    "inci": "Methylchloroisothiazolinone",
+    "common": "CMIT",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Strong contact allergen."
+  },
+  {
+    "inci": "Iodopropynyl Butylcarbamate",
+    "common": "IPBC",
+    "function": "Preservative",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Salicylic Acid",
+    "common": "BHA",
+    "function": "Exfoliant / keratolytic",
+    "annex": "III",
+    "concern": [
+      "acne",
+      "sensitivity"
+    ],
+    "aliases": [
+      "acido salicilico",
+      "beta hydroxy acid"
+    ]
+  },
+  {
+    "inci": "Retinol",
+    "common": "Vitamin A (retinol)",
+    "function": "Anti-aging active",
+    "annex": "III",
+    "concern": [
+      "aging",
+      "sensitivity"
+    ],
+    "note": "EU limits to 0.3% in face products.",
+    "aliases": [
+      "vitamin a",
+      "vitamina a"
+    ]
+  },
+  {
+    "inci": "Retinyl Palmitate",
+    "common": "Vitamin A palmitate",
+    "function": "Anti-aging active",
+    "annex": "III",
+    "concern": [
+      "aging"
+    ]
+  },
+  {
+    "inci": "Glycolic Acid",
+    "common": "AHA",
+    "function": "Exfoliant",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "acido glicolico"
+    ]
+  },
+  {
+    "inci": "Lactic Acid",
+    "common": "AHA",
+    "function": "Exfoliant / humectant",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "acido lactico"
+    ]
+  },
+  {
+    "inci": "Benzoyl Peroxide",
+    "common": "Benzoyl peroxide",
+    "function": "Anti-acne active",
+    "annex": "III",
+    "concern": [
+      "acne",
+      "sensitivity"
+    ],
+    "aliases": [
+      "peroxido de benzoilo"
+    ]
+  },
+  {
+    "inci": "Ascorbic Acid",
+    "common": "Vitamin C",
+    "function": "Antioxidant / brightening",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "vitamin c",
+      "vitamina c",
+      "l ascorbic acid"
+    ]
+  },
+  {
+    "inci": "Ethylhexyl Methoxycrylene",
+    "common": "Solastay",
+    "function": "UV stabilizer",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Triethanolamine",
+    "common": "TEA",
+    "function": "pH adjuster / emulsifier",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Resorcinol",
+    "common": "Resorcinol",
+    "function": "Hair dye / antiseptic",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Sodium Lauryl Sulfate",
+    "common": "SLS",
+    "function": "Surfactant (strong)",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Known skin irritant in leave-on products."
+  },
+  {
+    "inci": "Sodium Laureth Sulfate",
+    "common": "SLES",
+    "function": "Surfactant",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "sles"
+    ]
+  },
+  {
+    "inci": "Cocamidopropyl Betaine",
+    "common": "Cocamidopropyl betaine",
+    "function": "Surfactant (co)",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Contact allergen of the year 2004."
+  },
+  {
+    "inci": "Alcohol Denat",
+    "common": "Denatured alcohol",
+    "function": "Solvent / astringent",
+    "annex": "none",
+    "concern": [
+      "sensitivity",
+      "dryness"
+    ],
+    "aliases": [
+      "sd alcohol",
+      "sd alcohol 40",
+      "sd alcohol 40-b",
+      "alcohol desnaturalizado"
+    ]
+  },
+  {
+    "inci": "Parfum",
+    "common": "Fragrance",
+    "function": "Fragrance",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Undisclosed mixture; leading cause of cosmetic allergy.",
+    "aliases": [
+      "perfume",
+      "fragancia",
+      "aroma"
+    ]
+  },
+  {
+    "inci": "Fragrance",
+    "common": "Fragrance",
+    "function": "Fragrance",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Undisclosed mixture; leading cause of cosmetic allergy."
+  },
+  {
+    "inci": "Limonene",
+    "common": "Limonene",
+    "function": "Fragrance / solvent",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Linalool",
+    "common": "Linalool",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Citronellol",
+    "common": "Citronellol",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Geraniol",
+    "common": "Geraniol",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Citral",
+    "common": "Citral",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Eugenol",
+    "common": "Eugenol",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Coumarin",
+    "common": "Coumarin",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Benzyl Salicylate",
+    "common": "Benzyl salicylate",
+    "function": "Fragrance / UV",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Benzyl Benzoate",
+    "common": "Benzyl benzoate",
+    "function": "Fragrance / solvent",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Hexyl Cinnamal",
+    "common": "Hexyl cinnamal",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Hydroxycitronellal",
+    "common": "Hydroxycitronellal",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Amyl Cinnamal",
+    "common": "Amyl cinnamal",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Cinnamal",
+    "common": "Cinnamaldehyde",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Isoeugenol",
+    "common": "Isoeugenol",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Hydroquinone",
+    "common": "Hydroquinone",
+    "function": "Skin-lightening agent",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Prohibited in leave-on cosmetics in the EU.",
+    "aliases": [
+      "hidroquinona"
+    ]
+  },
+  {
+    "inci": "Formaldehyde",
+    "common": "Formaldehyde",
+    "function": "Preservative (banned)",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Prohibited; known carcinogen.",
+    "aliases": [
+      "formaldehido",
+      "formol"
+    ]
+  },
+  {
+    "inci": "Mercury",
+    "common": "Mercury",
+    "function": "Preservative (banned)",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Prohibited; toxic heavy metal."
+  },
+  {
+    "inci": "Lead Acetate",
+    "common": "Lead acetate",
+    "function": "Hair colorant (banned)",
+    "annex": "II",
+    "concern": [],
+    "note": "Prohibited; neurotoxic."
+  },
+  {
+    "inci": "Hydroquinone Methyl Ether",
+    "common": "Mequinol",
+    "function": "Skin-lightening (banned)",
+    "annex": "II",
+    "concern": [],
+    "note": "Prohibited in cosmetics."
+  },
+  {
+    "inci": "Phenol",
+    "common": "Phenol",
+    "function": "Antiseptic (banned)",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Prohibited in cosmetics."
+  },
+  {
+    "inci": "Methylene Glycol",
+    "common": "Formaldehyde releaser",
+    "function": "Preservative",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "DMDM Hydantoin",
+    "common": "DMDM hydantoin",
+    "function": "Preservative (formaldehyde releaser)",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Imidazolidinyl Urea",
+    "common": "Imidazolidinyl urea",
+    "function": "Preservative (formaldehyde releaser)",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Diazolidinyl Urea",
+    "common": "Diazolidinyl urea",
+    "function": "Preservative (formaldehyde releaser)",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Triclosan",
+    "common": "Triclosan",
+    "function": "Preservative / antibacterial",
+    "annex": "V",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "BHT",
+    "common": "Butylated hydroxytoluene",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "BHA",
+    "common": "Butylated hydroxyanisole",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Mineral Oil",
+    "common": "Mineral oil (Paraffinum Liquidum)",
+    "function": "Emollient / occlusive",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ],
+    "aliases": [
+      "aceite mineral"
+    ]
+  },
+  {
+    "inci": "Paraffinum Liquidum",
+    "common": "Mineral oil",
+    "function": "Emollient / occlusive",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ],
+    "aliases": [
+      "liquid paraffin"
+    ]
+  },
+  {
+    "inci": "Petrolatum",
+    "common": "Petroleum jelly",
+    "function": "Occlusive",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ],
+    "aliases": [
+      "vaselina",
+      "petroleum jelly",
+      "vaseline"
+    ]
+  },
+  {
+    "inci": "Lanolin",
+    "common": "Lanolin",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [
+      "acne",
+      "sensitivity"
+    ],
+    "aliases": [
+      "lanolina"
+    ]
+  },
+  {
+    "inci": "Isopropyl Myristate",
+    "common": "Isopropyl myristate",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ]
+  },
+  {
+    "inci": "Coconut Oil",
+    "common": "Cocos Nucifera Oil",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ]
+  },
+  {
+    "inci": "Cocos Nucifera Oil",
+    "common": "Coconut oil",
+    "function": "Emollient",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ],
+    "aliases": [
+      "aceite de coco"
+    ]
+  },
+  {
+    "inci": "Propylene Glycol",
+    "common": "Propylene glycol",
+    "function": "Humectant / solvent",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "PEG-100 Stearate",
+    "common": "PEG-100 stearate",
+    "function": "Emulsifier",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Polysorbate 20",
+    "common": "Polysorbate 20",
+    "function": "Emulsifier / solubilizer",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Polysorbate 80",
+    "common": "Polysorbate 80",
+    "function": "Emulsifier",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "CI 77491",
+    "common": "Iron oxide red",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77492",
+    "common": "Iron oxide yellow",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77499",
+    "common": "Iron oxide black",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 19140",
+    "common": "Tartrazine (Yellow 5)",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "CI 15985",
+    "common": "Sunset Yellow (Yellow 6)",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "CI 42090",
+    "common": "Brilliant Blue (Blue 1)",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "Mica",
+    "common": "Mica",
+    "function": "Colorant / opacifier",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "ci 77019"
+    ]
+  },
+  {
+    "inci": "Talc",
+    "common": "Talc",
+    "function": "Bulking / absorbent",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "talco"
+    ]
+  },
+  {
+    "inci": "Kaolin",
+    "common": "Kaolin clay",
+    "function": "Absorbent",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Bentonite",
+    "common": "Bentonite clay",
+    "function": "Absorbent",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Caffeine",
+    "common": "Caffeine",
+    "function": "Skin conditioning",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "cafeina"
+    ]
+  },
+  {
+    "inci": "Urea",
+    "common": "Urea",
+    "function": "Humectant / keratolytic",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "carbamide"
+    ]
+  },
+  {
+    "inci": "Azelaic Acid",
+    "common": "Azelaic acid",
+    "function": "Active (brightening / anti-acne)",
+    "annex": "none",
+    "concern": [
+      "acne"
+    ],
+    "aliases": [
+      "acido azelaico"
+    ]
+  },
+  {
+    "inci": "Bakuchiol",
+    "common": "Bakuchiol",
+    "function": "Retinol alternative",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Ferulic Acid",
+    "common": "Ferulic acid",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "acido ferulico"
+    ]
+  },
+  {
+    "inci": "Sodium Ascorbyl Phosphate",
+    "common": "Vitamin C derivative",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Ascorbyl Glucoside",
+    "common": "Vitamin C derivative",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Tetrahexyldecyl Ascorbate",
+    "common": "Vitamin C derivative (THD)",
+    "function": "Antioxidant",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Snail Secretion Filtrate",
+    "common": "Snail mucin",
+    "function": "Skin conditioning",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "snail mucin",
+      "baba de caracol",
+      "mucina de caracol"
+    ]
+  },
+  {
+    "inci": "Hydrolyzed Collagen",
+    "common": "Collagen",
+    "function": "Humectant / film former",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Rosa Damascena Flower Water",
+    "common": "Rose water",
+    "function": "Skin conditioning / fragrance",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "rose water",
+      "agua de rosas"
+    ]
+  },
+  {
+    "inci": "Melaleuca Alternifolia Leaf Oil",
+    "common": "Tea tree oil",
+    "function": "Essential oil / antimicrobial",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "tea tree oil",
+      "aceite de arbol de te"
+    ]
+  },
+  {
+    "inci": "Lavandula Angustifolia Oil",
+    "common": "Lavender oil",
+    "function": "Essential oil / fragrance",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "lavender oil",
+      "aceite de lavanda"
+    ]
+  },
+  {
+    "inci": "Mentha Piperita Oil",
+    "common": "Peppermint oil",
+    "function": "Essential oil",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "peppermint oil",
+      "aceite de menta"
+    ]
+  },
+  {
+    "inci": "Citrus Limon Peel Oil",
+    "common": "Lemon peel oil",
+    "function": "Essential oil / fragrance",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Phenylethyl Resorcinol",
+    "common": "Symwhite",
+    "function": "Brightening active",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Arbutin",
+    "common": "Arbutin",
+    "function": "Brightening active",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "beta-arbutin"
+    ]
+  },
+  {
+    "inci": "Tranexamic Acid",
+    "common": "Tranexamic acid",
+    "function": "Brightening active",
+    "annex": "none",
+    "concern": [],
+    "aliases": [
+      "acido tranexamico"
+    ]
+  },
+  {
+    "inci": "Kojic Acid",
+    "common": "Kojic acid",
+    "function": "Brightening active",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "acido kojico"
+    ]
+  },
+  {
+    "inci": "Polyglutamic Acid",
+    "common": "Polyglutamic acid",
+    "function": "Humectant",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Cocoyl Isethionate",
+    "common": "SCI",
+    "function": "Surfactant (mild)",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Cocamide MEA",
+    "common": "Cocamide MEA",
+    "function": "Surfactant / thickener",
+    "annex": "none",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Phenethyl Alcohol",
+    "common": "Phenethyl alcohol",
+    "function": "Preservative / fragrance",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Ethylhexylglycerin",
+    "common": "Ethylhexylglycerin",
+    "function": "Preservative booster / emollient",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Caprylyl Glycol",
+    "common": "Caprylyl glycol",
+    "function": "Humectant / preservative booster",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "1,2-Hexanediol",
+    "common": "Hexanediol",
+    "function": "Humectant / preservative booster",
+    "annex": "none",
+    "concern": []
+  },
+  {
+    "inci": "Avene Aqua",
+    "common": "Avène thermal spring water",
+    "function": "Thermal water / solvent",
+    "concern": [],
+    "aliases": [
+      "avene thermal spring water",
+      "eau thermale avene",
+      "agua termal de avene"
+    ]
+  },
+  {
+    "inci": "Vichy Aqua",
+    "common": "Vichy volcanic water",
+    "function": "Thermal water / solvent",
+    "concern": [],
+    "aliases": [
+      "vichy thermal spa water",
+      "agua termal de vichy",
+      "vichy mineralizing water"
+    ]
+  },
+  {
+    "inci": "Uriage Thermal Water",
+    "common": "Uriage thermal spring water",
+    "function": "Thermal water / solvent",
+    "concern": [],
+    "aliases": [
+      "uriage aqua",
+      "agua termal de uriage",
+      "uriage thermal spring water"
+    ]
+  },
+  {
+    "inci": "La Roche-Posay Thermal Spring Water",
+    "common": "La Roche-Posay thermal water",
+    "function": "Thermal water / solvent",
+    "concern": [],
+    "aliases": [
+      "agua termal de la roche posay"
+    ]
+  },
+  {
+    "inci": "Nitrogen",
+    "common": "Nitrogen (propellant)",
+    "function": "Propellant",
+    "concern": []
+  },
+  {
+    "inci": "Butane",
+    "common": "Butane (propellant)",
+    "function": "Propellant",
+    "concern": []
+  },
+  {
+    "inci": "Isobutane",
+    "common": "Isobutane (propellant)",
+    "function": "Propellant",
+    "concern": []
+  },
+  {
+    "inci": "Propane",
+    "common": "Propane (propellant)",
+    "function": "Propellant",
+    "concern": []
+  },
+  {
+    "inci": "CI 77891",
+    "common": "Titanium dioxide (pigment)",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77007",
+    "common": "Ultramarines",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77742",
+    "common": "Manganese violet",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 75470",
+    "common": "Carmine (cochineal red)",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "carmine",
+      "carmin",
+      "cochineal"
+    ]
+  },
+  {
+    "inci": "CI 77163",
+    "common": "Bismuth oxychloride (pearl)",
+    "function": "Colorant / pearlescent",
+    "annex": "IV",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "bismuth oxychloride"
+    ]
+  },
+  {
+    "inci": "CI 77000",
+    "common": "Aluminum powder",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77510",
+    "common": "Ferric ferrocyanide (blue)",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77288",
+    "common": "Chromium oxide green",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77289",
+    "common": "Chromium hydroxide green",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 77120",
+    "common": "Barium sulfate",
+    "function": "Colorant / opacifier",
+    "annex": "IV",
+    "concern": []
+  },
+  {
+    "inci": "CI 15850",
+    "common": "Red 7 lake",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": [],
+    "aliases": [
+      "red 7 lake",
+      "red 6 lake"
+    ]
+  },
+  {
+    "inci": "CI 45410",
+    "common": "Red 28 lake",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": [],
+    "aliases": [
+      "red 28 lake"
+    ]
+  },
+  {
+    "inci": "CI 17200",
+    "common": "Red 33",
+    "function": "Colorant",
+    "annex": "IV",
+    "concern": [],
+    "aliases": [
+      "red 33"
+    ]
+  },
+  {
+    "inci": "Synthetic Fluorphlogopite",
+    "common": "Synthetic mica",
+    "function": "Colorant / texturizer",
+    "concern": [],
+    "aliases": [
+      "synthetic mica"
+    ]
+  },
+  {
+    "inci": "Silica",
+    "common": "Silica",
+    "function": "Absorbent / texturizer",
+    "concern": []
+  },
+  {
+    "inci": "Hydrated Silica",
+    "common": "Hydrated silica",
+    "function": "Abrasive / absorbent",
+    "concern": []
+  },
+  {
+    "inci": "Boron Nitride",
+    "common": "Boron nitride",
+    "function": "Texturizer / slip modifier",
+    "concern": []
+  },
+  {
+    "inci": "Nylon-12",
+    "common": "Nylon powder",
+    "function": "Texturizer",
+    "concern": []
+  },
+  {
+    "inci": "Polyethylene",
+    "common": "Polyethylene",
+    "function": "Film forming / texturizer",
+    "concern": [],
+    "note": "Microplastic; being phased out in the EU."
+  },
+  {
+    "inci": "Polymethyl Methacrylate",
+    "common": "PMMA powder",
+    "function": "Texturizer",
+    "concern": [],
+    "note": "Microplastic; being phased out in the EU."
+  },
+  {
+    "inci": "Isododecane",
+    "common": "Isododecane",
+    "function": "Solvent / emollient",
+    "concern": []
+  },
+  {
+    "inci": "Isohexadecane",
+    "common": "Isohexadecane",
+    "function": "Solvent / emollient",
+    "concern": []
+  },
+  {
+    "inci": "Octyldodecanol",
+    "common": "Octyldodecanol",
+    "function": "Emollient",
+    "concern": []
+  },
+  {
+    "inci": "Ethylhexyl Palmitate",
+    "common": "Ethylhexyl palmitate",
+    "function": "Emollient",
+    "concern": [
+      "acne"
+    ],
+    "note": "Comedogenic — may clog pores in acne-prone skin."
+  },
+  {
+    "inci": "Isopropyl Palmitate",
+    "common": "Isopropyl palmitate",
+    "function": "Emollient",
+    "concern": [
+      "acne"
+    ],
+    "note": "Comedogenic — may clog pores in acne-prone skin."
+  },
+  {
+    "inci": "Isopropyl Isostearate",
+    "common": "Isopropyl isostearate",
+    "function": "Emollient",
+    "concern": [
+      "acne"
+    ],
+    "note": "Comedogenic — may clog pores in acne-prone skin."
+  },
+  {
+    "inci": "Myristyl Myristate",
+    "common": "Myristyl myristate",
+    "function": "Emollient",
+    "concern": [
+      "acne"
+    ],
+    "note": "Comedogenic — may clog pores in acne-prone skin."
+  },
+  {
+    "inci": "Squalene",
+    "common": "Squalene (unstable form)",
+    "function": "Emollient",
+    "concern": [
+      "acne"
+    ]
+  },
+  {
+    "inci": "Cera Alba",
+    "common": "Beeswax",
+    "function": "Wax / emulsion stabilising",
+    "concern": [],
+    "aliases": [
+      "beeswax",
+      "cera de abejas"
+    ]
+  },
+  {
+    "inci": "Copernicia Cerifera Cera",
+    "common": "Carnauba wax",
+    "function": "Wax",
+    "concern": [],
+    "aliases": [
+      "carnauba wax",
+      "cera de carnauba"
+    ]
+  },
+  {
+    "inci": "Candelilla Cera",
+    "common": "Candelilla wax",
+    "function": "Wax",
+    "concern": [],
+    "aliases": [
+      "candelilla wax",
+      "euphorbia cerifera cera"
+    ]
+  },
+  {
+    "inci": "Cera Microcristallina",
+    "common": "Microcrystalline wax",
+    "function": "Wax",
+    "concern": [],
+    "aliases": [
+      "microcrystalline wax"
+    ]
+  },
+  {
+    "inci": "Paraffin",
+    "common": "Paraffin wax",
+    "function": "Wax / occlusive",
+    "concern": []
+  },
+  {
+    "inci": "Ozokerite",
+    "common": "Ozokerite wax",
+    "function": "Wax",
+    "concern": []
+  },
+  {
+    "inci": "Magnesium Stearate",
+    "common": "Magnesium stearate",
+    "function": "Texturizer / binding",
+    "concern": []
+  },
+  {
+    "inci": "Zinc Stearate",
+    "common": "Zinc stearate",
+    "function": "Texturizer / binding",
+    "concern": []
+  },
+  {
+    "inci": "Calcium Carbonate",
+    "common": "Chalk",
+    "function": "Absorbent / opacifying",
+    "concern": [
+      "dryness"
+    ]
+  },
+  {
+    "inci": "Aluminum Hydroxide",
+    "common": "Aluminum hydroxide",
+    "function": "Opacifying / surface modifier",
+    "concern": []
+  },
+  {
+    "inci": "Aluminum Starch Octenylsuccinate",
+    "common": "Modified starch",
+    "function": "Absorbent",
+    "concern": []
+  },
+  {
+    "inci": "Tin Oxide",
+    "common": "Tin oxide",
+    "function": "Opacifying",
+    "concern": []
+  },
+  {
+    "inci": "Triethoxycaprylylsilane",
+    "common": "Pigment coating (silane)",
+    "function": "Surface modifier",
+    "concern": []
+  },
+  {
+    "inci": "Trimethylsiloxysilicate",
+    "common": "Long-wear silicone resin",
+    "function": "Film forming",
+    "concern": []
+  },
+  {
+    "inci": "Acrylates Copolymer",
+    "common": "Acrylates copolymer",
+    "function": "Film forming",
+    "concern": []
+  },
+  {
+    "inci": "Acrylates/C10-30 Alkyl Acrylate Crosspolymer",
+    "common": "Gel-forming polymer",
+    "function": "Gel forming / viscosity controlling",
+    "concern": []
+  },
+  {
+    "inci": "Lauroyl Lysine",
+    "common": "Lauroyl lysine",
+    "function": "Texturizer / hair conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Polyacrylate",
+    "common": "Sodium polyacrylate",
+    "function": "Thickener",
+    "concern": []
+  },
+  {
+    "inci": "Polyacrylamide",
+    "common": "Polyacrylamide",
+    "function": "Film forming / thickener",
+    "concern": []
+  },
+  {
+    "inci": "Sodium C14-16 Olefin Sulfonate",
+    "common": "Olefin sulfonate",
+    "function": "Surfactant (strong)",
+    "concern": [
+      "dryness",
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Ammonium Lauryl Sulfate",
+    "common": "ALS",
+    "function": "Surfactant (strong)",
+    "concern": [
+      "dryness",
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Ammonium Laureth Sulfate",
+    "common": "ALES",
+    "function": "Surfactant (strong)",
+    "concern": [
+      "dryness"
+    ]
+  },
+  {
+    "inci": "Sodium Coco-Sulfate",
+    "common": "Sodium coco-sulfate",
+    "function": "Surfactant (strong)",
+    "concern": [
+      "dryness"
+    ]
+  },
+  {
+    "inci": "Cocamide DEA",
+    "common": "Cocamide DEA",
+    "function": "Surfactant - foam boosting",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Restricted in the EU over nitrosamine impurities."
+  },
+  {
+    "inci": "Sodium Lauroyl Sarcosinate",
+    "common": "Sarcosinate (mild)",
+    "function": "Surfactant (mild)",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Lauroyl Methyl Isethionate",
+    "common": "Gentle cleanser",
+    "function": "Surfactant (mild)",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Methyl Cocoyl Taurate",
+    "common": "Taurate (mild)",
+    "function": "Surfactant (mild)",
+    "concern": []
+  },
+  {
+    "inci": "Disodium Laureth Sulfosuccinate",
+    "common": "Sulfosuccinate (mild)",
+    "function": "Surfactant (mild)",
+    "concern": []
+  },
+  {
+    "inci": "Lauryl Glucoside",
+    "common": "Sugar-based cleanser",
+    "function": "Surfactant (mild)",
+    "concern": []
+  },
+  {
+    "inci": "Cocamidopropyl Hydroxysultaine",
+    "common": "Hydroxysultaine",
+    "function": "Surfactant (mild)",
+    "concern": []
+  },
+  {
+    "inci": "Behentrimonium Chloride",
+    "common": "Conditioning quat",
+    "function": "Hair conditioning / antistatic",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Cetrimonium Chloride",
+    "common": "Conditioning quat",
+    "function": "Hair conditioning / antistatic",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Behentrimonium Methosulfate",
+    "common": "Gentle conditioning quat",
+    "function": "Hair conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Polyquaternium-7",
+    "common": "Conditioning polymer",
+    "function": "Hair conditioning / film forming",
+    "concern": []
+  },
+  {
+    "inci": "Polyquaternium-10",
+    "common": "Conditioning polymer",
+    "function": "Hair conditioning / film forming",
+    "concern": []
+  },
+  {
+    "inci": "Guar Hydroxypropyltrimonium Chloride",
+    "common": "Conditioning guar",
+    "function": "Hair conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Amodimethicone",
+    "common": "Amino silicone",
+    "function": "Hair conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Bis-Aminopropyl Dimethicone",
+    "common": "Amino silicone",
+    "function": "Hair conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Dimethiconol",
+    "common": "Dimethiconol (silicone)",
+    "function": "Hair conditioning / emollient",
+    "concern": []
+  },
+  {
+    "inci": "Phenyl Trimethicone",
+    "common": "Shine silicone",
+    "function": "Hair conditioning / emollient",
+    "concern": []
+  },
+  {
+    "inci": "Cyclohexasiloxane",
+    "common": "D6 silicone",
+    "function": "Emollient / solvent",
+    "concern": []
+  },
+  {
+    "inci": "Cyclotetrasiloxane",
+    "common": "D4 silicone",
+    "function": "Emollient / solvent",
+    "concern": [],
+    "note": "EU-restricted silicone (environmental / reprotoxic concerns)."
+  },
+  {
+    "inci": "Hydrolyzed Keratin",
+    "common": "Hydrolyzed keratin",
+    "function": "Hair conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Hydrolyzed Wheat Protein",
+    "common": "Wheat protein",
+    "function": "Hair conditioning",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Wheat-derived; relevant if allergic to gluten."
+  },
+  {
+    "inci": "Hydrolyzed Silk",
+    "common": "Silk protein",
+    "function": "Hair conditioning / skin conditioning",
+    "concern": []
+  },
+  {
+    "inci": "p-Phenylenediamine",
+    "common": "PPD (hair dye)",
+    "function": "Hair dye",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Strong allergen in permanent hair dyes.",
+    "aliases": [
+      "ppd",
+      "paraphenylenediamine",
+      "1 4 phenylenediamine"
+    ]
+  },
+  {
+    "inci": "Toluene-2,5-Diamine Sulfate",
+    "common": "PTD (hair dye)",
+    "function": "Hair dye",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Strong allergen in permanent hair dyes."
+  },
+  {
+    "inci": "Ammonium Hydroxide",
+    "common": "Ammonia",
+    "function": "pH adjuster",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "ammonia",
+      "amoniaco"
+    ]
+  },
+  {
+    "inci": "Ethanolamine",
+    "common": "MEA (ammonia substitute)",
+    "function": "pH adjuster",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "monoethanolamine"
+    ]
+  },
+  {
+    "inci": "Hydrogen Peroxide",
+    "common": "Peroxide (developer)",
+    "function": "Oxidising",
+    "annex": "III",
+    "concern": [
+      "sensitivity",
+      "dryness"
+    ],
+    "aliases": [
+      "agua oxigenada",
+      "peroxido de hidrogeno"
+    ]
+  },
+  {
+    "inci": "Ammonium Thioglycolate",
+    "common": "Perm salt",
+    "function": "Hair waving or straightening",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Glyoxylic Acid",
+    "common": "Straightening acid",
+    "function": "Hair waving or straightening",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Zinc Pyrithione",
+    "common": "Zinc pyrithione (anti-dandruff)",
+    "function": "Anti-dandruff",
+    "annex": "II",
+    "concern": [],
+    "note": "Banned in the EU since 2022."
+  },
+  {
+    "inci": "Piroctone Olamine",
+    "common": "Piroctone olamine (anti-dandruff)",
+    "function": "Anti-dandruff",
+    "concern": []
+  },
+  {
+    "inci": "Climbazole",
+    "common": "Climbazole (anti-dandruff)",
+    "function": "Anti-dandruff",
+    "concern": []
+  },
+  {
+    "inci": "Selenium Disulfide",
+    "common": "Selenium sulfide (anti-dandruff)",
+    "function": "Anti-dandruff",
+    "annex": "III",
+    "concern": [
+      "dryness"
+    ],
+    "aliases": [
+      "selenium sulfide",
+      "selenium disulphide"
+    ]
+  },
+  {
+    "inci": "Menthol",
+    "common": "Menthol",
+    "function": "Refreshing / soothing",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "mentol"
+    ]
+  },
+  {
+    "inci": "Camphor",
+    "common": "Camphor",
+    "function": "Refreshing",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "alcanfor"
+    ]
+  },
+  {
+    "inci": "Benzophenone-3",
+    "common": "Oxybenzone",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Common allergen; under review for endocrine effects.",
+    "aliases": [
+      "oxybenzone"
+    ]
+  },
+  {
+    "inci": "Benzophenone-4",
+    "common": "Sulisobenzone",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "sulisobenzone"
+    ]
+  },
+  {
+    "inci": "Diethylamino Hydroxybenzoyl Hexyl Benzoate",
+    "common": "Uvinul A Plus",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "uvinul a plus"
+    ]
+  },
+  {
+    "inci": "Ethylhexyl Triazone",
+    "common": "Uvinul T 150",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "uvinul t 150",
+      "octyl triazone"
+    ]
+  },
+  {
+    "inci": "Methylene Bis-Benzotriazolyl Tetramethylbutylphenol",
+    "common": "Tinosorb M",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "tinosorb m",
+      "bisoctrizole"
+    ]
+  },
+  {
+    "inci": "Tris-Biphenyl Triazine",
+    "common": "Tinosorb A2B",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": []
+  },
+  {
+    "inci": "Phenylbenzimidazole Sulfonic Acid",
+    "common": "Ensulizole",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "ensulizole"
+    ]
+  },
+  {
+    "inci": "Drometrizole Trisiloxane",
+    "common": "Mexoryl XL",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "mexoryl xl"
+    ]
+  },
+  {
+    "inci": "Terephthalylidene Dicamphor Sulfonic Acid",
+    "common": "Mexoryl SX",
+    "function": "UV filter (chemical)",
+    "annex": "VI",
+    "concern": [],
+    "aliases": [
+      "mexoryl sx",
+      "ecamsule"
+    ]
+  },
+  {
+    "inci": "4-Methylbenzylidene Camphor",
+    "common": "Enzacamene",
+    "function": "UV filter (chemical)",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Banned in the EU since 2025 (endocrine concerns).",
+    "aliases": [
+      "enzacamene",
+      "4 mbc"
+    ]
+  },
+  {
+    "inci": "Butylphenyl Methylpropional",
+    "common": "Lilial",
+    "function": "Fragrance",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Banned in the EU since 2022 (reprotoxic).",
+    "aliases": [
+      "lilial",
+      "lily aldehyde"
+    ]
+  },
+  {
+    "inci": "Hydroxyisohexyl 3-Cyclohexene Carboxaldehyde",
+    "common": "Lyral",
+    "function": "Fragrance",
+    "annex": "II",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Prohibited in cosmetics.",
+    "aliases": [
+      "lyral"
+    ]
+  },
+  {
+    "inci": "Alpha-Isomethyl Ionone",
+    "common": "Fragrance allergen",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Anise Alcohol",
+    "common": "Fragrance allergen",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Benzyl Cinnamate",
+    "common": "Fragrance allergen",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Farnesol",
+    "common": "Fragrance allergen",
+    "function": "Fragrance",
+    "annex": "III",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Declarable fragrance allergen."
+  },
+  {
+    "inci": "Retinal",
+    "common": "Retinaldehyde",
+    "function": "Anti-aging active",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "retinaldehyde"
+    ]
+  },
+  {
+    "inci": "Hydroxypinacolone Retinoate",
+    "common": "Granactive retinoid",
+    "function": "Anti-aging active",
+    "concern": [],
+    "aliases": [
+      "granactive retinoid"
+    ]
+  },
+  {
+    "inci": "Gluconolactone",
+    "common": "PHA",
+    "function": "Exfoliant",
+    "concern": []
+  },
+  {
+    "inci": "Lactobionic Acid",
+    "common": "PHA",
+    "function": "Exfoliant",
+    "concern": []
+  },
+  {
+    "inci": "Mandelic Acid",
+    "common": "Mandelic acid (AHA)",
+    "function": "Exfoliant",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "acido mandelico"
+    ]
+  },
+  {
+    "inci": "Malic Acid",
+    "common": "Malic acid (AHA)",
+    "function": "Exfoliant / pH adjuster",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Tartaric Acid",
+    "common": "Tartaric acid (AHA)",
+    "function": "Exfoliant / pH adjuster",
+    "concern": [
+      "sensitivity"
+    ]
+  },
+  {
+    "inci": "Capryloyl Salicylic Acid",
+    "common": "LHA",
+    "function": "Exfoliant",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "lha"
+    ]
+  },
+  {
+    "inci": "Succinic Acid",
+    "common": "Succinic acid",
+    "function": "Anti-acne active",
+    "concern": []
+  },
+  {
+    "inci": "Zinc PCA",
+    "common": "Zinc PCA",
+    "function": "Anti-sebum / humectant",
+    "concern": []
+  },
+  {
+    "inci": "3-O-Ethyl Ascorbic Acid",
+    "common": "Vitamin C derivative",
+    "function": "Brightening active / antioxidant",
+    "concern": [],
+    "aliases": [
+      "ethyl ascorbic acid"
+    ]
+  },
+  {
+    "inci": "Ascorbyl Tetraisopalmitate",
+    "common": "Vitamin C derivative (oil)",
+    "function": "Brightening active / antioxidant",
+    "concern": []
+  },
+  {
+    "inci": "Magnesium Ascorbyl Phosphate",
+    "common": "Vitamin C derivative",
+    "function": "Brightening active / antioxidant",
+    "concern": []
+  },
+  {
+    "inci": "Alpha-Arbutin",
+    "common": "Alpha-arbutin",
+    "function": "Brightening active",
+    "concern": [],
+    "aliases": [
+      "alfa arbutina"
+    ]
+  },
+  {
+    "inci": "Ectoin",
+    "common": "Ectoin",
+    "function": "Skin protecting / humectant",
+    "concern": []
+  },
+  {
+    "inci": "Copper Tripeptide-1",
+    "common": "Copper peptide (GHK-Cu)",
+    "function": "Peptide",
+    "concern": [],
+    "aliases": [
+      "ghk cu",
+      "copper peptide"
+    ]
+  },
+  {
+    "inci": "Palmitoyl Pentapeptide-4",
+    "common": "Matrixyl",
+    "function": "Peptide",
+    "concern": [],
+    "aliases": [
+      "matrixyl"
+    ]
+  },
+  {
+    "inci": "Palmitoyl Tripeptide-1",
+    "common": "Peptide",
+    "function": "Peptide",
+    "concern": []
+  },
+  {
+    "inci": "Palmitoyl Tetrapeptide-7",
+    "common": "Peptide",
+    "function": "Peptide",
+    "concern": []
+  },
+  {
+    "inci": "Acetyl Hexapeptide-8",
+    "common": "Argireline",
+    "function": "Peptide",
+    "concern": [],
+    "aliases": [
+      "argireline"
+    ]
+  },
+  {
+    "inci": "Galactomyces Ferment Filtrate",
+    "common": "Galactomyces ferment",
+    "function": "Ferment / skin conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Bifida Ferment Lysate",
+    "common": "Bifida ferment",
+    "function": "Ferment / skin conditioning",
+    "concern": []
+  },
+  {
+    "inci": "Ceramide AP",
+    "common": "Ceramide",
+    "function": "Skin barrier",
+    "concern": []
+  },
+  {
+    "inci": "Ceramide EOP",
+    "common": "Ceramide",
+    "function": "Skin barrier",
+    "concern": []
+  },
+  {
+    "inci": "Ceramide NG",
+    "common": "Ceramide",
+    "function": "Skin barrier",
+    "concern": []
+  },
+  {
+    "inci": "Phytosphingosine",
+    "common": "Phytosphingosine",
+    "function": "Skin barrier",
+    "concern": []
+  },
+  {
+    "inci": "Argania Spinosa Kernel Oil",
+    "common": "Argan oil",
+    "function": "Emollient / hair conditioning",
+    "concern": [],
+    "aliases": [
+      "argan oil",
+      "aceite de argan"
+    ]
+  },
+  {
+    "inci": "Ricinus Communis Seed Oil",
+    "common": "Castor oil",
+    "function": "Emollient",
+    "concern": [],
+    "aliases": [
+      "castor oil",
+      "aceite de ricino"
+    ]
+  },
+  {
+    "inci": "Olea Europaea Fruit Oil",
+    "common": "Olive oil",
+    "function": "Emollient",
+    "concern": [
+      "acne"
+    ],
+    "aliases": [
+      "olive oil",
+      "aceite de oliva"
+    ]
+  },
+  {
+    "inci": "Persea Gratissima Oil",
+    "common": "Avocado oil",
+    "function": "Emollient",
+    "concern": [],
+    "aliases": [
+      "avocado oil",
+      "aceite de palta",
+      "aceite de aguacate"
+    ]
+  },
+  {
+    "inci": "Prunus Amygdalus Dulcis Oil",
+    "common": "Sweet almond oil",
+    "function": "Emollient",
+    "concern": [],
+    "aliases": [
+      "sweet almond oil",
+      "aceite de almendras"
+    ]
+  },
+  {
+    "inci": "Vitis Vinifera Seed Oil",
+    "common": "Grapeseed oil",
+    "function": "Emollient / antioxidant",
+    "concern": [],
+    "aliases": [
+      "grapeseed oil",
+      "aceite de uva"
+    ]
+  },
+  {
+    "inci": "Rosa Canina Fruit Oil",
+    "common": "Rosehip oil",
+    "function": "Emollient / antioxidant",
+    "concern": [],
+    "aliases": [
+      "rosehip oil",
+      "aceite de rosa mosqueta"
+    ]
+  },
+  {
+    "inci": "Macadamia Integrifolia Seed Oil",
+    "common": "Macadamia oil",
+    "function": "Emollient",
+    "concern": [],
+    "aliases": [
+      "macadamia oil"
+    ]
+  },
+  {
+    "inci": "Oryza Sativa Bran Oil",
+    "common": "Rice bran oil",
+    "function": "Emollient",
+    "concern": [],
+    "aliases": [
+      "rice bran oil",
+      "aceite de arroz"
+    ]
+  },
+  {
+    "inci": "Mel",
+    "common": "Honey",
+    "function": "Humectant / soothing",
+    "concern": [],
+    "aliases": [
+      "honey",
+      "miel"
+    ]
+  },
+  {
+    "inci": "Avena Sativa Kernel Extract",
+    "common": "Oat extract",
+    "function": "Soothing / skin protecting",
+    "concern": [],
+    "aliases": [
+      "oat extract",
+      "colloidal oatmeal",
+      "avena"
+    ]
+  },
+  {
+    "inci": "Calendula Officinalis Flower Extract",
+    "common": "Calendula",
+    "function": "Soothing",
+    "concern": [],
+    "aliases": [
+      "calendula"
+    ]
+  },
+  {
+    "inci": "Chamomilla Recutita Flower Extract",
+    "common": "Chamomile",
+    "function": "Soothing",
+    "concern": [],
+    "aliases": [
+      "chamomile extract",
+      "manzanilla"
+    ]
+  },
+  {
+    "inci": "Hamamelis Virginiana Leaf Extract",
+    "common": "Witch hazel",
+    "function": "Astringent / tonic",
+    "concern": [
+      "dryness",
+      "sensitivity"
+    ],
+    "aliases": [
+      "witch hazel",
+      "hamamelis"
+    ]
+  },
+  {
+    "inci": "Rosmarinus Officinalis Leaf Oil",
+    "common": "Rosemary oil",
+    "function": "Essential oil",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "rosemary oil",
+      "aceite de romero"
+    ]
+  },
+  {
+    "inci": "Eucalyptus Globulus Leaf Oil",
+    "common": "Eucalyptus oil",
+    "function": "Essential oil",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "eucalyptus oil",
+      "aceite de eucalipto"
+    ]
+  },
+  {
+    "inci": "Citrus Aurantium Dulcis Peel Oil",
+    "common": "Sweet orange oil",
+    "function": "Essential oil",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Photosensitizing citrus oil — avoid sun right after use.",
+    "aliases": [
+      "sweet orange oil",
+      "aceite de naranja"
+    ]
+  },
+  {
+    "inci": "Citrus Aurantium Bergamia Fruit Oil",
+    "common": "Bergamot oil",
+    "function": "Essential oil",
+    "concern": [
+      "sensitivity"
+    ],
+    "note": "Photosensitizing citrus oil — avoid sun right after use.",
+    "aliases": [
+      "bergamot oil",
+      "aceite de bergamota"
+    ]
+  },
+  {
+    "inci": "Pelargonium Graveolens Flower Oil",
+    "common": "Geranium oil",
+    "function": "Essential oil",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "geranium oil"
+    ]
+  },
+  {
+    "inci": "Cananga Odorata Flower Oil",
+    "common": "Ylang-ylang oil",
+    "function": "Essential oil",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "ylang ylang oil"
+    ]
+  },
+  {
+    "inci": "Propolis Extract",
+    "common": "Propolis",
+    "function": "Soothing / antimicrobial",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "propoleo"
+    ]
+  },
+  {
+    "inci": "Alcohol",
+    "common": "Ethanol",
+    "function": "Solvent / astringent",
+    "concern": [
+      "dryness",
+      "sensitivity"
+    ],
+    "aliases": [
+      "ethanol",
+      "ethyl alcohol",
+      "etanol"
+    ]
+  },
+  {
+    "inci": "Isopropyl Alcohol",
+    "common": "Isopropyl alcohol",
+    "function": "Solvent / astringent",
+    "concern": [
+      "dryness"
+    ],
+    "aliases": [
+      "isopropanol",
+      "alcohol isopropilico"
+    ]
+  },
+  {
+    "inci": "Hexylene Glycol",
+    "common": "Hexylene glycol",
+    "function": "Solvent / humectant",
+    "concern": []
+  },
+  {
+    "inci": "Dipropylene Glycol",
+    "common": "Dipropylene glycol",
+    "function": "Solvent / humectant",
+    "concern": []
+  },
+  {
+    "inci": "Trehalose",
+    "common": "Trehalose (sugar)",
+    "function": "Humectant",
+    "concern": []
+  },
+  {
+    "inci": "Betaine",
+    "common": "Betaine",
+    "function": "Humectant",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Lactate",
+    "common": "Sodium lactate",
+    "function": "Humectant / pH adjuster",
+    "concern": []
+  },
+  {
+    "inci": "Saccharide Isomerate",
+    "common": "Plant-sugar hydrator",
+    "function": "Humectant",
+    "concern": []
+  },
+  {
+    "inci": "Hydroxyethylcellulose",
+    "common": "Cellulose thickener",
+    "function": "Thickener",
+    "concern": []
+  },
+  {
+    "inci": "Sclerotium Gum",
+    "common": "Sclerotium gum",
+    "function": "Thickener",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Chloride",
+    "common": "Salt",
+    "function": "Viscosity controlling",
+    "concern": [],
+    "aliases": [
+      "sal",
+      "sea salt",
+      "maris sal"
+    ]
+  },
+  {
+    "inci": "Magnesium Sulfate",
+    "common": "Epsom salt",
+    "function": "Viscosity controlling",
+    "concern": []
+  },
+  {
+    "inci": "Sodium Bicarbonate",
+    "common": "Baking soda",
+    "function": "pH adjuster / deodorant",
+    "concern": [
+      "sensitivity"
+    ],
+    "aliases": [
+      "baking soda",
+      "bicarbonato de sodio"
+    ]
+  },
+  {
+    "inci": "Sulfur",
+    "common": "Sulfur",
+    "function": "Anti-acne active",
+    "annex": "III",
+    "concern": [
+      "dryness"
+    ],
+    "aliases": [
+      "azufre"
+    ]
+  },
+  {
+    "inci": "Charcoal Powder",
+    "common": "Activated charcoal",
+    "function": "Absorbent",
+    "concern": [],
+    "aliases": [
+      "activated charcoal",
+      "carbon activado"
+    ]
+  },
+  {
+    "inci": "Montmorillonite",
+    "common": "Clay",
+    "function": "Absorbent",
+    "concern": [
+      "dryness"
+    ]
+  },
+  {
+    "inci": "Illite",
+    "common": "Green clay",
+    "function": "Absorbent",
+    "concern": [
+      "dryness"
+    ]
+  },
+  {
+    "inci": "Aluminum Chlorohydrate",
+    "common": "Antiperspirant salt",
+    "function": "Antiperspirant",
+    "concern": []
+  },
+  {
+    "inci": "Aluminum Zirconium Tetrachlorohydrex GLY",
+    "common": "Antiperspirant salt",
+    "function": "Antiperspirant",
+    "concern": []
+  }
 ]

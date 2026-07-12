@@ -21,6 +21,9 @@ export const es = {
   'banner.watchlist.one': '⚠ 1 ingrediente de tu lista de vigilados',
   'banner.personal': '★ {n} ingredientes relevantes para tu perfil de piel',
   'banner.personal.one': '★ 1 ingrediente relevante para tu perfil de piel',
+  'banner.score': 'Puntaje',
+  'banner.scoreHint':
+    'Puntaje 1-100 según el riesgo de cada ingrediente, sus señales de alerta y su concentración (orden INCI)',
 
   // Tarjeta de ingrediente
   'ingcard.onWatchlist': 'En tu lista de vigilados',
@@ -30,9 +33,10 @@ export const es = {
   'ingcard.removeWatch': 'Quitar de vigilados',
   'ingcard.personal': 'Relevante para tu perfil de piel',
   'ingcard.topConcentration': 'Entre los primeros ingredientes — mayor concentración',
+  'ingcard.scoreHint': 'Puntaje 1-100 del ingrediente — más alto es más suave',
 
   // Inicio
-  'home.tagline': 'Sabé qué hay en tu skincare',
+  'home.tagline': 'Sabé qué hay en tus cosméticos — skincare, maquillaje y pelo',
   'home.greet': 'Hola {name} 👋',
   'home.cta': 'Escanear un producto',
   'home.ctaSub': 'Apuntá la cámara al código de barras',
@@ -193,6 +197,11 @@ export const es = {
   'onb.concernsSub': 'Seleccioná todas las que apliquen.',
   'onb.finish': 'Completar',
   'onb.skip': 'Omitir por ahora',
+  'onb.accountQ': '¿Guardar tus análisis en la nube?',
+  'onb.accountSub':
+    'Iniciá sesión para respaldar tu historial y sincronizarlo entre dispositivos. También podés hacerlo más adelante desde tu perfil.',
+  'onb.signIn': 'Iniciar sesión o crear cuenta',
+  'onb.guest': 'Continuar como invitado',
 
   // Auth
   'auth.welcome': 'Bienvenido de nuevo',

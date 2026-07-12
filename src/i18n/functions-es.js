@@ -129,6 +129,11 @@ export const FUNCTIONS_ES = {
   antiseptic: 'Antiséptico',
   'hair dye': 'Tinte capilar',
   antibacterial: 'Antibacteriano',
+  'thermal water': 'Agua termal',
+  texturizer: 'Texturizante',
+  wax: 'Cera',
+  peptide: 'Péptido',
+  ferment: 'Fermento',
 }
 
 // Notas curadas del overlay (12 textos fijos en el dataset). Coincidencia
@@ -150,4 +155,25 @@ export const NOTES_ES = {
   'Strong contact allergen.': 'Alérgeno de contacto fuerte.',
   'Undisclosed mixture; leading cause of cosmetic allergy.':
     'Mezcla no declarada; principal causa de alergia cosmética.',
+  'Microplastic; being phased out in the EU.':
+    'Microplástico; en retirada progresiva en la UE.',
+  'Comedogenic — may clog pores in acne-prone skin.':
+    'Comedogénico — puede tapar poros en piel propensa al acné.',
+  'Restricted in the EU over nitrosamine impurities.':
+    'Restringido en la UE por impurezas de nitrosaminas.',
+  'EU-restricted silicone (environmental / reprotoxic concerns).':
+    'Silicona restringida en la UE (preocupaciones ambientales / reprotóxicas).',
+  'Strong allergen in permanent hair dyes.':
+    'Alérgeno fuerte en tintes de pelo permanentes.',
+  'Banned in the EU since 2022.': 'Prohibido en la UE desde 2022.',
+  'Banned in the EU since 2022 (reprotoxic).':
+    'Prohibido en la UE desde 2022 (tóxico para la reproducción).',
+  'Banned in the EU since 2025 (endocrine concerns).':
+    'Prohibido en la UE desde 2025 (efectos endocrinos).',
+  'Common allergen; under review for endocrine effects.':
+    'Alérgeno común; en revisión por efectos endocrinos.',
+  'Photosensitizing citrus oil — avoid sun right after use.':
+    'Aceite cítrico fotosensibilizante — evitá el sol justo después de usarlo.',
+  'Wheat-derived; relevant if allergic to gluten.':
+    'Derivado del trigo; relevante si tenés alergia al gluten.',
 }

@@ -89,4 +89,33 @@ describe('parseInciList', () => {
     expect(tokens[0].position).toBe(1)
     expect(tokens[1].position).toBe(2)
   })
+
+  it('does not split chemical numbering commas ("1,2-Hexanediol")', () => {
+    const tokens = parseInciList('Aqua, 1,2-Hexanediol, Glycerin')
+    expect(tokens.map((t) => t.norm)).toEqual(['aqua', '1 2 hexanediol', 'glycerin'])
+    expect(tokens[1].display).toBe('1,2-Hexanediol')
+  })
+
+  it('unwraps makeup "may contain / +/-" colorant blocks instead of dropping them', () => {
+    const tokens = parseInciList('Mica, Talc [+/- CI 77891, CI 77491], Parfum')
+    expect(tokens.map((t) => t.norm)).toEqual([
+      'mica',
+      'talc',
+      'ci 77891',
+      'ci 77491',
+      'parfum',
+    ])
+  })
+
+  it('unwraps "MAY CONTAIN:" / "PUEDE CONTENER:" pigment lists', () => {
+    const tokens = parseInciList('Dimethicone. May Contain: CI 77007, CI 77742')
+    expect(tokens.map((t) => t.norm)).toContain('ci 77007')
+    const es = parseInciList('Mica, Puede contener: CI 77491')
+    expect(es.map((t) => t.norm)).toEqual(['mica', 'ci 77491'])
+  })
+
+  it('still drops non-ingredient bracket noise (batch codes)', () => {
+    const tokens = parseInciList('Aqua, Glycerin [B1234]')
+    expect(tokens.map((t) => t.norm)).toEqual(['aqua', 'glycerin'])
+  })
 })

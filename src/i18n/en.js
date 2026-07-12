@@ -21,6 +21,9 @@ export const en = {
   'banner.watchlist.one': '⚠ 1 ingredient on your watchlist',
   'banner.personal': '★ {n} ingredients relevant to your skin profile',
   'banner.personal.one': '★ 1 ingredient relevant to your skin profile',
+  'banner.score': 'Score',
+  'banner.scoreHint':
+    "1-100 score from each ingredient's risk level, concern flags and concentration (INCI order)",
 
   // Ingredient card
   'ingcard.onWatchlist': 'On your watchlist',
@@ -30,9 +33,10 @@ export const en = {
   'ingcard.removeWatch': 'Remove from watchlist',
   'ingcard.personal': 'Relevant to your skin profile',
   'ingcard.topConcentration': 'Among the first ingredients — higher concentration',
+  'ingcard.scoreHint': '1-100 ingredient score — higher is gentler',
 
   // Home
-  'home.tagline': "Know what's in your skincare",
+  'home.tagline': "Know what's in your cosmetics — skincare, makeup & hair",
   'home.greet': 'Hi {name} 👋',
   'home.cta': 'Scan a Product',
   'home.ctaSub': 'Point your camera at the barcode',
@@ -193,6 +197,11 @@ export const en = {
   'onb.concernsSub': 'Select all that apply — they coexist.',
   'onb.finish': 'Complete Setup',
   'onb.skip': 'Skip for now',
+  'onb.accountQ': 'Save your scans in the cloud?',
+  'onb.accountSub':
+    'Sign in to back up your history and sync it across devices. You can also do this later from your profile.',
+  'onb.signIn': 'Sign in or create account',
+  'onb.guest': 'Continue as guest',
 
   // Auth
   'auth.welcome': 'Welcome back',
