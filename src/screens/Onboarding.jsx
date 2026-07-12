@@ -42,11 +42,14 @@ export default function Onboarding() {
   return (
     <div className="onb">
       {step > 0 && (
-        <div className="onb__progress">
-          {Array.from({ length: TOTAL }).map((_, i) => (
-            <span key={i} className={`onb__seg ${i < step ? 'is-done' : ''}`} />
-          ))}
-        </div>
+        <>
+          <div className="onb__progress">
+            {Array.from({ length: TOTAL }).map((_, i) => (
+              <span key={i} className={`onb__seg ${i < step ? 'is-done' : ''}`} />
+            ))}
+          </div>
+          <span className="onb__stepcount faint">{t('onb.step', { x: step, y: TOTAL })}</span>
+        </>
       )}
 
       <div className="onb__body">
@@ -95,6 +98,7 @@ export default function Onboarding() {
                   key={id}
                   className={`onb__card ${skinType === id ? 'is-sel' : ''}`}
                   onClick={() => setSkinType(id)}
+                  aria-pressed={skinType === id}
                 >
                   <div className="onb__card-main">
                     <strong>{t(`skin.${id}`)}</strong>
@@ -117,6 +121,7 @@ export default function Onboarding() {
                   key={id}
                   className={`onb__chip ${concerns.includes(id) ? 'is-sel' : ''}`}
                   onClick={() => toggleConcern(id)}
+                  aria-pressed={concerns.includes(id)}
                 >
                   {t(`concern.${id}`)}
                 </button>

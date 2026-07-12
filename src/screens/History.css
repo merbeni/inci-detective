@@ -12,11 +12,22 @@
 
 .history__list { display: flex; flex-direction: column; gap: 8px; }
 .history__item {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: stretch;
   background: var(--surface); border-radius: var(--radius-sm);
-  padding: 13px 14px; box-shadow: var(--shadow-sm); text-align: left;
+  box-shadow: var(--shadow-sm);
 }
-.history__item:active { transform: scale(0.99); }
+.history__main {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px;
+  padding: 13px 0 13px 14px; text-align: left; background: none;
+}
+.history__main:active { transform: scale(0.99); }
+.history__del {
+  display: grid; place-items: center; padding: 0 14px;
+  color: var(--ink-faint); background: none;
+  font-size: 12px; font-weight: 700; white-space: nowrap;
+  transition: color 0.15s;
+}
+.history__del.is-armed { color: var(--alert); }
 .history__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .history__name { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .history__brand { font-size: 12px; color: var(--ink-soft); }

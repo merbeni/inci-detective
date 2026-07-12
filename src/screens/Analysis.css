@@ -4,7 +4,8 @@
 .analysis__titles { flex: 1; min-width: 0; }
 .analysis__titles h1 { font-size: 19px; line-height: 1.25; }
 .analysis__titles span { font-size: 13px; }
-.analysis__del { color: var(--ink-faint); padding: 6px; }
+.analysis__del { color: var(--ink-soft); font-size: 12px; font-weight: 700; white-space: nowrap; padding: 6px; }
+.analysis__del.is-armed { color: var(--alert-strong); }
 
 .analysis__actions { display: flex; gap: 10px; margin-bottom: 16px; }
 .analysis__actions .btn { flex: 1; padding: 13px; }
@@ -31,20 +32,29 @@
 .analysis__list { display: flex; flex-direction: column; gap: 9px; }
 .analysis__list .eyebrow { margin-bottom: 2px; }
 
-/* Preview mode: required name + explicit save before anything hits history. */
+/* Preview mode: required name + optional brand + explicit save before
+   anything hits history. Stacked labels/inputs, same spacing rhythm as the
+   manual entry form. */
 .analysis__save {
   margin-bottom: 16px;
   padding: 14px;
-}
-.analysis__save-row {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 6px;
 }
-.analysis__save-row .input {
-  flex: 1;
-  min-width: 0;
+.analysis__save .btn {
+  margin-top: 6px;
 }
 .analysis__save-hint {
-  margin: 8px 0 0;
+  margin: 2px 0 0;
   font-size: 12px;
 }
+
+/* Open Beauty Facts contribution opt-in, shown between the brand input and
+   the Save button (only when the scan came from OCR/manual against a barcode). */
+.analysis__obf {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; color: var(--ink-soft);
+}
+.analysis__obf input { accent-color: var(--rose); }
+.analysis__obf-hint { font-size: 12px; margin: 0; }

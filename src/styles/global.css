@@ -33,6 +33,12 @@ input {
   font-family: inherit;
 }
 
+:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 h1, h2, h3 {
   margin: 0;
   font-weight: 800;
@@ -127,10 +133,10 @@ h1, h2, h3 {
   font-size: 12px;
   font-weight: 700;
 }
-.badge--safe { background: var(--safe-bg); color: var(--safe); }
-.badge--caution { background: var(--caution-bg); color: #b5703f; }
-.badge--alert { background: var(--alert-bg); color: var(--alert); }
-.badge--unknown { background: var(--unknown-bg); color: var(--unknown); }
+.badge--safe { background: var(--safe-bg); color: var(--safe-strong); }
+.badge--caution { background: var(--caution-bg); color: var(--caution-strong); }
+.badge--alert { background: var(--alert-bg); color: var(--alert-strong); }
+.badge--unknown { background: var(--unknown-bg); color: var(--unknown-strong); }
 
 .dot {
   width: 8px; height: 8px; border-radius: 50%; display: inline-block;

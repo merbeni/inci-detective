@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pencil, Moon, Sparkles, Database, Check, Cloud, CloudOff, RefreshCw, LogOut, Languages } from 'lucide-react'
+import { Pencil, Moon, Sparkles, Check, Cloud, CloudOff, RefreshCw, LogOut, Languages } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { db } from '../db/db.js'
 import { datasetMeta } from '../core/classifier.js'
@@ -194,17 +194,25 @@ export default function Profile() {
         )}
       </section>
 
-      <section className="card profile__section profile__dataset">
-        <Database size={18} className="faint" />
-        <div>
-          <strong>{t('profile.dataset', { v: datasetMeta.version })}</strong>
-          <div className="faint">
-            {t('profile.datasetSub', { n: datasetMeta.count, d: datasetMeta.generatedAt })}
-          </div>
-        </div>
-      </section>
+      <p className="faint profile__dataset">{datasetLine()}</p>
     </div>
   )
+}
+
+// "Analizamos con una base de 28.700 ingredientes · actualizada el 11 de julio de 2026"
+function datasetLine() {
+  const locale = getLang() === 'es' ? 'es-AR' : 'en-US'
+  // generatedAt is "YYYY-MM-DD"; parse the parts so the date can't shift a day
+  // when the device timezone is behind UTC.
+  const [y, m, d] = datasetMeta.generatedAt.split('-').map(Number)
+  return t('profile.datasetLine', {
+    n: datasetMeta.count.toLocaleString(locale),
+    d: new Date(y, m - 1, d).toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }),
+  })
 }
 
 function Row({ icon, label, sub, children }) {

@@ -63,6 +63,7 @@ export default function Watchlist() {
         <input
           className="watchlist__input"
           placeholder={t('watchlist.search')}
+          aria-label={t('watchlist.search')}
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />

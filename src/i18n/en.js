@@ -47,6 +47,18 @@ export const en = {
   'home.ingredients': '{n} ingredients',
   'home.ingredients.one': '1 ingredient',
 
+  // Product search
+  'home.search': 'Search by product or brand',
+  'search.title': 'Search products',
+  'search.placeholder': 'Product or brand — e.g. CeraVe',
+  'search.hint': 'Type at least 3 letters to search Open Beauty Facts and the community catalogue.',
+  'search.empty': 'No results. Try fewer words or scan the barcode.',
+  'search.offline': 'Offline — search needs a connection.',
+  'search.hasIngredients': 'Has ingredients',
+  'search.noIngredients': 'No ingredients',
+  'search.community': 'Community',
+  'search.failed': 'Could not analyze that product.',
+
   // Scan
   'scan.point': 'Point at a barcode',
   'scan.found': 'Found {code} — looking up…',
@@ -83,6 +95,8 @@ export const en = {
   'manual.lookupFailed': 'Lookup failed — enter ingredients',
   'manual.nameLabel': 'Product name (optional)',
   'manual.namePlaceholder': 'e.g. Hydrating Serum',
+  'manual.brandLabel': 'Brand (optional)',
+  'manual.brandPlaceholder': 'e.g. La Roche-Posay',
   'manual.listLabel': 'Ingredient list (INCI)',
   'manual.ocrTooltip': 'Scan the label with your camera',
   'manual.ocrBusy': 'Reading…',
@@ -133,11 +147,17 @@ export const en = {
   'analysis.saved': 'Saved to your history',
   'analysis.saveFailed': 'Could not save — try again',
 
+  // Open Beauty Facts contribution
+  'obf.share': 'Share on Open Beauty Facts',
+  'obf.shareHint': 'Public open cosmetics database — helps others find this product.',
+  'obf.thanks': 'Thanks! Product sent to Open Beauty Facts',
+
   // History
   'history.title': 'Scan history',
   'history.search': 'Search by product or brand',
   'history.empty': 'No scans yet.',
   'history.noMatches': 'No matches found.',
+  'history.confirm': 'Delete?',
   'date.today': 'Today',
   'date.yesterday': 'Yesterday',
   'date.daysAgo': '{n} days ago',
@@ -181,12 +201,12 @@ export const en = {
   'profile.keySaved': 'API key saved',
   'profile.keyHint':
     'Bring your own key from Google AI Studio so your usage never hits shared limits.',
-  'profile.dataset': 'CosIng dataset v{v}',
-  'profile.datasetSub': '{n} ingredients · built {d}',
+  'profile.datasetLine': 'Analyses run on a database of {n} ingredients · updated {d}',
 
   // Onboarding
   'onb.welcome': "Let's personalize your experience so your scans match your skin.",
   'onb.start': 'Get Started',
+  'onb.step': 'Step {x} of {y}',
   'onb.nameQ': "What's your name?",
   'onb.nameSub': "We'll use it to personalize the app.",
   'onb.namePlaceholder': 'Your name',
@@ -236,6 +256,10 @@ export const en = {
   'aiError.badRequest': 'The AI request was rejected — try again or re-take the photo.',
   'aiError.default': 'AI request failed — please try again.',
 
+  // General errors (ErrorBoundary)
+  'error.loadFailed': 'This screen failed to load.',
+  'error.reload': 'Reload',
+
   // Regulatory annexes (CosIng)
   'annex.II': 'Annex II — prohibited in cosmetics',
   'annex.III': 'Annex III — allowed with restrictions',
@@ -243,6 +267,16 @@ export const en = {
   'annex.V': 'Annex V — allowed preservative (with conditions)',
   'annex.VI': 'Annex VI — allowed UV filter (with conditions)',
   'annex.none': 'Not regulated / generally recognized',
+
+  // Product category context (see core/category.js)
+  'context.uvExpected': 'UV filter — the expected active in sun protection',
+  'context.preservative': 'Approved preservative — normal and necessary in water-based products',
+  'context.colorantExpected': 'Approved pigment — expected in makeup',
+  'context.rinseoff': 'Rinse-off product — skin contact is brief',
+  'category.line': 'Evaluated as {cat}',
+  'category.sunscreen': 'sunscreen',
+  'category.makeup': 'makeup',
+  'category.rinseoff': 'rinse-off product',
 
   // Skin types
   'skin.normal': 'Normal',

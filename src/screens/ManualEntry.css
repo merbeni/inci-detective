@@ -6,7 +6,7 @@
 
 .manual__notice {
   background: var(--caution-bg);
-  color: #b5703f;
+  color: var(--caution-strong);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
   font-size: 13px;

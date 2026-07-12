@@ -4,9 +4,9 @@
   box-shadow: var(--shadow-sm);
   margin-bottom: 16px;
 }
-.riskbanner--safe { background: var(--safe-bg); color: var(--safe); }
-.riskbanner--caution { background: var(--caution-bg); color: #b5703f; }
-.riskbanner--alert { background: var(--alert-bg); color: var(--alert); }
+.riskbanner--safe { background: var(--safe-bg); color: var(--safe-strong); }
+.riskbanner--caution { background: var(--caution-bg); color: var(--caution-strong); }
+.riskbanner--alert { background: var(--alert-bg); color: var(--alert-strong); }
 
 .riskbanner__head {
   display: flex;
@@ -40,9 +40,9 @@
   letter-spacing: 0.04em;
   color: var(--ink-soft);
 }
-.riskbanner__score--safe strong, .riskbanner__score--safe > span { color: var(--safe); }
-.riskbanner__score--caution strong, .riskbanner__score--caution > span { color: #b5703f; }
-.riskbanner__score--alert strong, .riskbanner__score--alert > span { color: var(--alert); }
+.riskbanner__score--safe strong, .riskbanner__score--safe > span { color: var(--safe-strong); }
+.riskbanner__score--caution strong, .riskbanner__score--caution > span { color: var(--caution-strong); }
+.riskbanner__score--alert strong, .riskbanner__score--alert > span { color: var(--alert-strong); }
 
 .riskbanner__counts {
   display: grid;
@@ -62,10 +62,17 @@
 .riskbanner__count strong { font-size: 18px; color: var(--ink); }
 .riskbanner__count span:last-child { font-size: 11px; color: var(--ink-soft); font-weight: 700; }
 
+/* Detected product category (see category.js) — a soft aside, not a flag. */
+.riskbanner__category {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
 .riskbanner__watch {
   margin-top: 12px;
   background: var(--surface);
-  color: var(--alert);
+  color: var(--alert-strong);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   font-size: 13px;

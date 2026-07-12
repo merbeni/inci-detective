@@ -9,16 +9,22 @@
   --cream-deep: #fbeee8;
   --lavender: #c4a8d4;
   --lavender-soft: #ece2f3;
+  --lavender-strong: #7b5a94;
 
-  /* Risk semaphore (pastel) */
-  --safe: #7cae7a;
-  --safe-bg: #e7f1e6;
-  --caution: #e8a87c;
-  --caution-bg: #fbeadd;
-  --alert: #d4737f;
-  --alert-bg: #f9e3e6;
-  --unknown: #b8a99f;
-  --unknown-bg: #f0e9e4;
+  /* Risk semaphore — unambiguous and clearly distinct from the brand rose.
+     Base = fills/dots/bars, -strong = text/icons (AA on -bg), -bg = surfaces. */
+  --safe: #4a9d5f;
+  --safe-strong: #2e7d46;
+  --safe-bg: #e4f2e7;
+  --caution: #e39a3b;
+  --caution-strong: #96660f;
+  --caution-bg: #fdf0da;
+  --alert: #d94848;
+  --alert-strong: #b02e2e;
+  --alert-bg: #fbe3e3;
+  --unknown: #8f8f98;
+  --unknown-strong: #6b6b74;
+  --unknown-bg: #eeedf1;
 
   /* Neutrals */
   --ink: #3a2f31;
@@ -48,11 +54,20 @@
   --ink-faint: #8e7e7e;
   --line: #3a2f31;
   --rose-soft: #5a3b44;
-  --safe-bg: #2a3a2a;
-  --caution-bg: #3d3025;
-  --alert-bg: #3d2a2d;
-  --unknown-bg: #332c29;
+  --safe: #7ec98b;
+  --safe-strong: #a8dcb1;
+  --safe-bg: #263a2b;
+  --caution: #e0a557;
+  --caution-strong: #eec387;
+  --caution-bg: #3d3120;
+  --alert: #e57373;
+  --alert-strong: #f0a3a3;
+  --alert-bg: #422527;
+  --unknown: #9a9aa4;
+  --unknown-strong: #b9b9c3;
+  --unknown-bg: #303036;
   --lavender-soft: #322b3a;
+  --lavender-strong: #cdb6e0;
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
 }

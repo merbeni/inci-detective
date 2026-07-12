@@ -6,13 +6,20 @@
 }
 
 .onb__progress {
-  display: flex; gap: 6px; margin-bottom: 32px;
+  display: flex; gap: 6px; margin-bottom: 6px;
 }
 .onb__seg {
   flex: 1; height: 5px; border-radius: 3px; background: var(--cream-deep);
   transition: background 0.3s;
 }
 .onb__seg.is-done { background: var(--rose); }
+
+.onb__stepcount {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  margin-bottom: 26px;
+}
 
 .onb__body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 

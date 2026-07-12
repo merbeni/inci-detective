@@ -47,6 +47,19 @@ export const es = {
   'home.ingredients': '{n} ingredientes',
   'home.ingredients.one': '1 ingrediente',
 
+  // Búsqueda de productos
+  'home.search': 'Buscar por producto o marca',
+  'search.title': 'Buscar producto',
+  'search.placeholder': 'Producto o marca — ej. CeraVe',
+  'search.hint':
+    'Escribí al menos 3 letras para buscar en Open Beauty Facts y el catálogo comunitario.',
+  'search.empty': 'Sin resultados. Probá con menos palabras o escaneá el código de barras.',
+  'search.offline': 'Sin conexión — la búsqueda necesita internet.',
+  'search.hasIngredients': 'Con ingredientes',
+  'search.noIngredients': 'Sin ingredientes',
+  'search.community': 'Comunidad',
+  'search.failed': 'No se pudo analizar ese producto.',
+
   // Escaneo
   'scan.point': 'Apuntá a un código de barras',
   'scan.found': 'Encontrado {code} — buscando…',
@@ -83,6 +96,8 @@ export const es = {
   'manual.lookupFailed': 'Falló la búsqueda — ingresá los ingredientes',
   'manual.nameLabel': 'Nombre del producto (opcional)',
   'manual.namePlaceholder': 'ej. Sérum Hidratante',
+  'manual.brandLabel': 'Marca (opcional)',
+  'manual.brandPlaceholder': 'ej. La Roche-Posay',
   'manual.listLabel': 'Lista de ingredientes (INCI)',
   'manual.ocrTooltip': 'Escaneá la etiqueta con tu cámara',
   'manual.ocrBusy': 'Leyendo…',
@@ -133,11 +148,18 @@ export const es = {
   'analysis.saved': 'Guardado en tu historial',
   'analysis.saveFailed': 'No se pudo guardar — probá de nuevo',
 
+  // Contribución a Open Beauty Facts
+  'obf.share': 'Compartir en Open Beauty Facts',
+  'obf.shareHint':
+    'Base pública y abierta de cosméticos — ayuda a que otras personas encuentren este producto.',
+  'obf.thanks': '¡Gracias! Producto enviado a Open Beauty Facts',
+
   // Historial
   'history.title': 'Historial de escaneos',
   'history.search': 'Buscar por producto o marca',
   'history.empty': 'Todavía no hay escaneos.',
   'history.noMatches': 'Sin resultados.',
+  'history.confirm': '¿Borrar?',
   'date.today': 'Hoy',
   'date.yesterday': 'Ayer',
   'date.daysAgo': 'hace {n} días',
@@ -181,12 +203,12 @@ export const es = {
   'profile.keySaved': 'API key guardada',
   'profile.keyHint':
     'Traé tu propia key de Google AI Studio para que tu uso no dependa de los límites compartidos.',
-  'profile.dataset': 'Catálogo CosIng v{v}',
-  'profile.datasetSub': '{n} ingredientes · generado {d}',
+  'profile.datasetLine': 'Analizamos con una base de {n} ingredientes · actualizada el {d}',
 
   // Onboarding
   'onb.welcome': 'Personalicemos tu experiencia para que cada escaneo hable de tu piel.',
   'onb.start': 'Empezar',
+  'onb.step': 'Paso {x} de {y}',
   'onb.nameQ': '¿Cómo te llamás?',
   'onb.nameSub': 'Lo usamos para personalizar la app.',
   'onb.namePlaceholder': 'Tu nombre',
@@ -236,6 +258,10 @@ export const es = {
   'aiError.badRequest': 'La solicitud fue rechazada — reintentá o sacá otra foto.',
   'aiError.default': 'Falló la solicitud de IA — probá de nuevo.',
 
+  // Errores generales (ErrorBoundary)
+  'error.loadFailed': 'No se pudo cargar esta pantalla.',
+  'error.reload': 'Recargar',
+
   // Anexos regulatorios (CosIng)
   'annex.II': 'Anexo II — prohibido en cosméticos',
   'annex.III': 'Anexo III — permitido con restricciones',
@@ -243,6 +269,16 @@ export const es = {
   'annex.V': 'Anexo V — conservante permitido (con condiciones)',
   'annex.VI': 'Anexo VI — filtro UV permitido (con condiciones)',
   'annex.none': 'No regulado / de uso general reconocido',
+
+  // Contexto de categoría de producto (ver core/category.js)
+  'context.uvExpected': 'Filtro UV — es el activo esperado en protección solar',
+  'context.preservative': 'Conservante permitido — normal y necesario en productos con agua',
+  'context.colorantExpected': 'Pigmento aprobado — esperado en maquillaje',
+  'context.rinseoff': 'Producto de enjuague — el contacto con la piel es breve',
+  'category.line': 'Evaluado como {cat}',
+  'category.sunscreen': 'protector solar',
+  'category.makeup': 'maquillaje',
+  'category.rinseoff': 'producto de enjuague',
 
   // Tipos de piel
   'skin.normal': 'Normal',

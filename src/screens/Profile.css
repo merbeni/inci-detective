@@ -59,6 +59,4 @@
 .profile__account-actions { display: flex; gap: 8px; margin-top: 14px; }
 .profile__account-actions .btn { flex: 1; padding: 11px; font-size: 14px; }
 
-.profile__dataset { display: flex; align-items: center; gap: 12px; }
-.profile__dataset strong { font-size: 14px; }
-.profile__dataset .faint { font-size: 12px; }
+.profile__dataset { text-align: center; font-size: 12px; margin: 6px 0 4px; }
