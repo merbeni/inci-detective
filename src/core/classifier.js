@@ -10,6 +10,7 @@
 import bundledMeta from '../data/dataset-meta.json'
 import { similarity } from './levenshtein.js'
 import { scoreIngredient, scoreProduct } from './score.js'
+import { detectCategory, applyContext } from './category.js'
 
 const FUZZY_THRESHOLD = 0.85
 const MIN_FUZZY_LEN = 5
@@ -204,13 +205,21 @@ export function looksLikeIngredientList(summary) {
   return known / summary.total >= 0.4
 }
 
-// Classify a full parsed list and produce summary counts.
-export function classifyList(tokens, watchlistNorms = new Set()) {
-  const items = tokens.map((t) => {
+// Classify a full parsed list and produce summary counts. `meta.productName`
+// (when available) drives category detection — falls back to the ingredient
+// signals themselves (see category.js) when the name gives no clue.
+export function classifyList(tokens, watchlistNorms = new Set(), meta = {}) {
+  let items = tokens.map((t) => {
     const item = classifyToken(t, watchlistNorms)
     item.score = scoreIngredient(item)
     return item
   })
+
+  const category = detectCategory({ productName: meta.productName || '', items })
+  // Applied before the summary/score pass below, so a promoted ingredient
+  // (e.g. an expected UV filter) counts toward "safe" and the product score.
+  items = applyContext(items, category)
+
   const summary = { safe: 0, caution: 0, alert: 0, unknown: 0, total: items.length }
   let watchlistHits = 0
   for (const item of items) {
@@ -223,5 +232,5 @@ export function classifyList(tokens, watchlistNorms = new Set()) {
   if (summary.alert > 0) overall = 'alert'
   else if (summary.caution > 0) overall = 'caution'
 
-  return { items, summary, overall, watchlistHits, score: scoreProduct(items) }
+  return { items, summary, overall, watchlistHits, score: scoreProduct(items), category }
 }

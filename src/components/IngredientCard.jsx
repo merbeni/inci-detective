@@ -43,6 +43,17 @@ export default function IngredientCard({ item, onToggleWatch, personalFlags }) {
             {fn && <span>{fn}</span>}
           </div>
         )}
+        {item.context && (
+          <div
+            className={`ingcard__context${
+              item.context === 'uvExpected' || item.context === 'colorantExpected'
+                ? ' ingcard__context--expected'
+                : ''
+            }`}
+          >
+            {t('context.' + item.context)}
+          </div>
+        )}
         {personal && (
           <div className="ingcard__watch">
             <Sparkle size={12} style={{ verticalAlign: '-1px', marginRight: 4 }} />

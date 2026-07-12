@@ -89,13 +89,18 @@ export default function Scan() {
       const video = videoRef.current
       const useAI = profile?.aiEnabled && navigator.onLine
       let text = ''
+      let brand = ''
+      let productName = ''
 
       if (useAI) {
         const frame = await frameToBlob(video)
         if (frame) {
           setStatus(t('manual.aiReading'))
           try {
-            text = (await ocrImageWithAI(frame, profile)).trim()
+            const result = await ocrImageWithAI(frame, profile)
+            text = result.ingredients.trim()
+            brand = result.brand
+            productName = result.productName
           } catch (err) {
             showToast(describeAiError(err))
           }
@@ -110,14 +115,16 @@ export default function Scan() {
           setStatus(t('manual.aiCleaning'))
           try {
             const cleaned = await cleanOcrTextWithAI(text, profile)
-            if (cleaned) text = cleaned
+            if (cleaned.ingredients) text = cleaned.ingredients
+            if (cleaned.brand) brand = cleaned.brand
+            if (cleaned.productName) productName = cleaned.productName
           } catch {
             /* keep the raw OCR text */
           }
         }
       }
 
-      const analysis = await analyzeIngredientsText(text, { source: 'ocr' })
+      const analysis = await analyzeIngredientsText(text, { source: 'ocr', brand, productName })
       // Don't save garbage: a frame of something that isn't an ingredient
       // list (wrong part of the label, random object) parses into few tokens,
       // nearly all unknown. Tell the user and let them re-aim.

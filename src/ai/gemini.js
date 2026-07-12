@@ -234,22 +234,28 @@ export async function analyzeWithAI(analysis, profile, options = {}) {
   return { text, model: MODEL, prompt }
 }
 
-// Reconstruct an INCI ingredient list from noisy OCR text. Cosmetic labels read
-// from a photo come back mangled (speckle misread as "©/$4/oS", truncated words);
-// the local classifier can't match those. Gemini corrects the obvious OCR errors
-// and returns a clean comma-separated INCI list we can parse and classify.
+// Reconstruct an INCI ingredient list (plus brand/product name, when present)
+// from noisy OCR text. Cosmetic labels read from a photo come back mangled
+// (speckle misread as "©/$4/oS", truncated words); the local classifier can't
+// match those. Gemini corrects the obvious OCR errors and returns strict JSON
+// we can parse and classify.
 const OCR_CLEAN_PROMPT = `You are an OCR post-processor for cosmetic ingredient labels.
 Below is raw, noisy OCR text from a photo of a product label. It may contain
-directions, warnings and manufacturer info mixed in with the ingredient list.
+directions, warnings, manufacturer info and the brand/product name mixed in
+with the ingredient list.
 
-Task:
-- Output ONLY the cosmetic ingredient list (INCI names), in order.
-- Correct obvious OCR errors to the correct INCI name (e.g. "G'yeol"->"Glycol",
-  "erasodium EDTA"->"Tetrasodium EDTA", "O'efera"->"Oleifera", "Sodium Hyde"->
-  "Sodium Hyaluronate") ONLY when you are confident of the intended ingredient.
-- Drop noise fragments, batch codes, percentages and non-ingredient text.
-- Return a single line of comma-separated INCI names. No numbering, no commentary,
-  no markdown. If you cannot find an ingredient list, return an empty string.
+Task: return STRICT JSON, no markdown, no commentary, of the exact shape:
+{"brand": "", "product": "", "ingredients": ""}
+- "ingredients": the cosmetic ingredient list (INCI names), in order, as a
+  single comma-separated line. Correct obvious OCR errors to the correct INCI
+  name (e.g. "G'yeol"->"Glycol", "erasodium EDTA"->"Tetrasodium EDTA",
+  "O'efera"->"Oleifera", "Sodium Hyde"->"Sodium Hyaluronate") ONLY when you are
+  confident of the intended ingredient. Drop noise fragments, batch codes,
+  percentages and non-ingredient text. Empty string if you cannot find an
+  ingredient list.
+- "brand": the brand name, if clearly present in the text. Empty string otherwise.
+- "product": the product's marketing name/line (e.g. "Effaclar Duo+", "Hidratante
+  Facial FPS 30"), WITHOUT the brand. Empty string if not clearly present.
 
 Raw OCR text:
 """
@@ -257,7 +263,7 @@ Raw OCR text:
 
 export async function cleanOcrTextWithAI(rawText, profile, options = {}) {
   if (!navigator.onLine) throw new GeminiError('offline', 'offline')
-  if (!rawText || !rawText.trim()) return ''
+  if (!rawText || !rawText.trim()) return { ingredients: '', brand: '', productName: '' }
   const prompt = `${OCR_CLEAN_PROMPT}${rawText.trim()}\n"""`
   const text = await runGemini(
     prompt,
@@ -265,20 +271,28 @@ export async function cleanOcrTextWithAI(rawText, profile, options = {}) {
     { temperature: 0.1, maxOutputTokens: 2048, ...NO_THINKING },
     options,
   )
-  return cleanInciLine(text)
+  return parseOcrReply(text)
 }
 
-// Read the ingredient list straight from the photo. Gemini is multimodal, so
-// letting it see the label beats running Tesseract first and then repairing the
-// mangled text: there's no lossy OCR step in between. This is the preferred
-// online path; on-device Tesseract stays the offline fallback.
+// Read the ingredient list (plus brand/product name, when visible) straight
+// from the photo. Gemini is multimodal, so letting it see the label beats
+// running Tesseract first and then repairing the mangled text: there's no
+// lossy OCR step in between. This is the preferred online path; on-device
+// Tesseract stays the offline fallback.
 const OCR_IMAGE_PROMPT = `You are reading a photo of a cosmetic product label.
-Extract ONLY the cosmetic ingredient list (INCI names), in the order printed.
-- Ignore directions, warnings, marketing copy, batch codes and manufacturer info.
-- Fix distortions from the photo (glare, curved surface, small print) to the
-  intended INCI name ONLY when you are confident of the ingredient.
-- Return a single line of comma-separated INCI names. No numbering, no markdown,
-  no commentary. If the image has no ingredient list, return an empty string.`
+Ignore directions, warnings, marketing copy, batch codes and manufacturer info
+except where noted below.
+
+Return STRICT JSON, no markdown, no commentary, of the exact shape:
+{"brand": "", "product": "", "ingredients": ""}
+- "ingredients": the cosmetic ingredient list (INCI names), in the order
+  printed, as a single comma-separated line. Fix distortions from the photo
+  (glare, curved surface, small print) to the intended INCI name ONLY when you
+  are confident of the ingredient. Empty string if the image has no ingredient
+  list.
+- "brand": the brand name, if visible on the label. Empty string otherwise.
+- "product": the product's marketing name/line (e.g. "Effaclar Duo+", "Hidratante
+  Facial FPS 30"), WITHOUT the brand. Empty string if not visible.`
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -315,7 +329,7 @@ async function imageToInlineData(file) {
 
 export async function ocrImageWithAI(file, profile, options = {}) {
   if (!navigator.onLine) throw new GeminiError('offline', 'offline')
-  if (!file) return ''
+  if (!file) return { ingredients: '', brand: '', productName: '' }
   const inlineData = await imageToInlineData(file)
   const parts = [{ text: OCR_IMAGE_PROMPT }, { inlineData }]
   const text = await runGemini(
@@ -324,7 +338,7 @@ export async function ocrImageWithAI(file, profile, options = {}) {
     { temperature: 0.1, maxOutputTokens: 2048, ...NO_THINKING },
     options,
   )
-  return cleanInciLine(text)
+  return parseOcrReply(text)
 }
 
 // Normalize a model reply down to one clean comma-separated INCI line.
@@ -334,4 +348,31 @@ function cleanInciLine(text) {
     .replace(/^["'\s]+|["'\s]+$/g, '')
     .replace(/\s*\n\s*/g, ', ')
     .trim()
+}
+
+// Parse an OCR reply into { ingredients, brand, productName }. The prompt asks
+// for strict JSON, but models sometimes wrap it in a code fence or add stray
+// prose around it — so locate the outermost {...} rather than assuming the
+// whole string is JSON. If parsing fails outright (a model that ignored the
+// JSON instruction entirely), fall back to treating the whole reply as the
+// ingredient line so the OCR still produces something usable.
+function parseOcrReply(text) {
+  const fallback = () => ({ ingredients: cleanInciLine(text || ''), brand: '', productName: '' })
+  if (!text) return fallback()
+  const stripped = text.replace(/^```[a-z]*\n?|```$/gim, '').trim()
+  const start = stripped.indexOf('{')
+  const end = stripped.lastIndexOf('}')
+  if (start === -1 || end === -1 || end < start) return fallback()
+  let parsed
+  try {
+    parsed = JSON.parse(stripped.slice(start, end + 1))
+  } catch {
+    return fallback()
+  }
+  const str = (v) => (typeof v === 'string' ? v.trim() : '')
+  return {
+    ingredients: cleanInciLine(str(parsed.ingredients)),
+    brand: str(parsed.brand),
+    productName: str(parsed.product),
+  }
 }

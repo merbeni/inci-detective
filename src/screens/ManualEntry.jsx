@@ -23,12 +23,14 @@ export default function ManualEntry() {
   const [params] = useSearchParams()
   const prefillBarcode = params.get('barcode') || ''
   const prefillName = params.get('productName') || ''
+  const prefillBrand = params.get('brand') || ''
   const reason = params.get('reason')
 
   const [tab, setTab] = useState(reason ? 'ingredients' : 'barcode')
   const [notice, setNotice] = useState(reason ? reasonText(reason) : '')
   const [barcode, setBarcode] = useState(prefillBarcode)
   const [productName, setProductName] = useState(prefillName)
+  const [brand, setBrand] = useState(prefillBrand)
   const [text, setText] = useState('')
   const [working, setWorking] = useState(false)
   const [progress, setProgress] = useState('')
@@ -47,6 +49,7 @@ export default function ManualEntry() {
       } else {
         setTab('ingredients')
         if (result.productName) setProductName(result.productName)
+        if (result.brand) setBrand(result.brand)
         const msg = reasonText(result.status)
         setNotice(msg)
         showToast(msg)
@@ -69,6 +72,7 @@ export default function ManualEntry() {
       const analysis = await analyzeIngredientsText(text, {
         barcode: barcode.trim() || null,
         productName: productName.trim(),
+        brand: brand.trim(),
         source: 'manual',
       })
       if (analysis.summary.total === 0) {
@@ -97,6 +101,8 @@ export default function ManualEntry() {
     setWorking(true)
     try {
       let result = ''
+      let aiBrand = ''
+      let aiProductName = ''
       const useAI = profile?.aiEnabled && navigator.onLine
       const onRetry = ({ attempt, retries }) =>
         setProgress(t('manual.aiRetry', { attempt, retries }))
@@ -107,7 +113,10 @@ export default function ManualEntry() {
       if (useAI) {
         setProgress(t('manual.aiReading'))
         try {
-          result = (await ocrImageWithAI(file, profile, { onRetry })).trim()
+          const aiResult = await ocrImageWithAI(file, profile, { onRetry })
+          result = aiResult.ingredients.trim()
+          aiBrand = aiResult.brand
+          aiProductName = aiResult.productName
         } catch (err) {
           // Tell the user why AI didn't run, then fall back to on-device OCR.
           showToast(describeAiError(err))
@@ -129,7 +138,9 @@ export default function ManualEntry() {
           setProgress(t('manual.aiCleaning'))
           try {
             const cleaned = await cleanOcrTextWithAI(result, profile, { onRetry })
-            if (cleaned) result = cleaned
+            if (cleaned.ingredients) result = cleaned.ingredients
+            if (cleaned.brand) aiBrand = cleaned.brand
+            if (cleaned.productName) aiProductName = cleaned.productName
           } catch {
             /* keep the raw OCR text */
           }
@@ -148,6 +159,10 @@ export default function ManualEntry() {
         return
       }
       setText((prev) => (prev ? prev + '\n' : '') + result)
+      // Autocomplete brand/product from the label photo, but don't clobber
+      // whatever the user already typed (e.g. from a barcode prefill).
+      if (aiBrand && !brand) setBrand(aiBrand)
+      if (aiProductName && !productName) setProductName(aiProductName)
       setTab('ingredients')
       showToast(t('manual.extracted'))
     } catch {
@@ -174,16 +189,20 @@ export default function ManualEntry() {
 
       {notice && <div className="manual__notice">{notice}</div>}
 
-      <div className="manual__tabs">
+      <div className="manual__tabs" role="tablist">
         <button
           className={`manual__tab ${tab === 'barcode' ? 'is-active' : ''}`}
           onClick={() => setTab('barcode')}
+          role="tab"
+          aria-selected={tab === 'barcode'}
         >
           <Barcode size={16} /> {t('manual.tab.barcode')}
         </button>
         <button
           className={`manual__tab ${tab === 'ingredients' ? 'is-active' : ''}`}
           onClick={() => setTab('ingredients')}
+          role="tab"
+          aria-selected={tab === 'ingredients'}
         >
           <ListPlus size={16} /> {t('manual.tab.ingredients')}
         </button>
@@ -191,8 +210,9 @@ export default function ManualEntry() {
 
       {tab === 'barcode' ? (
         <div className="manual__panel">
-          <label className="manual__label">{t('manual.barcodeLabel')}</label>
+          <label className="manual__label" htmlFor="manual-barcode">{t('manual.barcodeLabel')}</label>
           <input
+            id="manual-barcode"
             className="input"
             inputMode="numeric"
             placeholder="e.g. 3600542525473"
@@ -211,16 +231,26 @@ export default function ManualEntry() {
         </div>
       ) : (
         <div className="manual__panel">
-          <label className="manual__label">{t('manual.nameLabel')}</label>
+          <label className="manual__label" htmlFor="manual-name">{t('manual.nameLabel')}</label>
           <input
+            id="manual-name"
             className="input"
             placeholder={t('manual.namePlaceholder')}
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
           />
-          <label className="manual__label">{t('manual.listLabel')}</label>
+          <label className="manual__label" htmlFor="manual-brand">{t('manual.brandLabel')}</label>
+          <input
+            id="manual-brand"
+            className="input"
+            placeholder={t('manual.brandPlaceholder')}
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+          />
+          <label className="manual__label" htmlFor="manual-list">{t('manual.listLabel')}</label>
           <div className="manual__textwrap">
             <textarea
+              id="manual-list"
               className="input manual__textarea"
               placeholder="Aqua, Glycerin, Niacinamide, Phenoxyethanol, Parfum…"
               value={text}

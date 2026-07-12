@@ -17,6 +17,7 @@ export default function RiskBanner({
   watchlistHits,
   personalHits = 0,
   score = null,
+  category = null,
 }) {
   const lvl = ICONS[overall] ? overall : 'caution'
   const Icon = ICONS[lvl]
@@ -45,6 +46,11 @@ export default function RiskBanner({
         <Count n={summary.alert} label={t('badge.alert')} cls="alert" />
         <Count n={summary.unknown} label={t('badge.unknown')} cls="unknown" />
       </div>
+      {category && (
+        <div className="riskbanner__category">
+          {t('category.line', { cat: t(`category.${category}`) })}
+        </div>
+      )}
       {watchlistHits > 0 && (
         <div className="riskbanner__watch">{tn('banner.watchlist', watchlistHits)}</div>
       )}
