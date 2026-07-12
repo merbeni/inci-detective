@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Leaf, Mail } from 'lucide-react'
 import { signIn, signUp, signInWithGoogle } from '../lib/sync.js'
 import { useApp } from '../context/AppContext.jsx'
@@ -8,7 +8,12 @@ import './Auth.css'
 
 export default function Auth() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { showToast } = useApp()
+  // Arriving from onboarding there's no screen to go "back" to (the history
+  // entry was replaced) and no profile context yet — land on Home instead.
+  const fromOnboarding = location.state?.from === 'onboarding'
+  const dest = fromOnboarding ? '/' : '/profile'
   const [mode, setMode] = useState('signin') // signin | signup
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -27,7 +32,7 @@ export default function Auth() {
       } else {
         await signIn(email.trim(), password)
         showToast(t('auth.signedIn'))
-        navigate('/profile', { replace: true })
+        navigate(dest, { replace: true })
       }
     } catch (err) {
       showToast(err.message || t('auth.failed'))
@@ -46,7 +51,11 @@ export default function Auth() {
 
   return (
     <div className="screen auth">
-      <button className="manual__back" onClick={() => navigate(-1)} aria-label={t('manual.back')}>
+      <button
+        className="manual__back"
+        onClick={() => (fromOnboarding ? navigate('/', { replace: true }) : navigate(-1))}
+        aria-label={t('manual.back')}
+      >
         <ArrowLeft size={22} />
       </button>
 

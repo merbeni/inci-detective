@@ -1,28 +1,38 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Leaf, ArrowRight, Check } from 'lucide-react'
+import { Leaf, ArrowRight, Check, Cloud } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { SKIN_TYPES, CONCERNS } from '../core/constants.js'
-import { t } from '../i18n/index.js'
+import { t, getLang, LANGUAGES } from '../i18n/index.js'
 import './Onboarding.css'
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { profile, updateProfile } = useApp()
+  const { profile, updateProfile, cloudEnabled, user } = useApp()
   const [step, setStep] = useState(0)
   const [name, setName] = useState(profile.name || '')
   const [skinType, setSkinType] = useState(profile.skinType || '')
   const [concerns, setConcerns] = useState(profile.concerns || [])
 
-  const TOTAL = 3 // steps with a progress bar (after Welcome)
+  // The account step only makes sense when cloud sync is configured and the
+  // user isn't already signed in (e.g. re-onboarding after a reset).
+  const hasAuthStep = cloudEnabled && !user
+  const LAST = hasAuthStep ? 4 : 3
+  const TOTAL = LAST // steps with a progress bar (after Welcome)
 
   function next() {
     setStep((s) => s + 1)
   }
 
-  async function finish() {
+  async function finishTo(path, state) {
     await updateProfile({ name: name.trim(), skinType, concerns, onboarded: true })
-    navigate('/', { replace: true })
+    navigate(path, { replace: true, state })
+  }
+
+  function skip() {
+    // Skipping the profile questions still offers the account choice.
+    if (hasAuthStep) setStep(4)
+    else finishTo('/')
   }
 
   function toggleConcern(id) {
@@ -47,6 +57,17 @@ export default function Onboarding() {
             </span>
             <h1>INCI Detective</h1>
             <p className="muted">{t('onb.welcome')}</p>
+            <div className="onb__langs">
+              {LANGUAGES.map((l) => (
+                <button
+                  key={l.id}
+                  className={`onb__chip ${getLang() === l.id ? 'is-sel' : ''}`}
+                  onClick={() => updateProfile({ language: l.id })}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -103,6 +124,16 @@ export default function Onboarding() {
             </div>
           </div>
         )}
+
+        {step === 4 && (
+          <div className="onb__welcome onb__step">
+            <span className="onb__logo">
+              <Cloud size={34} strokeWidth={2.2} />
+            </span>
+            <h2>{t('onb.accountQ')}</h2>
+            <p className="muted">{t('onb.accountSub')}</p>
+          </div>
+        )}
       </div>
 
       <div className="onb__footer">
@@ -129,13 +160,31 @@ export default function Onboarding() {
             {t('onb.continue')} <ArrowRight size={18} />
           </button>
         )}
-        {step === 3 && (
-          <button className="btn btn--primary btn--block btn--lg" onClick={finish}>
-            {t('onb.finish')} <Check size={18} />
-          </button>
+        {step === 3 &&
+          (hasAuthStep ? (
+            <button className="btn btn--primary btn--block btn--lg" onClick={next}>
+              {t('onb.continue')} <ArrowRight size={18} />
+            </button>
+          ) : (
+            <button className="btn btn--primary btn--block btn--lg" onClick={() => finishTo('/')}>
+              {t('onb.finish')} <Check size={18} />
+            </button>
+          ))}
+        {step === 4 && (
+          <>
+            <button
+              className="btn btn--primary btn--block btn--lg"
+              onClick={() => finishTo('/auth', { from: 'onboarding' })}
+            >
+              {t('onb.signIn')} <ArrowRight size={18} />
+            </button>
+            <button className="btn btn--ghost btn--block" onClick={() => finishTo('/')}>
+              {t('onb.guest')}
+            </button>
+          </>
         )}
         {step > 0 && step < 3 && (
-          <button className="btn btn--ghost btn--block" onClick={finish}>
+          <button className="btn btn--ghost btn--block" onClick={skip}>
             {t('onb.skip')}
           </button>
         )}
