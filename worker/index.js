@@ -1,15 +1,17 @@
 // Cloudflare Worker entry — routes the app's server-side AI endpoints:
 //   POST /api/ai      Gemini proxy (analysis, OCR cleanup, vision OCR)
 //   POST /api/search  semantic ingredient search + optional RAG answer
+//   POST /api/obf     Open Beauty Facts product contribution
 //
 // CORS is restricted to the app's origins (env.ALLOWED_ORIGIN, comma-separated).
 // Deploy with `wrangler deploy`; bindings (AI, VECTORIZE) live in wrangler.toml
-// and the GEMINI_API_KEY is a secret.
+// and the GEMINI_API_KEY / OBF_USER_ID / OBF_PASSWORD are secrets.
 
 import { json } from './util.js'
 import { handleAi } from './ai.js'
 import { handleSearch } from './search.js'
 import { handleShare } from './share.js'
+import { handleObf } from './obf.js'
 
 export default {
   async fetch(request, env) {
@@ -49,6 +51,7 @@ export default {
     try {
       if (pathname === '/api/ai') return await handleAi(request, env, cors)
       if (pathname === '/api/search') return await handleSearch(request, env, cors)
+      if (pathname === '/api/obf') return await handleObf(request, env, cors)
       return json({ error: 'not found' }, 404, cors)
     } catch (e) {
       return json({ error: 'worker error', message: String(e?.message || e) }, 500, cors)

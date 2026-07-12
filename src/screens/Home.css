@@ -33,6 +33,8 @@
 .home__cta-label { font-size: 20px; font-weight: 800; }
 .home__cta-sub { font-size: 13px; opacity: 0.85; }
 
+.home__search-btn { margin-top: 10px; }
+
 .home__recent { margin-top: 26px; }
 .home__recent-head {
   display: flex; align-items: center; justify-content: space-between;

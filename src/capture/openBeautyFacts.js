@@ -98,3 +98,23 @@ export async function lookupBarcode(barcode) {
     hasIngredients: Boolean(ingredientsText),
   }
 }
+
+// Contribute a product (barcode + name + brand + ingredient list) back to Open
+// Beauty Facts, growing the global open database. Goes through the Worker
+// because the write requires an OBF account whose credentials must stay
+// server-side. Never throws — a failed contribution shouldn't disrupt the
+// local save, which already succeeded.
+export async function contributeToObf({ barcode, productName, brand, ingredientsText, lang }) {
+  try {
+    const res = await fetch('/api/obf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: barcode, productName, brand, ingredientsText, lang }),
+    })
+    const data = await res.json()
+    if (!res.ok) return { ok: false, error: data?.error || 'obf_error' }
+    return { ok: true, status: data.status }
+  } catch {
+    return { ok: false, error: 'network' }
+  }
+}

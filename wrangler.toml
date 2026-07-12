@@ -5,6 +5,13 @@
 #
 # The Vectorize index must exist first:
 #   npx wrangler vectorize create inci-ingredients --dimensions=384 --metric=cosine
+#
+# Open Beauty Facts contribution (POST /api/obf) needs a write-API account —
+# create one at https://world.openbeautyfacts.org (same account works across
+# all Open*Facts sites) and set it as two more secrets:
+#   npx wrangler secret put OBF_USER_ID
+#   npx wrangler secret put OBF_PASSWORD
+# Until both are set, /api/obf replies 503 not_configured (feature stays dark).
 
 name = "inci-detective-api"
 main = "worker/index.js"

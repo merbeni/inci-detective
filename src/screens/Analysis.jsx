@@ -12,9 +12,10 @@ import {
   saveAiQuery,
 } from '../db/db.js'
 import { analyzeWithAI, describeAiError } from '../ai/gemini.js'
+import { contributeToObf } from '../capture/openBeautyFacts.js'
 import { createShareLink } from '../lib/sync.js'
 import { useApp } from '../context/AppContext.jsx'
-import { t, tn } from '../i18n/index.js'
+import { t, tn, getLang } from '../i18n/index.js'
 import { personalFlagSet, countPersonalHits } from '../core/personal.js'
 import { scoreProduct } from '../core/score.js'
 import RiskBanner from '../components/RiskBanner.jsx'
@@ -41,7 +42,14 @@ export default function Analysis() {
   const [aiLoading, setAiLoading] = useState(false)
   const [sharing, setSharing] = useState(false)
   const [name, setName] = useState(previewAnalysis?.productName || '')
+  const [brand, setBrand] = useState(previewAnalysis?.brand || '')
   const [saving, setSaving] = useState(false)
+  // Two-tap delete: first tap arms the button ("Delete?"), second tap deletes.
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  // Contributing to Open Beauty Facts only makes sense when we typed/OCR'd the
+  // ingredients ourselves against a real barcode — 'barcode' source means OBF
+  // already had them.
+  const [shareObf, setShareObf] = useState(true)
 
   // Personal relevance: dataset concern flags the user's skin profile cares about.
   const personalFlags = useMemo(() => personalFlagSet(profile), [profile])
@@ -68,6 +76,12 @@ export default function Analysis() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
+  useEffect(() => {
+    if (!confirmDelete) return
+    const timer = setTimeout(() => setConfirmDelete(false), 3500)
+    return () => clearTimeout(timer)
+  }, [confirmDelete])
+
   async function handleSave() {
     const trimmed = name.trim()
     if (!trimmed) {
@@ -76,13 +90,26 @@ export default function Analysis() {
     }
     setSaving(true)
     try {
-      const saved = await saveScan({ ...scan, productName: trimmed })
+      const saved = await saveScan({ ...scan, productName: trimmed, brand: brand.trim() })
       // An AI explanation requested while still in preview had no scan id to
       // attach to — link it now that the scan exists.
       if (ai) {
         await saveAiQuery({ scanId: saved.id, model: ai.model, response: ai.text }).catch(
           () => {},
         )
+      }
+      // Fire-and-forget: the community catalogue already has the data, so a
+      // slow/failed OBF write must never block the save flow.
+      if (canContribute && shareObf) {
+        contributeToObf({
+          barcode: scan.barcode,
+          productName: trimmed,
+          brand: brand.trim(),
+          ingredientsText: scan.rawText,
+          lang: getLang(),
+        }).then((r) => {
+          if (r.ok && r.status === 'saved') showToast(t('obf.thanks'))
+        })
       }
       showToast(t('analysis.saved'))
       navigate(`/analysis/${saved.id}`, { replace: true })
@@ -161,6 +188,15 @@ export default function Analysis() {
     navigate('/history', { replace: true })
   }
 
+  function handleDeleteClick() {
+    if (!confirmDelete) {
+      setConfirmDelete(true)
+      return
+    }
+    setConfirmDelete(false)
+    handleDelete()
+  }
+
   if (notFound) {
     return (
       <div className="screen center">
@@ -179,6 +215,12 @@ export default function Analysis() {
     )
   }
 
+  const displayBrand = isPreview ? brand.trim() : scan.brand
+  // 'barcode' source means OBF already served the ingredients — nothing new
+  // to contribute. OCR/manual entries against a real barcode are the gap OBF
+  // doesn't cover yet.
+  const canContribute = isPreview && scan.barcode && (scan.source === 'ocr' || scan.source === 'manual')
+
   return (
     <div className="screen analysis">
       <header className="analysis__head">
@@ -187,11 +229,15 @@ export default function Analysis() {
         </button>
         <div className="analysis__titles">
           <h1>{isPreview ? name.trim() || t('analysis.unsaved') : scan.productName}</h1>
-          {scan.brand && <span className="muted">{scan.brand}</span>}
+          {displayBrand && <span className="muted">{displayBrand}</span>}
         </div>
         {!isPreview && (
-          <button className="analysis__del" onClick={handleDelete} aria-label={t('analysis.delete')}>
-            <Trash2 size={18} />
+          <button
+            className={`analysis__del ${confirmDelete ? 'is-armed' : ''}`}
+            onClick={handleDeleteClick}
+            aria-label={t('analysis.delete')}
+          >
+            {confirmDelete ? t('history.confirm') : <Trash2 size={18} />}
           </button>
         )}
       </header>
@@ -202,28 +248,49 @@ export default function Analysis() {
         watchlistHits={scan.watchlistHits}
         personalHits={countPersonalHits(scan.items, personalFlags)}
         score={scan.score ?? scoreProduct(scan.items)}
+        category={scan.category}
       />
 
       {isPreview && (
         <div className="analysis__save card">
-          <label className="manual__label">{t('analysis.nameLabel')}</label>
-          <div className="analysis__save-row">
-            <input
-              className="input"
-              placeholder={t('manual.namePlaceholder')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus={!name}
-            />
-            <button
-              className="btn btn--primary"
-              onClick={handleSave}
-              disabled={saving || !name.trim()}
-            >
-              {saving ? <span className="spinner" /> : <Save size={18} />}
-              {t('analysis.save')}
-            </button>
-          </div>
+          <label className="manual__label" htmlFor="analysis-name">{t('analysis.nameLabel')}</label>
+          <input
+            id="analysis-name"
+            className="input"
+            placeholder={t('manual.namePlaceholder')}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus={!name}
+          />
+          <label className="manual__label" htmlFor="analysis-brand">{t('manual.brandLabel')}</label>
+          <input
+            id="analysis-brand"
+            className="input"
+            placeholder={t('manual.brandPlaceholder')}
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+          />
+          {canContribute && (
+            <>
+              <label className="analysis__obf">
+                <input
+                  type="checkbox"
+                  checked={shareObf}
+                  onChange={(e) => setShareObf(e.target.checked)}
+                />
+                <span>{t('obf.share')}</span>
+              </label>
+              <p className="faint analysis__obf-hint">{t('obf.shareHint')}</p>
+            </>
+          )}
+          <button
+            className="btn btn--primary btn--block"
+            onClick={handleSave}
+            disabled={saving || !name.trim()}
+          >
+            {saving ? <span className="spinner" /> : <Save size={18} />}
+            {t('analysis.save')}
+          </button>
           <p className="faint analysis__save-hint">{t('analysis.saveHint')}</p>
         </div>
       )}

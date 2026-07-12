@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ScanLine, Keyboard, Leaf, ChevronRight } from 'lucide-react'
+import { ScanLine, Keyboard, Search, Leaf, ChevronRight } from 'lucide-react'
 import { listScans } from '../db/db.js'
 import { useApp } from '../context/AppContext.jsx'
 import RiskBadge from '../components/RiskBadge.jsx'
@@ -45,6 +45,13 @@ export default function Home() {
 
       <button className="btn btn--outline btn--block" onClick={() => navigate('/manual')}>
         <Keyboard size={18} /> {t('home.manual')}
+      </button>
+
+      <button
+        className="btn btn--outline btn--block home__search-btn"
+        onClick={() => navigate('/search')}
+      >
+        <Search size={18} /> {t('home.search')}
       </button>
 
       <section className="home__recent">

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useApp } from './context/AppContext.jsx'
 import BottomNav from './components/BottomNav.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 import Home from './screens/Home.jsx'
 
 // Heavy capture-dependent routes (ZXing / Tesseract) are code-split so they
@@ -15,6 +16,7 @@ const Profile = lazy(() => import('./screens/Profile.jsx'))
 const Onboarding = lazy(() => import('./screens/Onboarding.jsx'))
 const Auth = lazy(() => import('./screens/Auth.jsx'))
 const Shared = lazy(() => import('./screens/Shared.jsx'))
+const Search = lazy(() => import('./screens/Search.jsx'))
 
 // Screens where the bottom navigation is hidden (camera + onboarding), per the
 // design decisions in section 3.4.
@@ -44,27 +46,30 @@ export default function App() {
 
   return (
     <div className="app">
-      <Suspense
-        fallback={
-          <div className="screen" style={{ display: 'grid', placeItems: 'center' }}>
-            <span className="spinner" />
-          </div>
-        }
-      >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/scan" element={<Scan />} />
-          <Route path="/manual" element={<ManualEntry />} />
-          <Route path="/analysis/:id" element={<Analysis />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/watchlist" element={<Watchlist />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/share/:shareId" element={<Shared />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+      <ErrorBoundary key={location.pathname}>
+        <Suspense
+          fallback={
+            <div className="screen" style={{ display: 'grid', placeItems: 'center' }}>
+              <span className="spinner" />
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/scan" element={<Scan />} />
+            <Route path="/manual" element={<ManualEntry />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/analysis/:id" element={<Analysis />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/watchlist" element={<Watchlist />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/share/:shareId" element={<Shared />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
       {showNav && <BottomNav />}
     </div>
   )
