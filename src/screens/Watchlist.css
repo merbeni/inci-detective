@@ -6,7 +6,8 @@
   background: var(--surface); border-radius: var(--radius-pill);
   padding: 12px 16px; box-shadow: var(--shadow-sm); margin-bottom: 10px;
 }
-.watchlist__input { flex: 1; border: none; background: none; font-size: 15px; color: var(--ink); }
+/* 16px minimum: below that iOS auto-zooms the page when the field gets focus. */
+.watchlist__input { flex: 1; border: none; background: none; font-size: 16px; color: var(--ink); }
 .watchlist__input:focus { outline: none; }
 .watchlist__add { color: var(--rose); }
 
@@ -22,14 +23,16 @@
 
 .watchlist__list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .watchlist__empty { width: 100%; padding: 28px 16px; }
+/* Lavender = informational, matching the "watched" badge on ingredient cards;
+   only the ✕ inside is a tap target. */
 .watchlist__chip {
   display: flex; align-items: center; gap: 8px;
-  background: var(--rose-soft); color: var(--rose-dark);
+  background: var(--lavender-soft); color: var(--lavender-strong);
   padding: 8px 8px 8px 14px; border-radius: var(--radius-pill);
   font-size: 13px; font-weight: 700;
 }
 .watchlist__chip button {
   display: grid; place-items: center;
   width: 20px; height: 20px; border-radius: 50%;
-  background: rgba(168, 83, 106, 0.18); color: var(--rose-dark);
+  background: var(--surface); color: var(--lavender-strong);
 }

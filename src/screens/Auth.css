@@ -1,8 +1,17 @@
 .auth { display: flex; flex-direction: column; }
+
+/* Reuses manual__back's look (ink color, 4px padding) but the button sits
+   alone here with no header row to keep it from stretching — .auth is a
+   column flex container, so without align-self it would stretch to full
+   width and the button's own centered content (UA default) would land the
+   arrow in the middle of the screen instead of the top-left corner. */
+.auth__back { align-self: flex-start; color: var(--ink); padding: 4px; }
+
+.auth__body { display: flex; flex-direction: column; flex: 1; }
 .auth__brand { text-align: center; margin: 18px 0 28px; }
 .auth__logo {
   width: 60px; height: 60px; border-radius: 20px;
-  background: var(--lavender-soft); color: var(--rose);
+  background: var(--lavender-soft); color: var(--lavender-strong);
   display: grid; place-items: center; margin: 0 auto 14px;
 }
 .auth__brand h1 { font-size: 24px; margin-bottom: 6px; }

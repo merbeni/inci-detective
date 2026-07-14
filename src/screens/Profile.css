@@ -1,7 +1,7 @@
 .profile__head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
 .profile__avatar {
   width: 56px; height: 56px; border-radius: 50%;
-  background: var(--rose); color: #fff;
+  background: var(--lavender-soft); color: var(--lavender-strong);
   display: grid; place-items: center;
   font-size: 24px; font-weight: 800;
 }
@@ -26,13 +26,16 @@
   border: 1.5px solid transparent;
 }
 .profile__chip--solid { background: var(--rose); color: #fff; }
+/* Read-only display of the saved profile (view mode) — informational, so it
+   must not wear the interactive rose that edit-mode selected chips use. */
+.profile__chip--info { background: var(--lavender-soft); color: var(--lavender-strong); }
 
 .profile__row {
   display: flex; align-items: center; gap: 12px;
   padding: 10px 0;
 }
 .profile__row + .profile__row { border-top: 1px solid var(--line); }
-.profile__rowicon { color: var(--rose); display: grid; place-items: center; }
+.profile__rowicon { color: var(--lavender-strong); display: grid; place-items: center; }
 .profile__rowtext { flex: 1; display: flex; flex-direction: column; }
 .profile__rowtext span:first-child { font-weight: 700; font-size: 14px; }
 .profile__rowtext .faint { font-size: 12px; }

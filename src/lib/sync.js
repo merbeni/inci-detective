@@ -241,9 +241,13 @@ export async function pushProduct({ barcode, productName, brand, ingredientsText
 export async function createShareLink(scanId) {
   const userId = await currentUserId()
   if (!userId) throw new Error('sign-in-required')
-  const shareId = (globalThis.crypto?.randomUUID?.() || `${Date.now()}${Math.random()}`)
-    .replace(/-/g, '')
-    .slice(0, 12)
+  // 12 hex chars (~48 bits). Fallback uses getRandomValues, never Math.random —
+  // share ids are capability URLs, so they must not be guessable.
+  const shareId = globalThis.crypto?.randomUUID
+    ? crypto.randomUUID().replace(/-/g, '').slice(0, 12)
+    : [...crypto.getRandomValues(new Uint8Array(6))]
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
   const { error } = await supabase
     .from('scans')
     .update({ share_id: shareId, is_public: true })
@@ -256,9 +260,12 @@ export async function createShareLink(scanId) {
 
 export async function fetchSharedScan(shareId) {
   if (!isCloudEnabled) return null
+  // Explicit column list: the "public shared scans" RLS policy exposes the
+  // whole row, so select('*') would also leak the sharer's user_id to anyone
+  // holding the link.
   const { data, error } = await supabase
     .from('scans')
-    .select('*')
+    .select('id,barcode,product_name,brand,image_url,source,overall,summary,items,share_id,created_at')
     .eq('share_id', shareId)
     .eq('is_public', true)
     .maybeSingle()

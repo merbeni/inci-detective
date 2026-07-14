@@ -240,6 +240,11 @@ export const es = {
   'auth.signedIn': 'Sesión iniciada',
   'auth.failed': 'Falló la autenticación',
   'auth.googleFailed': 'Falló el inicio con Google',
+  'auth.err.invalidCredentials': 'Email o contraseña incorrectos',
+  'auth.err.emailNotConfirmed': 'Confirmá tu email antes de iniciar sesión',
+  'auth.err.alreadyRegistered': 'Ese email ya tiene una cuenta — iniciá sesión',
+  'auth.err.weakPassword': 'La contraseña debe tener al menos 6 caracteres',
+  'auth.err.rateLimit': 'Demasiados intentos — esperá un momento y probá de nuevo',
 
   // Vista compartida
   'shared.unavailable': 'Este análisis compartido no está disponible.',

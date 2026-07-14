@@ -26,7 +26,7 @@
 .onb__welcome { text-align: center; animation: fade 0.4s var(--ease); }
 .onb__logo {
   width: 76px; height: 76px; border-radius: 24px;
-  background: var(--lavender-soft); color: var(--rose);
+  background: var(--lavender-soft); color: var(--lavender-strong);
   display: grid; place-items: center; margin: 0 auto 20px;
 }
 .onb__welcome h1 { font-size: 28px; margin-bottom: 10px; }

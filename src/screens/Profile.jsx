@@ -89,7 +89,7 @@ export default function Profile() {
         {!editing ? (
           <div className="profile__chips">
             {profile.skinType ? (
-              <span className="profile__chip profile__chip--solid">
+              <span className="profile__chip profile__chip--info">
                 {t(`skin.${profile.skinType}`)}
               </span>
             ) : (
@@ -152,6 +152,7 @@ export default function Profile() {
           <Toggle
             on={profile.darkMode}
             onClick={() => updateProfile({ darkMode: !profile.darkMode })}
+            label={t('profile.darkMode')}
           />
         </Row>
 
@@ -159,6 +160,7 @@ export default function Profile() {
           <Toggle
             on={profile.aiEnabled}
             onClick={() => updateProfile({ aiEnabled: !profile.aiEnabled })}
+            label={t('profile.ai')}
           />
         </Row>
 
@@ -228,13 +230,14 @@ function Row({ icon, label, sub, children }) {
   )
 }
 
-function Toggle({ on, onClick }) {
+function Toggle({ on, onClick, label }) {
   return (
     <button
       className={`toggle ${on ? 'toggle--on' : ''}`}
       onClick={onClick}
       role="switch"
       aria-checked={on}
+      aria-label={label}
     >
       <span className="toggle__knob" />
     </button>

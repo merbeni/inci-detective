@@ -99,6 +99,15 @@ describe('applyContext', () => {
     expect(out.safety).toBe('caution')
   })
 
+  it('never tags an alert-level item with a reassuring context', () => {
+    // e.g. Formaldehyde: function says "preservative" but it's Annex II
+    // (prohibited) — "allowed preservative" next to the red badge is wrong.
+    const banned = item({ annex: 'II', safety: 'alert', function: 'Preservative' })
+    const [out] = applyContext([banned], null)
+    expect(out.context).toBeUndefined()
+    expect(out.safety).toBe('alert')
+  })
+
   it('does not mutate the input array or its items', () => {
     const uv = item({ annex: 'VI', safety: 'caution' })
     const input = [uv]

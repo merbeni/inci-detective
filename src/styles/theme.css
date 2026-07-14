@@ -1,5 +1,13 @@
 /* Design tokens — the exact palette specified in sections 3.5 / 4.4 of the doc.
-   Emotional design: personal-care warmth, not medical alert. */
+   Emotional design: personal-care warmth, not medical alert.
+
+   Color roles (keep these exclusive so affordance stays readable):
+   - rose        → interactive only: buttons, links, active tab/nav, toggles,
+                   selection states, focus rings. If it's rose, you can tap it.
+   - lavender    → informational accent: logo marks, decorative icons, section
+                   labels, watchlist/community chips. Never a tap target color.
+   - semaphore   → risk levels only (safe/caution/alert/unknown).
+   - neutrals    → text, lines, disabled controls. */
 :root {
   /* Brand */
   --rose: #c4687a;

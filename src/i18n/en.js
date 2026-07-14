@@ -238,6 +238,11 @@ export const en = {
   'auth.signedIn': 'Signed in',
   'auth.failed': 'Authentication failed',
   'auth.googleFailed': 'Google sign-in failed',
+  'auth.err.invalidCredentials': 'Wrong email or password',
+  'auth.err.emailNotConfirmed': 'Confirm your email before signing in',
+  'auth.err.alreadyRegistered': 'That email already has an account — sign in instead',
+  'auth.err.weakPassword': 'Password must be at least 6 characters',
+  'auth.err.rateLimit': 'Too many attempts — wait a moment and try again',
 
   // Shared view
   'shared.unavailable': "This shared analysis isn't available.",

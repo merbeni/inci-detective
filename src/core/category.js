@@ -65,7 +65,10 @@ export function ingredientRole(item) {
 // input.
 export function applyContext(items, category) {
   return items.map((item) => {
-    if (item.unknown) return item
+    // Alert-level items (e.g. Annex II, prohibited) must never carry a
+    // reassuring context line — "allowed and expected" next to a red badge
+    // contradicts itself.
+    if (item.unknown || item.safety === 'alert') return item
     const role = ingredientRole(item)
     if (!role) return item
 

@@ -97,7 +97,14 @@ h1, h2, h3 {
 }
 .btn:active { transform: scale(0.97); }
 .btn--primary { background: var(--rose); color: #fff; box-shadow: var(--shadow-sm); }
-.btn--primary:disabled { background: var(--rose-soft); color: #fff; cursor: not-allowed; }
+/* Disabled = neutral gray, not a soft rose: rose-soft also paints informational
+   chips, so a rose-soft "button" read as tappable (or as a chip). */
+.btn--primary:disabled {
+  background: var(--line);
+  color: var(--ink-faint);
+  box-shadow: none;
+  cursor: not-allowed;
+}
 .btn--outline { border: 1.5px solid var(--rose); color: var(--rose); background: transparent; }
 .btn--ghost { color: var(--ink-soft); }
 .btn--block { display: flex; width: 100%; }
