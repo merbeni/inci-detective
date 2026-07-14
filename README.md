@@ -35,9 +35,11 @@ recommended in that document section by section.
   classify : OCR / manual fallback) → local classification. Every path
   converges on the offline classifier.
 - **Static dataset decision (§1.5)** → `data/cosing-source.json` +
-  `data/risk-mapping.json` → `scripts/build-dataset.mjs` → `src/data/ingredients.json`.
-  The risk mapping is a separate, versionable config; the bundled JSON carries a
-  `cosing_version` shown in the Profile screen.
+  `data/risk-mapping.json` → `scripts/build-dataset.mjs` →
+  `public/dataset/ingredients-v<version>.json`. The catalogue ships as a
+  versioned static JSON (fetched on first use, persisted in IndexedDB) so the
+  app bundle and PWA precache stay small; the risk mapping is a separate,
+  versionable config and the `cosing_version` shows in the Profile screen.
 - **"Unknown → Caution, never Alert" (§1.4)** → `src/core/classifier.js`.
 - **Visual system (§3.5 / §4.4)** → `src/styles/theme.css` (exact palette:
   rose `#C4687A`, cream `#FFF8F5`, lavender `#C4A8D4`; semaphore sage/peach/coral).
@@ -143,6 +145,15 @@ from §1.4). AI is strictly opt-in; core classification never depends on it.
 npm run lint     # ESLint (flat config)
 npm test         # Vitest — parser / classifier / levenshtein suites
 npm run build    # dataset + PWA
+npm run test:e2e # Playwright E2E over the production build (build first)
 ```
 
-CI (GitHub Actions) runs lint → test → build on every push/PR to main.
+CI (GitHub Actions):
+
+- `ci.yml` — lint → test → build → `npm audit` plus the Playwright E2E suite
+  on every push/PR to main.
+- `deploy-worker.yml` — deploys the Cloudflare Worker when `worker/**` or
+  `wrangler.toml` change on main (needs the `CLOUDFLARE_API_TOKEN` secret).
+- `dataset-refresh.yml` — monthly (and on dataset changes) rebuild + re-seed of
+  the Supabase remote dataset (needs `VITE_SUPABASE_URL` +
+  `SUPABASE_SERVICE_ROLE_KEY` secrets).

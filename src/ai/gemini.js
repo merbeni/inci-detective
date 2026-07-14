@@ -11,6 +11,7 @@
 // connectivity. The core classification never depends on it.
 
 import { t, getLang } from '../i18n/index.js'
+import { authHeaders } from '../lib/supabase.js'
 
 // 2.5-flash: the 2.0 family no longer has a free tier (limit: 0 on free keys).
 const MODEL = 'gemini-2.5-flash'
@@ -192,7 +193,9 @@ async function callProxy(parts, generationConfig) {
   try {
     res = await fetch(PROXY_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      // Signed-in users send their Supabase JWT: the Worker verifies it and
+      // grants the per-user rate limit (anonymous callers share a smaller one).
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
       body: JSON.stringify({ parts, model: MODEL, generationConfig }),
     })
   } catch {

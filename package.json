@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "pretest": "node scripts/build-dataset.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
     "@vitejs/plugin-react": "^5.2.0",
     "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",

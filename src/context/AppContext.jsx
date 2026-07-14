@@ -52,6 +52,13 @@ export function AppProvider({ children }) {
       await reloadProfile()
       setLoading(false)
 
+      // Warm the ingredient catalogue in the background: it lives outside the
+      // bundle (static JSON -> IndexedDB), so fetching it now — not on the first
+      // analysis — is what makes the classifier work offline from day one.
+      import('../core/classifier.js')
+        .then((m) => m.ensureDataset())
+        .catch(() => {})
+
       if (isCloudEnabled) {
         const u = await getCurrentUser().catch(() => null)
         setUser(u)

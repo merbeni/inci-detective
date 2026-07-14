@@ -24,8 +24,10 @@ if (!ACCOUNT || !TOKEN) {
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = resolve(here, '..')
+// The built catalogue lives under public/dataset with a versioned filename.
+const { version } = JSON.parse(readFileSync(resolve(root, 'data/risk-mapping.json'), 'utf-8'))
 const items = JSON.parse(
-  readFileSync(resolve(root, 'src/data/ingredients.json'), 'utf-8'),
+  readFileSync(resolve(root, `public/dataset/ingredients-v${version}.json`), 'utf-8'),
 ).ingredients
 
 // The official CosIng `function` (99% coverage) is the strong clustering signal.

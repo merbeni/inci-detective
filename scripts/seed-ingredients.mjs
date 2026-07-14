@@ -36,7 +36,11 @@ if (!url || !serviceKey) {
   process.exit(1)
 }
 
-const dataset = JSON.parse(readFileSync(resolve(root, 'src/data/ingredients.json'), 'utf-8'))
+// The built catalogue lives under public/dataset with a versioned filename.
+const { version } = JSON.parse(readFileSync(resolve(root, 'data/risk-mapping.json'), 'utf-8'))
+const dataset = JSON.parse(
+  readFileSync(resolve(root, `public/dataset/ingredients-v${version}.json`), 'utf-8'),
+)
 const supabase = createClient(url, serviceKey, { auth: { persistSession: false } })
 
 // `norm` is the dataset's unique merge key, so it doubles as the row id (the

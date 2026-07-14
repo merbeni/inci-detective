@@ -3,6 +3,7 @@
 // embeds the query with the same bge model the Vectorize corpus was built with.
 
 import { GeminiError } from './gemini.js'
+import { authHeaders } from '../lib/supabase.js'
 
 const SEARCH_URL = '/api/search'
 
@@ -30,7 +31,8 @@ async function postSearch(payload) {
   try {
     res = await fetch(SEARCH_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      // JWT (when signed in) buys the per-user rate limit — see gemini.js.
+      headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
       body: JSON.stringify(payload),
     })
   } catch {

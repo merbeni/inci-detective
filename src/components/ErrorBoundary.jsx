@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import { t } from '../i18n/index.js'
+import { reportError } from '../lib/monitor.js'
 
 // vite-plugin-pwa runs in 'autoUpdate' mode, so a tab left open across a
 // deploy is still running the old app shell while the server now only serves
@@ -24,6 +25,8 @@ export default class ErrorBoundary extends Component {
 
   componentDidCatch(error) {
     const isChunkError = CHUNK_ERROR_RE.test(error?.message || '')
+    // Stale-deploy chunk errors are expected noise; report everything else.
+    if (!isChunkError) reportError(error)
     if (isChunkError) {
       const last = Number(sessionStorage.getItem(RELOAD_KEY) || 0)
       if (Date.now() - last > RELOAD_COOLDOWN_MS) {

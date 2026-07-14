@@ -79,15 +79,33 @@ create table if not exists public.dataset_meta (
 -- readable; only authenticated users may write.
 create table if not exists public.products (
   barcode text primary key,
-  product_name text default '',
-  brand text default '',
-  ingredients_text text not null,
+  product_name text default '' check (char_length(product_name) <= 200),
+  brand text default '' check (char_length(brand) <= 200),
+  ingredients_text text not null check (char_length(ingredients_text) <= 6000),
   source text default 'ocr',           -- ocr | manual
   contributed_by uuid references auth.users on delete set null,
   confirmations int default 1,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+
+-- Version history: every content update archives the previous row (trigger
+-- below), so vandalism or a bad correction is always recoverable.
+-- No public RLS policies — history is service-role/back-office only.
+create table if not exists public.products_history (
+  id bigint generated always as identity primary key,
+  barcode text not null,
+  product_name text,
+  brand text,
+  ingredients_text text,
+  source text,
+  contributed_by uuid,
+  confirmations int,
+  replaced_at timestamptz default now(),
+  replaced_by uuid
+);
+create index if not exists products_history_barcode_idx
+  on public.products_history(barcode);
 
 -- ---------------------------------------------------------- Row Level Security
 alter table public.profiles      enable row level security;
@@ -123,7 +141,9 @@ create policy "read ingredients" on public.ingredients for select using (true);
 drop policy if exists "read dataset_meta" on public.dataset_meta;
 create policy "read dataset_meta" on public.dataset_meta for select using (true);
 
--- products: world-readable; only signed-in users may contribute/update.
+-- products: world-readable; signed-in users may contribute new rows, but only
+-- the original contributor may rewrite one (SEC-10 anti-vandalism). Everyone
+-- else "votes" via confirm_product() below.
 drop policy if exists "read products" on public.products;
 create policy "read products" on public.products for select using (true);
 drop policy if exists "contribute products" on public.products;
@@ -131,7 +151,60 @@ create policy "contribute products" on public.products
   for insert with check (auth.uid() is not null);
 drop policy if exists "update products" on public.products;
 create policy "update products" on public.products
-  for update using (auth.uid() is not null) with check (auth.uid() is not null);
+  for update
+  using (auth.uid() = contributed_by or contributed_by is null)
+  with check (auth.uid() is not null);
+
+alter table public.products_history enable row level security;
+
+-- Archive the previous version on every content update.
+create or replace function public.archive_product_version()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  -- Only archive real content changes; confirmation bumps are not versions.
+  if old.ingredients_text is distinct from new.ingredients_text
+     or old.product_name is distinct from new.product_name
+     or old.brand is distinct from new.brand then
+    insert into public.products_history
+      (barcode, product_name, brand, ingredients_text, source,
+       contributed_by, confirmations, replaced_by)
+    values
+      (old.barcode, old.product_name, old.brand, old.ingredients_text, old.source,
+       old.contributed_by, old.confirmations, auth.uid());
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists products_archive_version on public.products;
+create trigger products_archive_version
+  before update on public.products
+  for each row execute function public.archive_product_version();
+
+-- Any signed-in user whose scan matches the stored list votes for it instead
+-- of rewriting it. SECURITY DEFINER because the update policy above would
+-- otherwise block non-contributors.
+create or replace function public.confirm_product(p_barcode text)
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'authentication required';
+  end if;
+  update public.products
+     set confirmations = coalesce(confirmations, 1) + 1,
+         updated_at = now()
+   where barcode = p_barcode;
+end;
+$$;
+
+revoke all on function public.confirm_product(text) from public;
+grant execute on function public.confirm_product(text) to authenticated;
 
 -- -------------------------------------------- auto-create a profile per new user
 create or replace function public.handle_new_user()

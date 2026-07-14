@@ -6,7 +6,20 @@ import { VitePWA } from 'vite-plugin-pwa'
 // - CacheFirst for static assets (app shell + WASM + dataset)
 // - StaleWhileRevalidate for Open Beauty Facts
 // - NetworkFirst for the Gemini AI proxy
+// Local dev/preview hit the deployed Worker directly — in production /api is
+// rewritten by vercel.json, which doesn't apply outside Vercel. (/share is NOT
+// proxied: its Worker route serves the production app shell to browsers, while
+// locally the SPA route must render this build.)
+const apiProxy = {
+  '/api': {
+    target: 'https://inci-detective-api.merbeni.workers.dev',
+    changeOrigin: true,
+  },
+}
+
 export default defineConfig({
+  server: { proxy: apiProxy },
+  preview: { proxy: apiProxy },
   build: {
     rollupOptions: {
       output: {
@@ -45,10 +58,24 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // The CosIng dataset can be a few MB; allow precaching it.
-        maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,wasm,json}'],
+        // The CosIng catalogue (multi-MB versioned JSON) is fetched on demand
+        // and persisted in IndexedDB — precaching it would double the install
+        // weight for data the app already keeps offline.
+        globIgnores: ['dataset/**'],
         runtimeCaching: [
+          {
+            // Belt-and-braces for the catalogue fetch (e.g. IndexedDB blocked
+            // in private mode). The filename is versioned, so CacheFirst never
+            // serves a stale catalogue.
+            urlPattern: ({ url }) => url.pathname.startsWith('/dataset/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'inci-dataset',
+              expiration: { maxEntries: 2 },
+            },
+          },
           {
             urlPattern: ({ url }) => url.href.includes('openbeautyfacts.org'),
             handler: 'StaleWhileRevalidate',

@@ -110,10 +110,19 @@ const meta = {
 }
 const output = { ...meta, ingredients }
 
+// The full catalogue (multi-MB) ships as a static, versioned JSON under
+// public/ — fetched on demand and cached in IndexedDB, NOT bundled into a JS
+// chunk nor precached by the service worker. The versioned filename makes the
+// URL immutable, so any HTTP/SW cache can hold it forever.
+const publicDir = resolve(root, 'public/dataset')
+mkdirSync(publicDir, { recursive: true })
+writeFileSync(
+  resolve(publicDir, `ingredients-v${mapping.version}.json`),
+  JSON.stringify(output),
+  'utf-8',
+)
 const outDir = resolve(root, 'src/data')
 mkdirSync(outDir, { recursive: true })
-// The full catalogue (multi-MB) is lazy-loaded only when an analysis runs.
-writeFileSync(resolve(outDir, 'ingredients.json'), JSON.stringify(output), 'utf-8')
 // A tiny sidecar with just the metadata + annex labels, imported eagerly so the
 // Profile screen and the remote-dataset version check don't pull in the big file.
 writeFileSync(resolve(outDir, 'dataset-meta.json'), JSON.stringify(meta), 'utf-8')

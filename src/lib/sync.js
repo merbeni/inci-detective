@@ -218,23 +218,53 @@ export async function lookupCommunityProduct(barcode) {
   return fromCloudProduct(data)
 }
 
+// Loose text equality for ingredient lists: OCR/typing noise (case, spacing,
+// trailing dots) must not stop two matching scans from counting as agreement.
+const normText = (s) =>
+  String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+
 // Contribute a barcode -> ingredient list to the shared catalogue. Best-effort:
 // silently no-ops unless a user is signed in (RLS) and we have real data.
+// Anti-clobber (SEC-10): an existing row is never overwritten by a different
+// list — a matching scan counts as a confirmation vote instead, and a
+// differing one only goes through when this user is the original contributor
+// (enforced by RLS; the row's history is archived server-side).
 export async function pushProduct({ barcode, productName, brand, ingredientsText, source }) {
   const userId = await currentUserId()
   if (!userId || !barcode || !ingredientsText) return
-  await supabase.from('products').upsert(
-    {
-      barcode,
-      product_name: productName || '',
-      brand: brand || '',
-      ingredients_text: ingredientsText,
-      source: source || 'ocr',
-      contributed_by: userId,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: 'barcode' },
-  )
+
+  const row = {
+    barcode,
+    product_name: productName || '',
+    brand: brand || '',
+    ingredients_text: ingredientsText,
+    source: source || 'ocr',
+    contributed_by: userId,
+    updated_at: new Date().toISOString(),
+  }
+
+  const { data: existing } = await supabase
+    .from('products')
+    .select('ingredients_text')
+    .eq('barcode', barcode)
+    .maybeSingle()
+
+  if (!existing) {
+    await supabase.from('products').insert(row)
+    return
+  }
+  if (normText(existing.ingredients_text) === normText(ingredientsText)) {
+    // Same list — vote for it. No-op if the RPC isn't installed yet.
+    await supabase.rpc('confirm_product', { p_barcode: barcode })
+    return
+  }
+  // Different list: attempt the update; RLS rejects it unless this user
+  // contributed the row (best-effort, failure is fine).
+  const { contributed_by: _own, ...patch } = row
+  await supabase.from('products').update(patch).eq('barcode', barcode)
 }
 
 // ------------------------------------------------------------- sharing
@@ -274,10 +304,12 @@ export async function fetchSharedScan(shareId) {
 }
 
 // -------------------------------------------------- remote updatable dataset
-// On startup, load a cached remote dataset if it's newer than the bundled one.
+// On startup, load the IndexedDB dataset copy when it's at least as new as the
+// shipped one (>=: the static catalogue itself is cached there after its first
+// fetch, so this also makes the classifier ready offline without a network hit).
 export async function loadCachedDataset() {
   const cached = await getCachedDataset()
-  if (cached?.meta?.cosing_version > datasetMeta.version) {
+  if (cached?.ingredients?.length && cached.meta?.cosing_version >= datasetMeta.version) {
     setDataset(cached.ingredients, cached.meta)
     return cached.meta.cosing_version
   }

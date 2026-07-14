@@ -1,6 +1,7 @@
-# Lint, test and build on every push / PR to main. The dataset files
-# (src/data/*.json) are gitignored build artifacts, so `pretest` regenerates
-# them before vitest runs and `npm run build` regenerates them again for vite.
+# Quality gate: lint + unit tests + build + dependency audit on every push/PR,
+# plus the Playwright E2E suite. The dataset files are gitignored build
+# artifacts, so `pretest` regenerates them before vitest and `npm run build`
+# regenerates them again for vite. The Worker deploys from deploy-worker.yml.
 name: CI
 
 on:
@@ -9,14 +10,14 @@ on:
   pull_request:
 
 jobs:
-  ci:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install
@@ -30,3 +31,40 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # Fail on high+ vulnerabilities in production deps; dev-only issues warn.
+      - name: Audit (production deps)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit (all deps, informational)
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build
+
+      - name: E2E tests
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

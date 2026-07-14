@@ -1,0 +1,50 @@
+# Keeps the remote-updatable dataset (Supabase `ingredients` + `dataset_meta`)
+# in sync with the repo's curated data: rebuilds and re-seeds monthly, on any
+# change to the dataset sources, or on demand. Clients only re-download when
+# `cosing_version` (data/risk-mapping.json) is bumped — re-seeding the same
+# version is a harmless no-op for them.
+#
+# Requires repo secrets:
+#   VITE_SUPABASE_URL            the project URL
+#   SUPABASE_SERVICE_ROLE_KEY    service-role key (server-side only)
+# Until they're configured the job detects the missing secrets and skips.
+name: Dataset refresh
+
+on:
+  schedule:
+    - cron: '0 6 1 * *' # 1st of each month, 06:00 UTC
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'scripts/build-dataset.mjs'
+      - 'scripts/seed-ingredients.mjs'
+  workflow_dispatch:
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Check for Supabase secrets
+        id: secrets
+        env:
+          URL: ${{ secrets.VITE_SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: echo "present=$([ -n "$URL" ] && [ -n "$KEY" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - if: steps.secrets.outputs.present == 'true'
+        run: npm ci
+      - if: steps.secrets.outputs.present == 'true'
+        run: npm run build:dataset
+      - if: steps.secrets.outputs.present == 'true'
+        run: node scripts/seed-ingredients.mjs
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Skipped (no secrets)
+        if: steps.secrets.outputs.present != 'true'
+        run: echo "Supabase secrets not set — run 'node scripts/seed-ingredients.mjs' locally instead."

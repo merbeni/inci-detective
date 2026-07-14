@@ -35,11 +35,23 @@ APP_ORIGIN = "https://inci-detective.vercel.app"
 SUPABASE_URL = "https://shmdzlffwjhxcrhtkpfd.supabase.co"
 SUPABASE_ANON_KEY = "sb_publishable_Q0Bps6Y1EvJP1KrVEq_xgA_kBjt8FMm"
 
-# Per-IP rate limit for /api/ai and /api/search (both spend paid quota).
-# 20 requests / 60s per IP is generous for a human, hostile to a scraper.
+# Workers Logs — captures console.error from the routes (worker errors +
+# client errors reported via /api/log). View under the Worker's "Logs" tab.
+[observability]
+enabled = true
+
+# Rate limits. Signed-in users (verified Supabase JWT) get RATE_LIMITER keyed
+# per user; anonymous callers of /api/ai + /api/search share the smaller
+# per-IP RATE_LIMITER_ANON. Other routes use RATE_LIMITER per IP.
 # `namespace_id` is just a unique-per-worker numeric label, not an account id.
 [[unsafe.bindings]]
 name = "RATE_LIMITER"
 type = "ratelimit"
 namespace_id = "1001"
 simple = { limit = 20, period = 60 }
+
+[[unsafe.bindings]]
+name = "RATE_LIMITER_ANON"
+type = "ratelimit"
+namespace_id = "1002"
+simple = { limit = 8, period = 60 }

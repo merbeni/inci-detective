@@ -49,6 +49,19 @@ export default [
   },
 
   {
+    files: ['e2e/**/*.js', 'playwright.config.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { ...globals.node, ...globals.browser },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-empty': ['error', { allowEmptyCatch: true }],
+    },
+  },
+
+  {
     files: ['scripts/**/*.mjs', 'vite.config.js', 'vitest.config.js', 'eslint.config.js'],
     languageOptions: {
       ecmaVersion: 'latest',

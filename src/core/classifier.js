@@ -15,9 +15,11 @@ import { detectCategory, applyContext } from './category.js'
 const FUZZY_THRESHOLD = 0.85
 const MIN_FUZZY_LEN = 5
 
-// The full ~28k catalogue is multi-MB, so it is loaded lazily (a dynamic import)
-// the first time an analysis runs — it stays out of the initial app bundle. Only
-// the tiny metadata sidecar (version, annex labels) is imported eagerly.
+// The full ~28k catalogue is multi-MB, so it is NOT bundled: it ships as a
+// versioned static JSON (public/dataset/, written by scripts/build-dataset.mjs)
+// fetched the first time an analysis needs it and then persisted in IndexedDB —
+// after that first fetch the catalogue works fully offline and the app shell
+// precache stays small. Only the tiny metadata sidecar is imported eagerly.
 let active = {
   ingredients: [],
   unknownLevel: bundledMeta.unknownLevel,
@@ -26,21 +28,50 @@ let active = {
 let loaded = false
 let loadingPromise = null
 
+const DATASET_URL = `/dataset/ingredients-v${bundledMeta.cosing_version}.json`
+
+async function loadCatalogue() {
+  // 1. IndexedDB copy — either this same version (stored on a previous visit)
+  //    or a newer one pulled from Supabase by syncDataset().
+  try {
+    const { getCachedDataset } = await import('../db/db.js')
+    const cached = await getCachedDataset()
+    if (
+      cached?.ingredients?.length &&
+      cached.meta?.cosing_version >= bundledMeta.cosing_version
+    ) {
+      setDataset(cached.ingredients, cached.meta)
+      return
+    }
+  } catch {
+    /* IndexedDB unavailable (private mode) — fall through to the network */
+  }
+
+  // 2. The static versioned JSON served next to the app shell.
+  const res = await fetch(DATASET_URL)
+  if (!res.ok) throw new Error(`dataset fetch failed: HTTP ${res.status}`)
+  const ds = await res.json()
+  const { ingredients, ...meta } = ds
+  setDataset(ingredients, meta)
+
+  // Persist for offline use — best-effort, the in-memory dataset already works.
+  try {
+    const { setCachedDataset } = await import('../db/db.js')
+    await setCachedDataset(meta, ingredients)
+  } catch {
+    /* ignore */
+  }
+}
+
 export function ensureDataset() {
   if (loaded) return Promise.resolve()
   if (!loadingPromise) {
-    loadingPromise = import('../data/ingredients.json')
-      .then((mod) => {
-        const ds = mod.default
-        setDataset(ds.ingredients, ds)
-        loaded = true
-      })
-      .catch((err) => {
-        // A failed chunk load (flaky first visit, before the SW has precached)
-        // must not poison the cache — clear it so the next analysis retries.
-        loadingPromise = null
-        throw err
-      })
+    loadingPromise = loadCatalogue().catch((err) => {
+      // A failed fetch (flaky first visit) must not poison the cache — clear it
+      // so the next analysis retries.
+      loadingPromise = null
+      throw err
+    })
   }
   return loadingPromise
 }

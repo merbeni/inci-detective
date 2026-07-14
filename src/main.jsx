@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AppProvider } from './context/AppContext.jsx'
 import App from './App.jsx'
+import { initMonitor } from './lib/monitor.js'
 import './styles/global.css'
+
+initMonitor()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

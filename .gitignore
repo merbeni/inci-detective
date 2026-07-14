@@ -7,7 +7,7 @@ dist-ssr
 .DS_Store
 .vite
 # generated at build time from data/ + scripts/build-dataset.mjs
-src/data/ingredients.json
+public/dataset/
 src/data/dataset-meta.json
 # raw CosIng CSV (6 MB) — regenerable; data/cosing-full.json is the committed source
 data/cosing-raw/
@@ -15,3 +15,6 @@ data/cosing-raw/
 data/vectors.ndjson
 # wrangler local state
 .wrangler
+# Playwright output
+test-results/
+playwright-report/

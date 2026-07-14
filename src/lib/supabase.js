@@ -13,3 +13,17 @@ export const supabase = isCloudEnabled
       auth: { persistSession: true, autoRefreshToken: true },
     })
   : null
+
+// Authorization header for the Worker endpoints (/api/ai, /api/search): a
+// signed-in user's JWT gets them the full per-user rate limit instead of the
+// shared anonymous quota. Empty when signed out — auth there is optional.
+export async function authHeaders() {
+  if (!isCloudEnabled) return {}
+  try {
+    const { data } = await supabase.auth.getSession()
+    const token = data.session?.access_token
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  } catch {
+    return {}
+  }
+}
