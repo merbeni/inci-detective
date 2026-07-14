@@ -16,6 +16,9 @@
 name = "inci-detective-api"
 main = "worker/index.js"
 compatibility_date = "2024-09-23"
+# Pinned so CI's scoped API token (Workers Scripts: Edit only) doesn't need
+# account-discovery permissions. Not a secret — it's in every dashboard URL.
+account_id = "52285f97bc479b0f9602846e477b03aa"
 
 # Workers AI — used to embed search queries (bge-small-en-v1.5, 384 dims).
 [ai]
