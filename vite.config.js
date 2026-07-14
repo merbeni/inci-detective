@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { configDefaults } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -20,6 +21,11 @@ const apiProxy = {
 export default defineConfig({
   server: { proxy: apiProxy },
   preview: { proxy: apiProxy },
+  test: {
+    // e2e/ holds Playwright specs (own runner via `npm run test:e2e`) —
+    // vitest's default *.spec.js glob must not pick them up.
+    exclude: [...configDefaults.exclude, 'e2e/**'],
+  },
   build: {
     rollupOptions: {
       output: {
