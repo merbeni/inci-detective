@@ -57,6 +57,7 @@ const DEFAULT_PROFILE = {
   aiEnabled: false,
   language: '', // '' = auto-detect from the device; 'es' | 'en' when set
   geminiKey: '', // stays local only, never synced to the cloud
+  avatar: '', // small JPEG data URL; local only (pushProfile whitelists fields)
   onboarded: false,
   createdAt: null,
 }

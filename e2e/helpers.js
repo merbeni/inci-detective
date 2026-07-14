@@ -41,6 +41,12 @@ export async function analyzeQaList(page) {
   await expect(page.getByText('Contiene alertas')).toBeVisible({ timeout: 15_000 })
 }
 
+// Minimal valid 1x1 red PNG for upload tests (profile photo).
+export const TINY_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+  'base64',
+)
+
 // Collect console errors + uncaught page errors for the whole test (TC-18).
 export function watchConsole(page) {
   const errors = []

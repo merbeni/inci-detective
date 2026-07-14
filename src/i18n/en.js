@@ -202,6 +202,9 @@ export const en = {
   'profile.keyHint':
     'Bring your own key from Google AI Studio so your usage never hits shared limits.',
   'profile.datasetLine': 'Analyses run on a database of {n} ingredients · updated {d}',
+  'profile.changePhoto': 'Change profile photo',
+  'profile.photoSaved': 'Profile photo updated',
+  'profile.photoFailed': "Couldn't process that image",
 
   // Onboarding
   'onb.welcome': "Let's personalize your experience so your scans match your skin.",
@@ -243,6 +246,22 @@ export const en = {
   'auth.err.alreadyRegistered': 'That email already has an account — sign in instead',
   'auth.err.weakPassword': 'Password must be at least 6 characters',
   'auth.err.rateLimit': 'Too many attempts — wait a moment and try again',
+  'auth.err.providerDisabled':
+    'Google sign-in is not enabled on this server — use email and password',
+  'auth.forgot': 'Forgot your password?',
+  'auth.forgotNeedsEmail': 'Type your email above, then tap again',
+  'auth.forgotSent': 'We sent you an email to reset your password',
+
+  // Password reset
+  'reset.title': 'New password',
+  'reset.sub': 'Choose a new password for your account.',
+  'reset.password': 'New password',
+  'reset.confirm': 'Repeat password',
+  'reset.mismatch': "Passwords don't match",
+  'reset.save': 'Save password',
+  'reset.done': 'Password updated',
+  'reset.invalid': 'The link expired or is invalid. Request a new one from "Forgot your password?".',
+  'reset.back': 'Go to sign in',
 
   // Shared view
   'shared.unavailable': "This shared analysis isn't available.",

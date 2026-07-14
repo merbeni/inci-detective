@@ -15,6 +15,7 @@ const Watchlist = lazy(() => import('./screens/Watchlist.jsx'))
 const Profile = lazy(() => import('./screens/Profile.jsx'))
 const Onboarding = lazy(() => import('./screens/Onboarding.jsx'))
 const Auth = lazy(() => import('./screens/Auth.jsx'))
+const ResetPassword = lazy(() => import('./screens/ResetPassword.jsx'))
 const Shared = lazy(() => import('./screens/Shared.jsx'))
 const Search = lazy(() => import('./screens/Search.jsx'))
 
@@ -65,6 +66,7 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/reset" element={<ResetPassword />} />
             <Route path="/share/:shareId" element={<Shared />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

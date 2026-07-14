@@ -204,6 +204,9 @@ export const es = {
   'profile.keyHint':
     'Traé tu propia key de Google AI Studio para que tu uso no dependa de los límites compartidos.',
   'profile.datasetLine': 'Analizamos con una base de {n} ingredientes · actualizada el {d}',
+  'profile.changePhoto': 'Cambiar foto de perfil',
+  'profile.photoSaved': 'Foto de perfil actualizada',
+  'profile.photoFailed': 'No pudimos procesar esa imagen',
 
   // Onboarding
   'onb.welcome': 'Personalicemos tu experiencia para que cada escaneo hable de tu piel.',
@@ -245,6 +248,23 @@ export const es = {
   'auth.err.alreadyRegistered': 'Ese email ya tiene una cuenta — iniciá sesión',
   'auth.err.weakPassword': 'La contraseña debe tener al menos 6 caracteres',
   'auth.err.rateLimit': 'Demasiados intentos — esperá un momento y probá de nuevo',
+  'auth.err.providerDisabled':
+    'El inicio con Google no está habilitado en este servidor — usá email y contraseña',
+  'auth.forgot': '¿Olvidaste tu contraseña?',
+  'auth.forgotNeedsEmail': 'Escribí tu email arriba y volvé a tocar',
+  'auth.forgotSent': 'Te enviamos un email para restablecer la contraseña',
+
+  // Restablecer contraseña
+  'reset.title': 'Nueva contraseña',
+  'reset.sub': 'Elegí una contraseña nueva para tu cuenta.',
+  'reset.password': 'Nueva contraseña',
+  'reset.confirm': 'Repetir contraseña',
+  'reset.mismatch': 'Las contraseñas no coinciden',
+  'reset.save': 'Guardar contraseña',
+  'reset.done': 'Contraseña actualizada',
+  'reset.invalid':
+    'El enlace expiró o no es válido. Pedí uno nuevo desde "¿Olvidaste tu contraseña?".',
+  'reset.back': 'Ir a iniciar sesión',
 
   // Vista compartida
   'shared.unavailable': 'Este análisis compartido no está disponible.',

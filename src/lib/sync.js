@@ -43,7 +43,14 @@ export function onAuthChange(cb) {
 
 export async function signUp(email, password) {
   if (!isCloudEnabled) throw new Error('cloud-disabled')
-  const { data, error } = await supabase.auth.signUp({ email, password })
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    // The confirmation email must land back on THIS deployment, not the
+    // project's default Site URL (which Supabase ships as localhost:3000).
+    // The origin must also be allow-listed in Supabase Auth → URL Configuration.
+    options: { emailRedirectTo: window.location.origin },
+  })
   if (error) throw error
   return data.user
 }
@@ -57,10 +64,34 @@ export async function signIn(email, password) {
 
 export async function signInWithGoogle() {
   if (!isCloudEnabled) throw new Error('cloud-disabled')
-  const { error } = await supabase.auth.signInWithOAuth({
+  const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin },
+    options: { redirectTo: window.location.origin, skipBrowserRedirect: true },
   })
+  if (error) throw error
+  // Probe before leaving the SPA: if the provider isn't enabled on the
+  // project, the authorize URL answers a raw 400 JSON page and a straight
+  // redirect would strand the user on it. Fail open on network/CORS issues.
+  const probe = await fetch(data.url, { redirect: 'manual' }).catch(() => null)
+  if (probe && probe.status >= 400) {
+    const body = await probe.json().catch(() => ({}))
+    throw new Error(body.msg || 'provider is not enabled')
+  }
+  window.location.assign(data.url)
+}
+
+export async function resetPassword(email) {
+  if (!isCloudEnabled) throw new Error('cloud-disabled')
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/auth/reset`,
+  })
+  if (error) throw error
+}
+
+// Requires the recovery session created by the email link (see /auth/reset).
+export async function updatePassword(password) {
+  if (!isCloudEnabled) throw new Error('cloud-disabled')
+  const { error } = await supabase.auth.updateUser({ password })
   if (error) throw error
 }
 

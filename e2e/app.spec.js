@@ -3,7 +3,13 @@
 // so flows build their own state via the shared helpers.
 
 import { test, expect } from '@playwright/test'
-import { completeOnboarding, analyzeQaList, watchConsole, QA_INCI_LIST } from './helpers.js'
+import {
+  completeOnboarding,
+  analyzeQaList,
+  watchConsole,
+  QA_INCI_LIST,
+  TINY_PNG,
+} from './helpers.js'
 
 test.describe('Primer uso', () => {
   test('TC-01: sin perfil, / redirige a /onboarding', async ({ page }) => {
@@ -160,6 +166,21 @@ test.describe('Preferencias', () => {
     await expect(html).toHaveAttribute('data-theme', 'light')
   })
 
+  test('foto de perfil: subir una imagen la guarda y la muestra', async ({ page }) => {
+    await completeOnboarding(page)
+    await page.getByRole('link', { name: 'Perfil' }).click()
+    await page.locator('input[type="file"]').setInputFiles({
+      name: 'avatar.png',
+      mimeType: 'image/png',
+      buffer: TINY_PNG,
+    })
+    await expect(page.locator('.toast')).toHaveText('Foto de perfil actualizada')
+    await expect(page.locator('.profile__avatar img')).toBeVisible()
+    // Persistida en IndexedDB: sobrevive una recarga.
+    await page.reload()
+    await expect(page.locator('.profile__avatar img')).toBeVisible()
+  })
+
   test('TC-12: cambio de idioma en caliente ES ↔ EN', async ({ page }) => {
     await completeOnboarding(page)
     await page.getByRole('link', { name: 'Perfil' }).click()
@@ -185,6 +206,26 @@ test.describe('Cuentas y compartidos', () => {
     if (!/cloud-disabled/.test(text)) {
       expect(text).toBe('Email o contraseña incorrectos')
     }
+  })
+
+  test('olvidé mi contraseña: el enlace existe y sin email pide completarlo', async ({ page }) => {
+    await completeOnboarding(page)
+    await page.goto('/auth')
+    const forgot = page.getByRole('button', { name: '¿Olvidaste tu contraseña?' })
+    await expect(forgot).toBeVisible()
+    await forgot.click()
+    await expect(page.locator('.toast')).toHaveText('Escribí tu email arriba y volvé a tocar')
+  })
+
+  test('/auth/reset sin sesión de recuperación degrada a "pedir enlace nuevo"', async ({
+    page,
+  }) => {
+    await page.goto('/auth/reset')
+    await expect(page.getByText('El enlace expiró o no es válido', { exact: false })).toBeVisible({
+      timeout: 15_000,
+    })
+    await page.getByRole('button', { name: 'Ir a iniciar sesión' }).click()
+    await expect(page).toHaveURL(/\/auth$/)
   })
 
   test('TC-14: /share con id inexistente muestra aviso y CTA', async ({ page }) => {

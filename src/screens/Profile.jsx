@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Pencil, Moon, Sparkles, Check, Cloud, CloudOff, RefreshCw, LogOut, Languages } from 'lucide-react'
+import { Pencil, Moon, Sparkles, Check, Cloud, CloudOff, RefreshCw, LogOut, Languages, Camera } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { db } from '../db/db.js'
 import { datasetMeta } from '../core/classifier.js'
@@ -17,12 +17,26 @@ export default function Profile() {
   // The proxy needs zero setup; the bring-your-own-key field is advanced-only,
   // so keep it collapsed unless a key is already saved.
   const [showKey, setShowKey] = useState(Boolean(profile.geminiKey))
+  const photoInput = useRef(null)
 
   useEffect(() => {
     db.scans.count().then(setScanCount)
   }, [])
 
   const initial = (profile.name || '?').trim().charAt(0).toUpperCase()
+
+  async function onPhoto(e) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // re-picking the same file must fire change again
+    if (!file) return
+    try {
+      const avatar = await toAvatarDataUrl(file)
+      updateProfile({ avatar })
+      showToast(t('profile.photoSaved'))
+    } catch {
+      showToast(t('profile.photoFailed'))
+    }
+  }
 
   function toggleConcern(id) {
     const next = profile.concerns.includes(id)
@@ -34,7 +48,24 @@ export default function Profile() {
   return (
     <div className="screen profile">
       <header className="profile__head">
-        <div className="profile__avatar">{initial}</div>
+        <button
+          className="profile__avatar"
+          onClick={() => photoInput.current?.click()}
+          aria-label={t('profile.changePhoto')}
+        >
+          {profile.avatar ? <img src={profile.avatar} alt="" /> : initial}
+          <span className="profile__avatar-badge">
+            <Camera size={12} strokeWidth={2.5} />
+          </span>
+        </button>
+        <input
+          ref={photoInput}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={onPhoto}
+          aria-hidden="true"
+        />
         <div>
           <h1 className="profile__name">{profile.name || t('profile.title')}</h1>
           <span className="muted">{tn('profile.scanned', scanCount)}</span>
@@ -199,6 +230,32 @@ export default function Profile() {
       <p className="faint profile__dataset">{datasetLine()}</p>
     </div>
   )
+}
+
+// Center-crop the picked image to a small square JPEG data URL — a few KB in
+// IndexedDB instead of a multi-MB camera photo, and offline by construction.
+const AVATAR_SIZE = 192
+async function toAvatarDataUrl(file) {
+  const url = URL.createObjectURL(file)
+  try {
+    const img = await new Promise((resolve, reject) => {
+      const i = new Image()
+      i.onload = () => resolve(i)
+      i.onerror = () => reject(new Error('bad image'))
+      i.src = url
+    })
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = AVATAR_SIZE
+    const scale = Math.max(AVATAR_SIZE / img.width, AVATAR_SIZE / img.height)
+    const w = img.width * scale
+    const h = img.height * scale
+    canvas
+      .getContext('2d')
+      .drawImage(img, (AVATAR_SIZE - w) / 2, (AVATAR_SIZE - h) / 2, w, h)
+    return canvas.toDataURL('image/jpeg', 0.85)
+  } finally {
+    URL.revokeObjectURL(url)
+  }
 }
 
 // "Analizamos con una base de 28.700 ingredientes · actualizada el 11 de julio de 2026"

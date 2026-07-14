@@ -18,4 +18,8 @@
 .auth__brand p { font-size: 14px; max-width: 280px; margin: 0 auto; }
 
 .auth__form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.auth__forgot {
+  align-self: center; padding: 4px 8px;
+  color: var(--rose); font-weight: 700; font-size: 13px;
+}
 .auth__google { margin-bottom: 6px; }
