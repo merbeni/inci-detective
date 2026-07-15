@@ -22,6 +22,12 @@ import { verifySupabaseToken } from './auth.js'
 // works signed-out — but a scraper without an account now hits a low ceiling.
 const PAID_PATHS = new Set(['/api/ai', '/api/search'])
 
+// /api/obf writes to Open Beauty Facts using the app's OWN account credentials
+// (server-side secrets), so an open proxy would let anyone vandalise the public
+// database in our name. Require a verified Supabase account: raises the bar from
+// "any curl" to "a registered, revocable user" and gives a per-user rate limit.
+const AUTH_REQUIRED = new Set(['/api/obf'])
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url)
@@ -52,13 +58,26 @@ export default {
     const ip = request.headers.get('CF-Connecting-IP') || 'unknown'
     let limiter = env.RATE_LIMITER
     let key = ip
+
+    // Resolve identity once for any route that reads it (paid or auth-gated).
+    let userId = null
+    if (PAID_PATHS.has(pathname) || AUTH_REQUIRED.has(pathname)) {
+      userId = await verifySupabaseToken(request, env)
+    }
+
+    // Hard gate: routes that act with our own credentials demand an account.
+    if (AUTH_REQUIRED.has(pathname) && !userId) {
+      return json({ error: 'auth_required', message: 'Sign in to contribute.' }, 401, cors)
+    }
+
     if (PAID_PATHS.has(pathname)) {
-      const userId = await verifySupabaseToken(request, env)
       if (userId) {
         key = `user:${userId}` // per-user, full quota
       } else if (env.RATE_LIMITER_ANON) {
         limiter = env.RATE_LIMITER_ANON // anonymous: smaller shared quota
       }
+    } else if (AUTH_REQUIRED.has(pathname)) {
+      key = `obf:${userId}` // per-user OBF quota (own keyspace)
     }
     if (limiter) {
       const { success } = await limiter.limit({ key })

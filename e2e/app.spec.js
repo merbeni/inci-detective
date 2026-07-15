@@ -7,6 +7,7 @@ import {
   completeOnboarding,
   analyzeQaList,
   watchConsole,
+  signInFakeUser,
   QA_INCI_LIST,
   TINY_PNG,
 } from './helpers.js'
@@ -110,11 +111,17 @@ test.describe('Análisis manual', () => {
 })
 
 test.describe('Contribución a Open Beauty Facts', () => {
-  test('guardar con la casilla activa envía el producto a /api/obf', async ({ page }) => {
-    // Red interceptada: valida el payload y la UX sin escribir en la base real.
+  test('con sesión, guardar con la casilla activa envía el producto a /api/obf', async ({
+    page,
+  }) => {
+    // La contribución a OBF ahora exige sesión (el Worker escribe con las
+    // credenciales propias de la app). Simulamos usuario e interceptamos la red.
+    await signInFakeUser(page)
     let obfPayload = null
+    let obfAuth = null
     await page.route('**/api/obf', async (route) => {
       obfPayload = route.request().postDataJSON()
+      obfAuth = route.request().headers()['authorization'] || null
       await route.fulfill({ json: { ok: true, status: 'saved' } })
     })
 
@@ -144,9 +151,26 @@ test.describe('Contribución a Open Beauty Facts', () => {
       lang: 'es',
     })
     expect(obfPayload.ingredientsText).toContain('Formaldehyde')
+    // SEC: el fix adjunta el JWT — el Worker rechaza escrituras anónimas.
+    expect(obfAuth).toMatch(/^Bearer /)
+  })
+
+  test('SEC: sin sesión, la casilla de OBF no se ofrece aunque haya código', async ({ page }) => {
+    // Regresión del hallazgo del pentest: un usuario anónimo no debe poder
+    // disparar una escritura a OBF con las credenciales de la app.
+    await completeOnboarding(page)
+    await page.getByRole('button', { name: 'Ingresar código manualmente' }).click()
+    await page.locator('#manual-barcode').fill('2099999999992')
+    await page.getByRole('tab', { name: 'Ingredientes' }).click()
+    await page.locator('#manual-list').fill(QA_INCI_LIST)
+    await page.getByRole('button', { name: 'Analizar ingredientes' }).click()
+    await expect(page).toHaveURL(/\/analysis\/new/)
+    await expect(page.getByText('Compartir en Open Beauty Facts')).toHaveCount(0)
+    await expect(page.getByRole('checkbox')).toHaveCount(0)
   })
 
   test('sin código de barras la casilla de OBF no se ofrece', async ({ page }) => {
+    await signInFakeUser(page)
     await completeOnboarding(page)
     await analyzeQaList(page)
     await expect(page.getByText('Compartir en Open Beauty Facts')).toHaveCount(0)

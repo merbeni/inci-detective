@@ -41,6 +41,30 @@ export async function analyzeQaList(page) {
   await expect(page.getByText('Contiene alertas')).toBeVisible({ timeout: 15_000 })
 }
 
+// Simulate a signed-in Supabase user WITHOUT a real login: seed a persisted
+// session and stub the auth/REST endpoints. Enough for `user` to be truthy and
+// for authHeaders() to attach a token — the Worker call itself is intercepted
+// per-test. Must be called before the app first navigates.
+export async function signInFakeUser(page, { id = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee', email = 'qa@example.com' } = {}) {
+  const ref = 'shmdzlffwjhxcrhtkpfd'
+  const user = { id, email, aud: 'authenticated', role: 'authenticated' }
+  const session = {
+    access_token: 'fake.jwt.token',
+    refresh_token: 'fake-refresh',
+    token_type: 'bearer',
+    expires_in: 3600,
+    expires_at: Math.floor(Date.now() / 1000) + 3600,
+    user,
+  }
+  await page.route('**/auth/v1/user**', (route) => route.fulfill({ json: user }))
+  await page.route('**/auth/v1/token**', (route) => route.fulfill({ json: session }))
+  await page.route('**/rest/v1/**', (route) => route.fulfill({ json: [] }))
+  await page.addInitScript(
+    ([k, v]) => window.localStorage.setItem(k, v),
+    [`sb-${ref}-auth-token`, JSON.stringify(session)],
+  )
+}
+
 // Minimal valid 1x1 red PNG for upload tests (profile photo).
 export const TINY_PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',

@@ -8,6 +8,8 @@
 //  - fall back to the sibling Open*Facts databases (Beauty → Products → Food),
 //    since a barcode is occasionally registered in a different flavour.
 
+import { authHeaders } from '../lib/supabase.js'
+
 // Ingredient text comes in many per-language variants; we try them in order and
 // take the first non-empty one. English/Latin INCI is the same across languages,
 // so any populated variant is usable by the classifier.
@@ -106,9 +108,12 @@ export async function lookupBarcode(barcode) {
 // local save, which already succeeded.
 export async function contributeToObf({ barcode, productName, brand, ingredientsText, lang }) {
   try {
+    // The Worker requires a signed-in account (it writes with the app's own OBF
+    // credentials); attach the JWT so the request is attributed and rate-limited.
+    const auth = await authHeaders()
     const res = await fetch('/api/obf', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...auth },
       body: JSON.stringify({ code: barcode, productName, brand, ingredientsText, lang }),
     })
     const data = await res.json()

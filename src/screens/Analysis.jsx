@@ -219,7 +219,11 @@ export default function Analysis() {
   // 'barcode' source means OBF already served the ingredients — nothing new
   // to contribute. OCR/manual entries against a real barcode are the gap OBF
   // doesn't cover yet.
-  const canContribute = isPreview && scan.barcode && (scan.source === 'ocr' || scan.source === 'manual')
+  // OBF contribution goes through the Worker, which now requires a signed-in
+  // account (it writes with the app's own OBF credentials). Only offer it to
+  // signed-in users so the checkbox never promises a write that would 401.
+  const canContribute =
+    isPreview && Boolean(user) && scan.barcode && (scan.source === 'ocr' || scan.source === 'manual')
 
   return (
     <div className="screen analysis">
