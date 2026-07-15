@@ -56,8 +56,15 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
+      # Both values are public by design (the anon key is the *publishable* key
+      # and both already ship in the client bundle), so enabling cloud here just
+      # makes the E2E build mirror production. Tests that need a signed-in user
+      # stub the Supabase auth/REST endpoints (see e2e/helpers.js signInFakeUser).
       - name: Build
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://shmdzlffwjhxcrhtkpfd.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_Q0Bps6Y1EvJP1KrVEq_xgA_kBjt8FMm
 
       - name: E2E tests
         run: npm run test:e2e
