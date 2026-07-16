@@ -30,8 +30,14 @@ export default function Watchlist() {
   const suggestions = useMemo(() => {
     const term = normalizeName(q)
     if (term.length < 2 || !datasetReady) return []
+    // Rank: name-prefix, then word-prefix, then substring; shorter names break
+    // ties. Searching "sal" should surface Salicylic Acid, not the giant
+    // ferment extracts whose species list happens to contain the term.
+    const rank = (norm) =>
+      norm.startsWith(term) ? 0 : norm.includes(` ${term}`) ? 1 : 2
     return allIngredients()
       .filter((i) => !watchedNorms.has(i.norm) && i.norm.includes(term))
+      .sort((a, b) => rank(a.norm) - rank(b.norm) || a.norm.length - b.norm.length)
       .slice(0, 6)
   }, [q, watchedNorms, datasetReady])
 

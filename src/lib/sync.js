@@ -62,24 +62,6 @@ export async function signIn(email, password) {
   return data.user
 }
 
-export async function signInWithGoogle() {
-  if (!isCloudEnabled) throw new Error('cloud-disabled')
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin, skipBrowserRedirect: true },
-  })
-  if (error) throw error
-  // Probe before leaving the SPA: if the provider isn't enabled on the
-  // project, the authorize URL answers a raw 400 JSON page and a straight
-  // redirect would strand the user on it. Fail open on network/CORS issues.
-  const probe = await fetch(data.url, { redirect: 'manual' }).catch(() => null)
-  if (probe && probe.status >= 400) {
-    const body = await probe.json().catch(() => ({}))
-    throw new Error(body.msg || 'provider is not enabled')
-  }
-  window.location.assign(data.url)
-}
-
 export async function resetPassword(email) {
   if (!isCloudEnabled) throw new Error('cloud-disabled')
   const { error } = await supabase.auth.resetPasswordForEmail(email, {

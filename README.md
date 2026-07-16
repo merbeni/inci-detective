@@ -79,13 +79,12 @@ remote-updatable CosIng dataset. (See `../INCI_Detective_Requerimientos_Backend_
 1. Create a free [Supabase](https://supabase.com) project.
 2. Run [`supabase/schema.sql`](supabase/schema.sql) in the SQL editor (tables,
    RLS policies, the new-user trigger).
-3. (For Google login) enable the Google provider in Supabase → Authentication.
-4. Copy `.env.example` to `.env.local` and fill:
+3. Copy `.env.example` to `.env.local` and fill:
    ```
    VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
    VITE_SUPABASE_ANON_KEY=YOUR-ANON-KEY
    ```
-5. `npm run dev` — a "Sign in" section now appears in Profile.
+4. `npm run dev` — a "Sign in" section now appears in Profile.
 
 ### Remote dataset (optional, RF-B4)
 

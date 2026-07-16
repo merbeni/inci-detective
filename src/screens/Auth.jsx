@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Leaf, Mail } from 'lucide-react'
-import { signIn, signUp, signInWithGoogle, resetPassword } from '../lib/sync.js'
+import { signIn, signUp, resetPassword } from '../lib/sync.js'
 import { useApp } from '../context/AppContext.jsx'
 import { t } from '../i18n/index.js'
 import './Auth.css'
@@ -15,8 +15,6 @@ function authErrorMessage(err, fallbackKey) {
   if (msg.includes('already registered')) return t('auth.err.alreadyRegistered')
   if (msg.includes('password should be')) return t('auth.err.weakPassword')
   if (msg.includes('rate limit') || err?.status === 429) return t('auth.err.rateLimit')
-  if (msg.includes('provider is not enabled') || msg.includes('unsupported provider'))
-    return t('auth.err.providerDisabled')
   return err?.message || t(fallbackKey)
 }
 
@@ -52,14 +50,6 @@ export default function Auth() {
       showToast(authErrorMessage(err, 'auth.failed'))
     } finally {
       setBusy(false)
-    }
-  }
-
-  async function google() {
-    try {
-      await signInWithGoogle()
-    } catch (err) {
-      showToast(authErrorMessage(err, 'auth.googleFailed'))
     }
   }
 
@@ -130,10 +120,6 @@ export default function Auth() {
             </button>
           )}
         </form>
-
-        <button className="btn btn--outline btn--block auth__google" onClick={google}>
-          {t('auth.google')}
-        </button>
 
         <button
           className="btn btn--ghost btn--block"
